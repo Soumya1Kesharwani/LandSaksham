@@ -87,6 +87,13 @@ html.dark .bg-slate-200 {
   color: #f8fafc !important;
 }
 
+html.dark .bg-blue-50,
+html.dark .bg-blue-50\/70 {
+  background-color: rgba(30, 58, 138, 0.5) !important;
+  border-color: #1e40af !important;
+  color: #e0f2fe !important;
+}
+
 html.dark .text-slate-900,
 html.dark .text-slate-800,
 html.dark .text-slate-700,

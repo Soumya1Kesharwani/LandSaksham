@@ -130,10 +130,10 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-base font-bold text-gov-navy tracking-tight leading-tight">
-                {t('system.title')} — LandSaksham
+              <h1 className="text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
+                {t('system.title')} — <span className="text-[#f97316] font-extrabold">Land</span><span className="text-[#2563eb] dark:text-[#60a5fa] font-extrabold">Sak</span><span className="text-[#16a34a] dark:text-[#4ade80] font-extrabold">sham</span>
               </h1>
-              <span className="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300 uppercase tracking-wider">
+              <span className="text-[10px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 px-2 py-0.5 rounded border border-amber-300 dark:border-amber-800 uppercase tracking-wider">
                 SIH 2026
               </span>
             </div>

@@ -6,7 +6,7 @@ import { UserRole } from '../../types';
 import { LanguageSelector } from './LanguageSelector';
 import { 
   Building2, Globe, Shield, Bell, ChevronDown, 
-  MapPin, Clock, ExternalLink, Sparkles, User
+  MapPin, Clock, ExternalLink, Sparkles, User, Sun, Moon
 } from 'lucide-react';
 
 interface GovHeaderProps {
@@ -32,6 +32,26 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
   const [fontSize, setFontSize] = useState<'small' | 'normal' | 'large'>(() => {
     return (localStorage.getItem('nliis_font_size') as 'small' | 'normal' | 'large') || 'normal';
   });
+
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('nliis_theme') as 'light' | 'dark';
+    if (saved) return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+    localStorage.setItem('nliis_theme', nextTheme);
+  };
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
 
   const handleFontSizeChange = (size: 'small' | 'normal' | 'large') => {
     setFontSize(size);
@@ -197,6 +217,19 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
               A+
             </button>
           </div>
+
+          {/* Theme Toggle (Dark / Light Mode) */}
+          <button
+            onClick={toggleTheme}
+            className="p-1.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center"
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4 text-amber-400 fill-amber-400" />
+            ) : (
+              <Moon className="w-4 h-4 text-slate-600" />
+            )}
+          </button>
 
           {/* Regional Language Selector */}
           <LanguageSelector variant="header" />

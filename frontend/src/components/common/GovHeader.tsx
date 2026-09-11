@@ -113,7 +113,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
+    <header className="sticky top-0 z-40 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-200">
       {/* Tricolor Government Ribbon */}
       <div className="h-1 w-full flex">
         <div className="flex-1 bg-[#ff9933]"></div>
@@ -125,13 +125,13 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
       <div className="px-4 py-2.5 flex items-center justify-between gap-4">
         {/* Left: Identity & Branding */}
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-full bg-white p-0.5 shadow-sm border border-slate-200 flex items-center justify-center overflow-hidden shrink-0">
+          <div className="w-11 h-11 rounded-full bg-white p-0.5 shadow-sm border border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden shrink-0">
             <img src="/logo.png" alt="NLIIS Official Logo" className="w-full h-full object-contain rounded-full" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
-                {t('system.title')} — <span className="text-[#f97316] font-extrabold">Land</span><span className="text-[#2563eb] dark:text-[#60a5fa] font-extrabold">Sak</span><span className="text-[#16a34a] dark:text-[#4ade80] font-extrabold">sham</span>
+                <span className="text-slate-900 dark:text-white">{t('system.title')}</span> — <span className="text-[#f97316] font-extrabold">Land</span><span className="text-[#2563eb] dark:text-[#60a5fa] font-extrabold">Sak</span><span className="text-[#16a34a] dark:text-[#4ade80] font-extrabold">sham</span>
               </h1>
               <span className="text-[10px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 px-2 py-0.5 rounded border border-amber-300 dark:border-amber-800 uppercase tracking-wider">
                 SIH 2026

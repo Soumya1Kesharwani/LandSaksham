@@ -1,16 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useProject } from '../../context/ProjectContext';
 import { 
   LayoutDashboard, Map, FileSpreadsheet, Landmark, 
   Scale, Trees, Users, Briefcase, GitFork, 
   BrainCircuit, ListTodo, FileText, Bell, 
-  History, Download
+  History, Download, Sun, Moon
 } from 'lucide-react';
 
 export const GovSidebar: React.FC = () => {
   const { tr, t } = useLanguage();
   const { activeTab, setActiveTab, activeProject, actionItems, alerts } = useProject();
+
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('nliis_theme') as 'light' | 'dark';
+    if (saved) return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+    localStorage.setItem('nliis_theme', nextTheme);
+    window.dispatchEvent(new Event('storage'));
+  };
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+
+  useEffect(() => {
+    const handleStorage = () => {
+      const current = localStorage.getItem('nliis_theme') as 'light' | 'dark';
+      if (current && current !== theme) {
+        setTheme(current);
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, [theme]);
 
   const pendingActionsCount = actionItems.filter(a => a.status !== 'Resolved' && a.status !== 'Closed').length;
   const unreadAlertsCount = alerts.filter(a => !a.is_read).length;
@@ -100,6 +132,32 @@ export const GovSidebar: React.FC = () => {
         })}
       </div>
 
+      {/* Dark / Light Mode Toggle */}
+      <div className="p-3 border-t border-slate-800 bg-slate-950/50 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-xs text-slate-200 font-medium">
+          {theme === 'dark' ? (
+            <Moon className="w-4 h-4 text-amber-300" />
+          ) : (
+            <Sun className="w-4 h-4 text-amber-400" />
+          )}
+          <span>{theme === 'dark' ? tr('Dark Mode', 'डार्क मोड') : tr('Light Mode', 'लाइट मोड')}</span>
+        </div>
+
+        <button
+          onClick={toggleTheme}
+          className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+            theme === 'dark' ? 'bg-gov-blue' : 'bg-slate-700'
+          }`}
+          title="Toggle Dark / Light Mode"
+        >
+          <span
+            className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+              theme === 'dark' ? 'translate-x-5' : 'translate-x-0'
+            }`}
+          />
+        </button>
+      </div>
+
       {/* Footer System Status */}
       <div className="p-3 border-t border-slate-800 bg-slate-950/80 text-[11px] text-slate-400 flex items-center justify-between">
         <div className="flex items-center gap-1.5">
@@ -111,3 +169,4 @@ export const GovSidebar: React.FC = () => {
     </aside>
   );
 };
+

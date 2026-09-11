@@ -131,15 +131,12 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-base font-bold text-gov-navy tracking-tight leading-tight">
-                {t('system.title')}
+                {t('system.title')} — LandSaksham
               </h1>
               <span className="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300 uppercase tracking-wider">
                 SIH 2026
               </span>
             </div>
-            <p className="text-xs text-slate-500 hidden sm:block leading-tight">
-              {t('system.subtitle')}
-            </p>
           </div>
         </div>
 
@@ -217,19 +214,6 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
               A+
             </button>
           </div>
-
-          {/* Theme Toggle (Dark / Light Mode) */}
-          <button
-            onClick={toggleTheme}
-            className="p-1.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center"
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          >
-            {theme === 'dark' ? (
-              <Sun className="w-4 h-4 text-amber-400 fill-amber-400" />
-            ) : (
-              <Moon className="w-4 h-4 text-slate-600" />
-            )}
-          </button>
 
           {/* Regional Language Selector */}
           <LanguageSelector variant="header" />

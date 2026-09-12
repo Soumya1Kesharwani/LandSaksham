@@ -35,14 +35,14 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
     : tr("Low Readiness — Critical Bottlenecks", "न्यून तत्परता — गंभीर अवरोध विद्यमान");
 
   return (
-    <div className="flex items-center gap-4 bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+    <div className="flex items-center gap-4 bg-[#111c38] border border-slate-800 rounded-lg p-4 shadow-sm">
       <div className="relative flex items-center justify-center">
         <svg className="w-20 h-20 transform -rotate-90">
           <circle
             cx="40"
             cy="40"
             r={radius}
-            stroke="#e2e8f0"
+            stroke="#1e293b"
             strokeWidth="7"
             fill="transparent"
           />
@@ -60,7 +60,7 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-          <span className="text-xl font-extrabold font-mono text-slate-900 leading-none">
+          <span className="text-xl font-extrabold font-mono text-white leading-none">
             {clampedScore}
           </span>
           <span className="text-[10px] text-slate-400 font-semibold uppercase">
@@ -70,16 +70,16 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
       </div>
 
       <div className="flex-1">
-        <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <div className="text-xs font-semibold uppercase tracking-wider text-slate-400">
           {displayTitle}
         </div>
-        <div className="text-sm font-bold text-slate-800 mt-0.5">
+        <div className="text-sm font-bold text-slate-100 mt-0.5">
           {statusText}
         </div>
         {delayProbability !== undefined && (
-          <div className="mt-1.5 flex items-center gap-2 text-xs text-slate-600">
+          <div className="mt-1.5 flex items-center gap-2 text-xs text-slate-300">
             <span>{tr("Delay Risk Probability:", "विलंब जोखिम संभावना:")}</span>
-            <span className={`font-mono font-bold ${delayProbability > 0.6 ? 'text-red-700' : 'text-amber-700'}`}>
+            <span className={`font-mono font-bold ${delayProbability > 0.6 ? 'text-red-400' : 'text-amber-400'}`}>
               {(delayProbability * 100).toFixed(0)}%
             </span>
           </div>

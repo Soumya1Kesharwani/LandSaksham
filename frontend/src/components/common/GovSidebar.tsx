@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useProject } from '../../context/ProjectContext';
+import { useTheme } from '../../context/ThemeContext';
 import { 
   LayoutDashboard, Map, FileSpreadsheet, Landmark, 
   Scale, Trees, Users, Briefcase, GitFork, 
@@ -11,38 +12,33 @@ import {
 export const GovSidebar: React.FC = () => {
   const { tr, t } = useLanguage();
   const { activeTab, setActiveTab, activeProject, actionItems, alerts } = useProject();
+  const { theme, toggleTheme } = useTheme();
 
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    const saved = localStorage.getItem('nliis_theme') as 'light' | 'dark';
-    if (saved) return saved;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  const [fontSize, setFontSize] = useState<'small' | 'normal' | 'large'>(() => {
+    return (localStorage.getItem('nliis_font_size') as 'small' | 'normal' | 'large') || 'normal';
   });
 
-  const toggleTheme = () => {
-    const nextTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(nextTheme);
-    localStorage.setItem('nliis_theme', nextTheme);
-    window.dispatchEvent(new Event('storage'));
+  const handleFontSizeChange = (size: 'small' | 'normal' | 'large') => {
+    setFontSize(size);
+    localStorage.setItem('nliis_font_size', size);
+    if (size === 'small') {
+      document.documentElement.style.fontSize = '15px';
+    } else if (size === 'large') {
+      document.documentElement.style.fontSize = '19px';
+    } else {
+      document.documentElement.style.fontSize = '17px';
+    }
   };
 
   useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
+    if (fontSize === 'small') {
+      document.documentElement.style.fontSize = '15px';
+    } else if (fontSize === 'large') {
+      document.documentElement.style.fontSize = '19px';
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.style.fontSize = '17px';
     }
-  }, [theme]);
-
-  useEffect(() => {
-    const handleStorage = () => {
-      const current = localStorage.getItem('nliis_theme') as 'light' | 'dark';
-      if (current && current !== theme) {
-        setTheme(current);
-      }
-    };
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
-  }, [theme]);
+  }, [fontSize]);
 
   const pendingActionsCount = actionItems.filter(a => a.status !== 'Resolved' && a.status !== 'Closed').length;
   const unreadAlertsCount = alerts.filter(a => !a.is_read).length;
@@ -130,6 +126,34 @@ export const GovSidebar: React.FC = () => {
             </button>
           );
         })}
+      </div>
+
+      {/* Font Size Accessibility Controls (A- / A / A+) */}
+      <div className="p-3 border-t border-slate-800 bg-slate-950/40 flex items-center justify-between">
+        <span className="text-xs text-slate-300 font-medium">{tr('Font Size', 'फ़ॉन्ट आकार')}</span>
+        <div className="flex items-center bg-slate-800 border border-slate-700 rounded-md p-0.5 text-xs font-semibold text-slate-200">
+          <button
+            onClick={() => handleFontSizeChange('small')}
+            className={`px-2 py-0.5 rounded transition ${fontSize === 'small' ? 'bg-blue-600 text-white font-bold' : 'hover:bg-slate-700 text-slate-300'}`}
+            title="Decrease Font Size (A-)"
+          >
+            A-
+          </button>
+          <button
+            onClick={() => handleFontSizeChange('normal')}
+            className={`px-2 py-0.5 rounded transition ${fontSize === 'normal' ? 'bg-blue-600 text-white font-bold' : 'hover:bg-slate-700 text-slate-300'}`}
+            title="Normal Font Size (A)"
+          >
+            A
+          </button>
+          <button
+            onClick={() => handleFontSizeChange('large')}
+            className={`px-2 py-0.5 rounded transition ${fontSize === 'large' ? 'bg-blue-600 text-white font-bold' : 'hover:bg-slate-700 text-slate-300'}`}
+            title="Increase Font Size (A+)"
+          >
+            A+
+          </button>
+        </div>
       </div>
 
       {/* Dark / Light Mode Toggle */}

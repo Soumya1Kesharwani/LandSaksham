@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { RoleProvider, useRole } from './context/RoleContext';
 import { ProjectProvider, useProject } from './context/ProjectContext';
@@ -76,7 +77,7 @@ const DashboardContent: React.FC<{
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc]">
+    <div className="min-h-screen flex flex-col bg-[#f8fafc] dark:bg-[#090d16] text-slate-900 dark:text-[#f8fafc] transition-colors duration-200">
       <GovHeader
         onOpenCreateProject={onOpenCreateProject}
         onOpenCopilot={onOpenCopilot}
@@ -126,44 +127,47 @@ export const App: React.FC = () => {
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
 
   return (
-    <LanguageProvider>
-      <RoleProvider>
-        <ProjectProvider>
-          {viewMode === 'landing' && (
-            <LandingPage
-              onEnterDashboard={() => setViewMode('dashboard')}
-              onEnterCitizen={() => setViewMode('citizen')}
-            />
-          )}
+    <ThemeProvider>
+      <LanguageProvider>
+        <RoleProvider>
+          <ProjectProvider>
+            {viewMode === 'landing' && (
+              <LandingPage
+                onEnterDashboard={() => setViewMode('dashboard')}
+                onEnterCitizen={() => setViewMode('citizen')}
+              />
+            )}
 
-          {viewMode === 'citizen' && (
-            <CitizenPortal
-              onBackToDashboard={() => setViewMode('dashboard')}
-            />
-          )}
+            {viewMode === 'citizen' && (
+              <CitizenPortal
+                onBackToDashboard={() => setViewMode('dashboard')}
+              />
+            )}
 
-          {viewMode === 'dashboard' && (
-            <DashboardContent
-              onOpenCreateProject={() => setCreateProjectOpen(true)}
-              onOpenCopilot={() => setCopilotOpen(true)}
-              onNavigateLanding={() => setViewMode('landing')}
-              onNavigateCitizen={() => setViewMode('citizen')}
-            />
-          )}
+            {viewMode === 'dashboard' && (
+              <DashboardContent
+                onOpenCreateProject={() => setCreateProjectOpen(true)}
+                onOpenCopilot={() => setCopilotOpen(true)}
+                onNavigateLanding={() => setViewMode('landing')}
+                onNavigateCitizen={() => setViewMode('citizen')}
+              />
+            )}
 
-          <AIOfficerCopilot
-            isOpen={copilotOpen}
-            onClose={() => setCopilotOpen(false)}
-          />
-
-          {createProjectOpen && (
-            <CreateProjectModal
-              onClose={() => setCreateProjectOpen(false)}
+            <AIOfficerCopilot
+              isOpen={copilotOpen}
+              onToggle={() => setCopilotOpen(prev => !prev)}
+              onClose={() => setCopilotOpen(false)}
             />
-          )}
-        </ProjectProvider>
-      </RoleProvider>
-    </LanguageProvider>
+
+            {createProjectOpen && (
+              <CreateProjectModal
+                onClose={() => setCreateProjectOpen(false)}
+              />
+            )}
+          </ProjectProvider>
+        </RoleProvider>
+      </LanguageProvider>
+    </ThemeProvider>
   );
 };
 

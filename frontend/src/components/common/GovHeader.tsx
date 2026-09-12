@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useRole } from '../../context/RoleContext';
 import { useProject } from '../../context/ProjectContext';
+import { useTheme } from '../../context/ThemeContext';
 import { UserRole } from '../../types';
 import { LanguageSelector } from './LanguageSelector';
 import { 
   Building2, Globe, Shield, Bell, ChevronDown, 
-  MapPin, Clock, ExternalLink, Sparkles, User, Sun, Moon
+  MapPin, Clock, ExternalLink, Sparkles, User, Sun, Moon, Info, X
 } from 'lucide-react';
 
 interface GovHeaderProps {
@@ -26,72 +27,42 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
   const { role, setRole } = useRole();
   const { projects, activeProject, setActiveProjectId, alerts } = useProject();
 
-  const [currentTime, setCurrentTime] = useState<string>('');
+  const [currentDateStr, setCurrentDateStr] = useState<string>('');
+  const [currentTimeStr, setCurrentTimeStr] = useState<string>('');
+  const { theme, toggleTheme } = useTheme();
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
   const [projectDropdownOpen, setProjectDropdownOpen] = useState(false);
-  const [fontSize, setFontSize] = useState<'small' | 'normal' | 'large'>(() => {
-    return (localStorage.getItem('nliis_font_size') as 'small' | 'normal' | 'large') || 'normal';
-  });
-
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    const saved = localStorage.getItem('nliis_theme') as 'light' | 'dark';
-    if (saved) return saved;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  });
-
-  const toggleTheme = () => {
-    const nextTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(nextTheme);
-    localStorage.setItem('nliis_theme', nextTheme);
-  };
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [theme]);
-
-  const handleFontSizeChange = (size: 'small' | 'normal' | 'large') => {
-    setFontSize(size);
-    localStorage.setItem('nliis_font_size', size);
-    if (size === 'small') {
-      document.documentElement.style.fontSize = '15px';
-    } else if (size === 'large') {
-      document.documentElement.style.fontSize = '19px';
-    } else {
-      document.documentElement.style.fontSize = '17px';
-    }
-  };
-
-  useEffect(() => {
-    if (fontSize === 'small') {
-      document.documentElement.style.fontSize = '15px';
-    } else if (fontSize === 'large') {
-      document.documentElement.style.fontSize = '19px';
-    } else {
-      document.documentElement.style.fontSize = '17px';
-    }
-  }, [fontSize]);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [showProjectModal, setShowProjectModal] = useState(false);
 
   useEffect(() => {
     const updateIST = () => {
-      const options: Intl.DateTimeFormatOptions = {
+      const dateOptions: Intl.DateTimeFormatOptions = {
         timeZone: 'Asia/Kolkata',
-        hour12: true,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
         day: '2-digit',
         month: 'short',
         year: 'numeric'
       };
+      const timeOptions: Intl.DateTimeFormatOptions = {
+        timeZone: 'Asia/Kolkata',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      };
       const localeCode = language === 'en' ? 'en-IN' : (language === 'hi' ? 'hi-IN' : `${language}-IN`);
       try {
-        setCurrentTime(new Intl.DateTimeFormat(localeCode, options).format(new Date()) + ` ${t('IST', 'IST')}`);
+        const d = new Intl.DateTimeFormat(localeCode, dateOptions).format(new Date());
+        const tRaw = new Intl.DateTimeFormat(localeCode, timeOptions).format(new Date());
+        const cleanTime = tRaw.replace(/\s*(am|pm|AM|PM|a\.m\.|p\.m\.)\s*/gi, '').trim();
+        setCurrentDateStr(`${d},`);
+        setCurrentTimeStr(`${cleanTime} IST`);
       } catch (e) {
-        setCurrentTime(new Intl.DateTimeFormat('en-IN', options).format(new Date()) + ' IST');
+        const d = new Intl.DateTimeFormat('en-IN', dateOptions).format(new Date());
+        const tRaw = new Intl.DateTimeFormat('en-IN', timeOptions).format(new Date());
+        const cleanTime = tRaw.replace(/\s*(am|pm|AM|PM|a\.m\.|p\.m\.)\s*/gi, '').trim();
+        setCurrentDateStr(`${d},`);
+        setCurrentTimeStr(`${cleanTime} IST`);
       }
     };
     updateIST();
@@ -113,7 +84,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-200">
+    <header className="sticky top-0 z-40 bg-[#0b1329] border-b border-slate-800 shadow-md transition-colors duration-200">
       {/* Tricolor Government Ribbon */}
       <div className="h-1 w-full flex">
         <div className="flex-1 bg-[#ff9933]"></div>
@@ -122,162 +93,239 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
       </div>
 
       {/* Main Bar */}
-      <div className="px-4 py-2.5 flex items-center justify-between gap-4">
+      <div className="px-4 py-6 flex items-center justify-between gap-4">
         {/* Left: Identity & Branding */}
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-full bg-white p-0.5 shadow-sm border border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden shrink-0">
+          <div className="w-11 h-11 rounded-full bg-white p-0.5 shadow-sm border border-slate-700 flex items-center justify-center overflow-hidden shrink-0">
             <img src="/logo.png" alt="NLIIS Official Logo" className="w-full h-full object-contain rounded-full" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
-                <span className="text-slate-900 dark:text-white">{t('system.title')}</span> — <span className="text-[#f97316] font-extrabold">Land</span><span className="text-[#2563eb] dark:text-[#60a5fa] font-extrabold">Sak</span><span className="text-[#16a34a] dark:text-[#4ade80] font-extrabold">sham</span>
+            <div className="flex flex-col justify-center">
+              <h1 className="text-base font-bold text-slate-100 tracking-tight leading-tight">
+                {t('system.title')}
               </h1>
-              <span className="text-[10px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 px-2 py-0.5 rounded border border-amber-300 dark:border-amber-800 uppercase tracking-wider">
-                SIH 2026
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Center: Live Project Selector */}
-        <div className="relative hidden md:block">
-          <button
-            onClick={() => setProjectDropdownOpen(!projectDropdownOpen)}
-            className="flex items-center gap-2 bg-slate-50 hover:bg-slate-100 border border-slate-300 px-3 py-1.5 rounded-md text-xs font-semibold text-slate-800 transition"
-          >
-            <MapPin className="w-3.5 h-3.5 text-gov-blue" />
-            <span className="max-w-[220px] truncate">
-              {activeProject ? t(activeProject.name, activeProject.name) : t('system.select_project')}
-            </span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
-          </button>
-
-          {projectDropdownOpen && (
-            <div className="absolute left-0 mt-1 w-80 bg-white border border-slate-200 rounded-md shadow-lg py-1 z-50">
-              <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
-                {t('system.active_infra_projects')}
+              <div className="text-base font-extrabold tracking-tight leading-tight mt-0.5">
+                <span className="text-[#f97316]">Land</span><span className="text-white">Sak</span><span className="text-[#4ade80]">sham</span>
               </div>
-              {projects.map(p => (
-                <button
-                  key={p.id}
-                  onClick={() => {
-                    setActiveProjectId(p.id);
-                    setProjectDropdownOpen(false);
-                  }}
-                  className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-50 flex items-start justify-between ${
-                    p.id === activeProject?.id ? 'bg-blue-50 font-bold text-gov-blue' : 'text-slate-700'
-                  }`}
-                >
-                  <div>
-                    <div className="font-semibold">{t(p.name, p.name)}</div>
-                    <div className="text-[10px] text-slate-500 font-normal">{t(p.state, p.state)} • {p.length_km} {tr('km', 'किमी')}</div>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 border border-slate-300 font-mono">
-                    {p.overall_delay_risk_score}% {t(p.overall_delay_risk_level, p.overall_delay_risk_level)}
-                  </span>
-                </button>
-              ))}
             </div>
-          )}
+          </div>
         </div>
 
-        {/* Right Controls: IST Clock, Language, Role, Actions */}
+        {/* Right Controls in exact sequence requested:
+            1. Jaipur-Ajmer Live Project Selector
+            2. Dropdown of District Magistrate / Role Switcher
+            3. Landowner Portal
+            4. Language Dropdown
+            5. Date and Time (max 2 lines)
+        */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* IST Time */}
-          <div className="hidden lg:flex items-center gap-1.5 text-xs text-slate-600 bg-slate-100 px-2.5 py-1 rounded border border-slate-200 font-mono">
-            <Clock className="w-3.5 h-3.5 text-slate-500" />
-            <span>{currentTime}</span>
+          {/* 1. Jaipur-Ajmer Live Project Selector */}
+          <div className="relative hidden md:block">
+            <button
+              onClick={() => setProjectDropdownOpen(!projectDropdownOpen)}
+              className="flex items-center gap-2 bg-slate-800/90 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-md text-xs font-semibold text-white transition shadow-xs"
+            >
+              <MapPin className="w-3.5 h-3.5 text-blue-400" />
+              <span className="max-w-[220px] truncate">
+                {activeProject ? t(activeProject.name, activeProject.name) : t('system.select_project')}
+              </span>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            </button>
+
+            {projectDropdownOpen && (
+              <div className="absolute left-0 mt-1 w-80 bg-[#111c38] border border-slate-700 rounded-md shadow-xl py-1 z-50 text-slate-100">
+                <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
+                  {t('system.active_infra_projects')}
+                </div>
+                {projects.map(p => {
+                  const isJaipurAjmer = p.name.includes('Jaipur') || p.id.includes('jaipur');
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => {
+                        if (!isJaipurAjmer) {
+                          setShowProjectModal(true);
+                        } else {
+                          setActiveProjectId(p.id);
+                        }
+                        setProjectDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-800 flex items-start justify-between ${
+                        p.id === activeProject?.id ? 'bg-blue-950/80 font-bold text-blue-300' : 'text-slate-200'
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <div className="font-semibold text-white">{t(p.name, p.name)}</div>
+                          {!isJaipurAjmer && (
+                            <span className="text-[9px] bg-slate-800 text-amber-400/90 px-1.5 py-0.2 rounded border border-slate-700 font-normal">
+                              {tr('Inactive', 'निष्क्रिय')}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-normal">{t(p.state, p.state)} • {p.length_km} {tr('km', 'किमी')}</div>
+                      </div>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono text-slate-300">
+                        {p.overall_delay_risk_score}% {t(p.overall_delay_risk_level, p.overall_delay_risk_level)}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
-          {/* Font Size Accessibility Controls (A- / A / A+) */}
-          <div className="flex items-center bg-slate-100 border border-slate-300 rounded-md p-0.5 text-xs font-semibold text-slate-700">
-            <button
-              onClick={() => handleFontSizeChange('small')}
-              className={`px-2 py-1 rounded transition ${fontSize === 'small' ? 'bg-gov-navy text-white shadow-xs font-bold' : 'hover:bg-slate-200'}`}
-              title="Decrease Font Size (A-)"
-            >
-              A-
-            </button>
-            <button
-              onClick={() => handleFontSizeChange('normal')}
-              className={`px-2 py-1 rounded transition ${fontSize === 'normal' ? 'bg-gov-navy text-white shadow-xs font-bold' : 'hover:bg-slate-200'}`}
-              title="Normal / Comfortable Font Size (A)"
-            >
-              A
-            </button>
-            <button
-              onClick={() => handleFontSizeChange('large')}
-              className={`px-2 py-1 rounded transition ${fontSize === 'large' ? 'bg-gov-navy text-white shadow-xs font-bold' : 'hover:bg-slate-200'}`}
-              title="Increase Font Size (A+)"
-            >
-              A+
-            </button>
-          </div>
-
-          {/* Regional Language Selector */}
-          <LanguageSelector variant="header" />
-
-          {/* Role Switcher */}
+          {/* 2. Dropdown of District Magistrate / Role Switcher */}
           <div className="relative">
             <button
               onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
-              className="flex items-center gap-1.5 bg-gov-navy text-white px-3 py-1.5 rounded-md text-xs font-medium hover:bg-slate-800 transition"
+              className="flex items-center gap-2 bg-slate-800/90 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-md text-xs font-semibold text-white transition shadow-xs"
             >
-              <User className="w-3.5 h-3.5 text-amber-400" />
+              <User className="w-3.5 h-3.5 text-blue-400" />
               <span className="hidden sm:inline max-w-[140px] truncate">{t(role)}</span>
-              <ChevronDown className="w-3 h-3 text-slate-300" />
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
             </button>
 
             {roleDropdownOpen && (
-              <div className="absolute right-0 mt-1 w-64 bg-white border border-slate-200 rounded-md shadow-xl py-1 z-50">
-                <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
+              <div className="absolute right-0 mt-1 w-64 bg-[#111c38] border border-slate-700 rounded-md shadow-xl py-1 z-50 text-slate-100">
+                <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
                   {t('roles.select_role')}
                 </div>
                 {rolesList.map(r => (
                   <button
                     key={r}
                     onClick={() => {
-                      setRole(r);
+                      if (r !== 'Central Government Officer') {
+                        setShowRoleModal(true);
+                      } else {
+                        setRole(r);
+                      }
                       setRoleDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-50 flex items-center justify-between ${
-                      r === role ? 'bg-blue-50 font-bold text-gov-blue' : 'text-slate-700'
+                    className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-800 flex items-center justify-between ${
+                      r === role ? 'bg-blue-950/80 font-bold text-blue-300' : 'text-slate-200'
                     }`}
                   >
-                    <span>{t(r)}</span>
-                    {r === role && <span className="w-2 h-2 rounded-full bg-gov-blue" />}
+                    <div className="flex items-center gap-2">
+                      <span>{t(r)}</span>
+                      {r !== 'Central Government Officer' && (
+                        <span className="text-[9px] bg-slate-800 text-amber-400/90 px-1.5 py-0.2 rounded border border-slate-700 font-normal">
+                          {tr('Inactive', 'निष्क्रिय')}
+                        </span>
+                      )}
+                    </div>
+                    {r === role && <span className="w-2 h-2 rounded-full bg-blue-400 shrink-0" />}
                   </button>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Copilot Trigger */}
-          {onOpenCopilot && (
-            <button
-              onClick={onOpenCopilot}
-              className="flex items-center gap-1 bg-gradient-to-r from-blue-700 to-indigo-800 text-white px-2.5 py-1.5 rounded-md text-xs font-semibold hover:from-blue-800 hover:to-indigo-900 shadow-sm"
-              title={t('copilot.title')}
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span className="hidden md:inline">{t('AI Copilot')}</span>
-            </button>
-          )}
-
-          {/* Citizen Portal Shortcut */}
+          {/* 3. Landowner Portal */}
           {onNavigateCitizen && (
             <button
               onClick={onNavigateCitizen}
-              className="hidden xl:flex items-center gap-1 border border-slate-300 hover:bg-slate-50 text-slate-700 px-2.5 py-1.5 rounded-md text-xs font-semibold"
+              className="hidden xl:flex items-center gap-1 border border-slate-700 hover:bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-md text-xs font-semibold transition"
               title={t('citizen.title')}
             >
               <span>{t('Landowner Portal')}</span>
               <ExternalLink className="w-3 h-3 text-slate-400" />
             </button>
           )}
+
+          {/* 4. Language Dropdown */}
+          <LanguageSelector variant="header" />
+
+          {/* 5. Date and Time (Formatted in max 2 lines) */}
+          <div className="hidden lg:flex items-center gap-1.5 text-xs text-slate-300 bg-slate-800/80 px-2.5 py-1 rounded border border-slate-700 font-mono leading-tight shrink-0 whitespace-nowrap">
+            <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <div className="flex flex-col text-left whitespace-nowrap">
+              <span className="whitespace-nowrap">{currentDateStr}</span>
+              <span className="whitespace-nowrap">{currentTimeStr}</span>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Role Restriction Popup Modal */}
+      {showRoleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-200">
+          <div className="bg-[#111c38] border border-slate-700 rounded-xl shadow-2xl max-w-md w-full p-5 text-slate-100 space-y-4 relative animate-in zoom-in-95 duration-150">
+            <button
+              onClick={() => setShowRoleModal(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                <Info className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-white">{tr('Role Access Notice', 'भूमिका पहुंच सूचना')}</h3>
+                <p className="text-xs text-slate-400">{tr('Role Availability', 'भूमिका उपलब्धता')}</p>
+              </div>
+            </div>
+
+            <div className="bg-slate-900/80 border border-slate-800 rounded-lg p-3.5 text-xs text-slate-200 leading-relaxed font-medium">
+              {tr(
+                'Right now active for Central Government Officer only.',
+                'वर्तमान में केवल केंद्र सरकार अधिकारी (Central Government Officer) के लिए ही सक्रिय है।'
+              )}
+            </div>
+
+            <div className="flex justify-end pt-1">
+              <button
+                onClick={() => setShowRoleModal(false)}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold shadow-sm transition"
+              >
+                {t('common.close') || 'OK'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Project Restriction Popup Modal */}
+      {showProjectModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-200">
+          <div className="bg-[#111c38] border border-slate-700 rounded-xl shadow-2xl max-w-md w-full p-5 text-slate-100 space-y-4 relative animate-in zoom-in-95 duration-150">
+            <button
+              onClick={() => setShowProjectModal(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                <Info className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-white">{tr('Project Access Notice', 'परियोजना पहुंच सूचना')}</h3>
+                <p className="text-xs text-slate-400">{tr('Ground Data Availability', 'ग्राउंड डेटा उपलब्धता')}</p>
+              </div>
+            </div>
+
+            <div className="bg-slate-900/80 border border-slate-800 rounded-lg p-3.5 text-xs text-slate-200 leading-relaxed font-medium">
+              {tr(
+                'Right now available for Jaipur-Ajmer grounded data only.',
+                'वर्तमान में केवल जयपुर-अजमेर ग्राउंडेड डेटा के लिए उपलब्ध है।'
+              )}
+            </div>
+
+            <div className="flex justify-end pt-1">
+              <button
+                onClick={() => setShowProjectModal(false)}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold shadow-sm transition"
+              >
+                {t('common.close') || 'OK'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

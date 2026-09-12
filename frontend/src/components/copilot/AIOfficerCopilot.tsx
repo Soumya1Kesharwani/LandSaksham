@@ -7,6 +7,7 @@ import { Sparkles, Send, X, BookOpen, Loader2 } from 'lucide-react';
 interface AIOfficerCopilotProps {
   isOpen: boolean;
   onClose: () => void;
+  onToggle?: () => void;
 }
 
 interface ChatMessage {
@@ -17,7 +18,7 @@ interface ChatMessage {
   timestamp: string;
 }
 
-export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onClose }) => {
+export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onClose, onToggle }) => {
   const { language, tr, t } = useLanguage();
   const { activeProject } = useProject();
 
@@ -92,10 +93,21 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return (
+      <button
+        onClick={onToggle || onClose}
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold px-4 py-3 rounded-2xl shadow-2xl border border-blue-400/40 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer group"
+        title={tr("Open AI Officer Copilot", "एआई अधिकारी सहायक खोलें")}
+      >
+        <Sparkles className="w-5 h-5 text-amber-300 animate-pulse" />
+        <span className="text-xs font-bold text-white tracking-wide">{t('AI Copilot')}</span>
+      </button>
+    );
+  }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-96 sm:w-[440px] h-[580px] bg-white rounded-xl shadow-2xl border border-slate-300 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200">
+    <div className="fixed bottom-6 right-6 z-50 w-96 sm:w-[440px] h-[580px] bg-[#111c38] rounded-xl shadow-2xl border border-slate-700 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200">
       
       {/* Copilot Header */}
       <div className="px-4 py-3 bg-gradient-to-r from-gov-navy to-slate-900 text-white flex items-center justify-between border-b border-slate-800">
@@ -125,12 +137,12 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
       </div>
 
       {/* Quick Prompts Bar */}
-      <div className="p-2 bg-slate-50 border-b border-slate-200 flex gap-1.5 overflow-x-auto text-[11px]">
+      <div className="p-2 bg-[#0d162d] border-b border-slate-800 flex gap-1.5 overflow-x-auto text-[11px]">
         {quickPrompts.map((qp, idx) => (
           <button
             key={idx}
             onClick={() => handleSendMessage(qp.query)}
-            className="whitespace-nowrap px-2.5 py-1 rounded-full bg-white border border-slate-300 hover:border-gov-blue hover:text-gov-blue text-slate-700 font-medium transition shadow-2xs"
+            className="whitespace-nowrap px-2.5 py-1 rounded-full bg-[#162347] border border-slate-700 hover:border-blue-500 hover:text-blue-300 text-slate-200 font-medium transition shadow-2xs"
           >
             {qp.label}
           </button>
@@ -138,7 +150,7 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
       </div>
 
       {/* Messages Scroll Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3.5 text-xs bg-slate-50/50">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3.5 text-xs bg-[#090d16]">
         {messages.map(msg => (
           <div
             key={msg.id}
@@ -147,8 +159,8 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
             <div
               className={`max-w-[88%] rounded-lg p-3 leading-relaxed ${
                 msg.sender === 'user'
-                  ? 'bg-gov-navy text-white font-medium'
-                  : 'bg-white text-slate-800 border border-slate-200 shadow-2xs'
+                  ? 'bg-blue-900 text-white font-medium border border-blue-700'
+                  : 'bg-[#111c38] text-slate-100 border border-slate-800 shadow-2xs'
               }`}
             >
               <div className="whitespace-pre-line">
@@ -156,13 +168,13 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
               </div>
 
               {msg.citations && msg.citations.length > 0 && (
-                <div className="mt-2.5 pt-2 border-t border-slate-100 text-[11px] text-slate-500 space-y-0.5">
-                  <div className="font-semibold text-slate-600 flex items-center gap-1">
-                    <BookOpen className="w-3 h-3 text-gov-blue" />
+                <div className="mt-2.5 pt-2 border-t border-slate-800 text-[11px] text-slate-400 space-y-0.5">
+                  <div className="font-semibold text-blue-300 flex items-center gap-1">
+                    <BookOpen className="w-3 h-3 text-blue-400" />
                     <span>{tr('Official Data Sources Cited:', 'आधिकारिक उद्धृत डेटा स्रोत:')}</span>
                   </div>
                   {msg.citations.map((cite, cIdx) => (
-                    <div key={cIdx} className="font-mono text-[10px] text-slate-600 truncate">
+                    <div key={cIdx} className="font-mono text-[10px] text-slate-400 truncate">
                       • {cite}
                     </div>
                   ))}
@@ -177,8 +189,8 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
         ))}
 
         {isLoading && (
-          <div className="flex items-center gap-2 text-slate-500 text-xs p-2">
-            <Loader2 className="w-4 h-4 animate-spin text-gov-blue" />
+          <div className="flex items-center gap-2 text-slate-400 text-xs p-2">
+            <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
             <span>{tr('Consulting project records and RFCTLARR database...', 'परियोजना अभिलेखों एवं RFCTLARR डेटाबेस का विश्लेषण जारी है...')}</span>
           </div>
         )}
@@ -186,7 +198,7 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
       </div>
 
       {/* Chat Input & Disclaimer */}
-      <div className="p-3 bg-white border-t border-slate-200 space-y-1.5">
+      <div className="p-3 bg-[#0b1329] border-t border-slate-800 space-y-1.5">
         <form
           onSubmit={e => {
             e.preventDefault();
@@ -199,12 +211,12 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
             placeholder={tr("Ask a query about land, cases, or compensation...", "परियोजना से संबंधित प्रश्न पूछें...")}
             value={inputMessage}
             onChange={e => setInputMessage(e.target.value)}
-            className="flex-1 border border-slate-300 rounded-md px-3 py-2 text-xs focus:ring-1 focus:ring-gov-blue outline-none text-slate-800"
+            className="flex-1 border border-slate-700 rounded-md px-3 py-2 text-xs bg-[#090d16] text-white focus:ring-1 focus:ring-blue-500 outline-none"
           />
           <button
             type="submit"
             disabled={isLoading || !inputMessage.trim()}
-            className="bg-gov-navy hover:bg-slate-800 text-white p-2 rounded-md disabled:opacity-50 transition"
+            className="bg-blue-600 hover:bg-blue-500 text-white p-2 rounded-md disabled:opacity-50 transition"
           >
             <Send className="w-4 h-4" />
           </button>

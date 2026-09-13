@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { RoleProvider, useRole } from './context/RoleContext';
 import { ProjectProvider, useProject } from './context/ProjectContext';
@@ -76,7 +77,7 @@ const DashboardContent: React.FC<{
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc]">
+    <div className="min-h-screen flex flex-col bg-[#f8fafc] dark:bg-[#090d16] text-slate-900 dark:text-[#f8fafc] transition-colors duration-200">
       <GovHeader
         onOpenCreateProject={onOpenCreateProject}
         onOpenCopilot={onOpenCopilot}
@@ -89,17 +90,17 @@ const DashboardContent: React.FC<{
 
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
           {/* Active Role Indicator Bar */}
-          <div className="flex items-center justify-between bg-blue-50/70 border border-blue-200 px-4 py-2 rounded-lg text-xs text-gov-navy">
+          <div className="flex items-center justify-between bg-blue-50/80 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 px-4 py-2 rounded-lg text-xs transition-colors">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-gov-blue animate-pulse"></span>
-              <span>{t('system.active_viewport')}: <strong>{t(role)}</strong></span>
-              <span className="text-slate-400">|</span>
-              <span className="text-slate-600">{t('system.all_permissions_active')}</span>
+              <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400 animate-pulse"></span>
+              <span className="text-slate-800 dark:text-blue-100">{t('system.active_viewport')}: <strong className="text-slate-900 dark:text-white font-bold">{t(role)}</strong></span>
+              <span className="text-slate-400 dark:text-blue-600">|</span>
+              <span className="text-slate-700 dark:text-blue-200">{t('system.all_permissions_active')}</span>
             </div>
 
             <button
               onClick={onOpenCreateProject}
-              className="text-gov-blue hover:underline font-semibold"
+              className="text-blue-700 dark:text-blue-300 hover:underline font-semibold"
             >
               {t('system.register_new_project')}
             </button>
@@ -126,44 +127,47 @@ export const App: React.FC = () => {
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
 
   return (
-    <LanguageProvider>
-      <RoleProvider>
-        <ProjectProvider>
-          {viewMode === 'landing' && (
-            <LandingPage
-              onEnterDashboard={() => setViewMode('dashboard')}
-              onEnterCitizen={() => setViewMode('citizen')}
-            />
-          )}
+    <ThemeProvider>
+      <LanguageProvider>
+        <RoleProvider>
+          <ProjectProvider>
+            {viewMode === 'landing' && (
+              <LandingPage
+                onEnterDashboard={() => setViewMode('dashboard')}
+                onEnterCitizen={() => setViewMode('citizen')}
+              />
+            )}
 
-          {viewMode === 'citizen' && (
-            <CitizenPortal
-              onBackToDashboard={() => setViewMode('dashboard')}
-            />
-          )}
+            {viewMode === 'citizen' && (
+              <CitizenPortal
+                onBackToDashboard={() => setViewMode('dashboard')}
+              />
+            )}
 
-          {viewMode === 'dashboard' && (
-            <DashboardContent
-              onOpenCreateProject={() => setCreateProjectOpen(true)}
-              onOpenCopilot={() => setCopilotOpen(true)}
-              onNavigateLanding={() => setViewMode('landing')}
-              onNavigateCitizen={() => setViewMode('citizen')}
-            />
-          )}
+            {viewMode === 'dashboard' && (
+              <DashboardContent
+                onOpenCreateProject={() => setCreateProjectOpen(true)}
+                onOpenCopilot={() => setCopilotOpen(true)}
+                onNavigateLanding={() => setViewMode('landing')}
+                onNavigateCitizen={() => setViewMode('citizen')}
+              />
+            )}
 
-          <AIOfficerCopilot
-            isOpen={copilotOpen}
-            onClose={() => setCopilotOpen(false)}
-          />
-
-          {createProjectOpen && (
-            <CreateProjectModal
-              onClose={() => setCreateProjectOpen(false)}
+            <AIOfficerCopilot
+              isOpen={copilotOpen}
+              onToggle={() => setCopilotOpen(prev => !prev)}
+              onClose={() => setCopilotOpen(false)}
             />
-          )}
-        </ProjectProvider>
-      </RoleProvider>
-    </LanguageProvider>
+
+            {createProjectOpen && (
+              <CreateProjectModal
+                onClose={() => setCreateProjectOpen(false)}
+              />
+            )}
+          </ProjectProvider>
+        </RoleProvider>
+      </LanguageProvider>
+    </ThemeProvider>
   );
 };
 

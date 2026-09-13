@@ -13,38 +13,74 @@ export const EnvironmentalTab: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-          <div className="text-xs font-semibold uppercase text-slate-500">{t('environment.forest_diversion')}</div>
-          <div className="text-2xl font-bold font-mono text-slate-900 mt-1">
-            {activeProject?.forest_land_acres} {t('common.acres')}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+        {/* Card 1: Forest Land Diversion (Emerald Tint) */}
+        <div className="bg-emerald-50/70 border border-emerald-200/80 dark:bg-emerald-950/30 dark:border-emerald-900 rounded-lg p-4 shadow-2xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between gap-1">
+              <div className="text-xs font-semibold uppercase tracking-wider text-emerald-900 dark:text-emerald-300">
+                {t('environment.forest_diversion')}
+              </div>
+              <Trees className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            </div>
+            <div className="text-2xl font-bold font-mono text-emerald-950 dark:text-emerald-100 mt-1">
+              {activeProject?.forest_land_acres} {t('common.acres')}
+            </div>
           </div>
-          <p className="text-xs text-slate-500 mt-1">{tr('Dudu & Beawar Forest Divisions', 'दूदू एवं ब्यावर वन मंडल')}</p>
+          <p className="text-xs text-emerald-800 dark:text-emerald-300 mt-2 leading-tight">
+            {tr('Dudu & Beawar Forest Divisions', 'दूदू एवं ब्यावर वन मंडल')}
+          </p>
         </div>
 
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 shadow-sm">
-          <div className="text-xs font-semibold uppercase text-amber-800">{t('environment.stage_2_status')}</div>
-          <div className="text-xl font-bold text-amber-950 mt-1 flex items-center gap-1.5">
-            <Clock className="w-4 h-4 text-amber-600" />
-            <span>{tr('48 Days Inactive', '48 दिन निष्क्रिय')}</span>
+        {/* Card 2: Stage-II Clearance Status (Amber Tint - Inactivity Warning) */}
+        <div className="bg-amber-50/80 border border-amber-200 dark:bg-amber-950/40 dark:border-amber-900 rounded-lg p-4 shadow-2xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between gap-1">
+              <div className="text-xs font-semibold uppercase tracking-wider text-amber-900 dark:text-amber-300">
+                {t('environment.stage_2_status')}
+              </div>
+              <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+            </div>
+            <div className="text-xl font-bold text-amber-950 dark:text-amber-100 mt-1 font-mono">
+              <span>{tr('48 Days Inactive', '48 दिन निष्क्रिय')}</span>
+            </div>
           </div>
-          <p className="text-xs text-amber-800 mt-1">{tr('Regional Empowered Committee review pending', 'क्षेत्रीय अधिकार प्राप्त समिति समीक्षा लंबित')}</p>
+          <p className="text-xs text-amber-800 dark:text-amber-300 mt-2 leading-tight">
+            {tr('Regional Empowered Committee review pending', 'क्षेत्रीय अधिकार प्राप्त समिति समीक्षा लंबित')}
+          </p>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-          <div className="text-xs font-semibold uppercase text-slate-500">{t('environment.eco_sensitive_dist')}</div>
-          <div className="text-2xl font-bold font-mono text-gov-navy mt-1">
-            2 {tr('Wildlife Zones', 'वन्यजीव जोन')}
+        {/* Card 3: Distance to Eco-Sensitive Zone (Teal/Cyan Tint) */}
+        <div className="bg-teal-50/70 border border-teal-200/80 dark:bg-teal-950/30 dark:border-teal-900 rounded-lg p-4 shadow-2xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between gap-1">
+              <div className="text-xs font-semibold uppercase tracking-wider text-teal-900 dark:text-teal-300">
+                {t('environment.eco_sensitive_dist')}
+              </div>
+              <ShieldCheck className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+            </div>
+            <div className="text-2xl font-bold font-mono text-teal-950 dark:text-teal-100 mt-1 whitespace-nowrap">
+              2 {tr('Wildlife Zones', 'वन्यजीव जोन')}
+            </div>
           </div>
-          <p className="text-xs text-slate-500 mt-1">{t('environment.eco_sensitive_dist_sub')}</p>
+          <p className="text-xs text-teal-800 dark:text-teal-300 mt-2 leading-tight">
+            {t('environment.eco_sensitive_dist_sub')}
+          </p>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-          <div className="text-xs font-semibold uppercase text-slate-500">{t('overview.forest_parivesh')}</div>
-          <div className="text-2xl font-bold font-mono text-amber-600 mt-1">
-            {activeProject?.readiness_breakdown.environment} / 100
+        {/* Card 4: Forest & PARIVESH Score (Indigo Tint) */}
+        <div className="bg-indigo-50/80 border border-indigo-200 dark:bg-indigo-950/40 dark:border-indigo-900 rounded-lg p-4 shadow-2xs flex flex-col justify-between">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-wider text-indigo-900 dark:text-indigo-300">
+              {t('overview.forest_parivesh')}
+            </div>
+            <div className="text-2xl font-bold font-mono text-indigo-950 dark:text-indigo-100 mt-1">
+              {activeProject?.readiness_breakdown.environment} / 100
+            </div>
           </div>
-          <p className="text-xs text-slate-500 mt-1">{tr('CAMPA NPV deposition required', 'कैम्पा एनपीवी जमा किया जाना आवश्यक')}</p>
+          <p className="text-xs text-indigo-800 dark:text-indigo-300 mt-2 leading-tight">
+            {tr('CAMPA NPV deposition required', 'कैम्पा एनपीवी जमा किया जाना आवश्यक')}
+          </p>
         </div>
       </div>
 
@@ -63,33 +99,41 @@ export const EnvironmentalTab: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
-          <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-md">
-            <div className="flex items-center justify-between font-bold text-emerald-900 mb-1">
+          <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-md">
+            <div className="flex items-center justify-between font-bold text-emerald-900 dark:text-emerald-200 mb-1">
               <span>{tr('Stage 1: Proposal Submission', 'चरण 1: प्रस्ताव प्रस्तुति')}</span>
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
             </div>
-            <p className="text-emerald-800 text-[11px]">{tr('Completed on 14-Dec-2024 by NHAI PIU Jaipur', '14-दिसंबर-2024 को NHAI PIU जयपुर द्वारा पूर्ण')}</p>
+            <p className="text-emerald-800 dark:text-emerald-300 text-[11px] font-medium leading-relaxed">
+              {tr('Completed on 14-Dec-2024 by NHAI PIU Jaipur', '14-दिसंबर-2024 को NHAI PIU जयपुर द्वारा पूर्ण')}
+            </p>
           </div>
 
-          <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-md">
-            <div className="flex items-center justify-between font-bold text-emerald-900 mb-1">
+          <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-md">
+            <div className="flex items-center justify-between font-bold text-emerald-900 dark:text-emerald-200 mb-1">
               <span>{tr('Stage 2: DFO Site Inspection', 'चरण 2: डीएफओ स्थल निरीक्षण')}</span>
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
             </div>
-            <p className="text-emerald-800 text-[11px]">{tr('DFO Dudu completed tree enumeration (1,420 trees)', 'डीएफओ दूदू द्वारा वृक्ष गणना पूर्ण (1,420 वृक्ष)')}</p>
+            <p className="text-emerald-800 dark:text-emerald-300 text-[11px] font-medium leading-relaxed">
+              {tr('DFO Dudu completed tree enumeration (1,420 trees)', 'डीएफओ दूदू द्वारा वृक्ष गणना पूर्ण (1,420 वृक्ष)')}
+            </p>
           </div>
 
-          <div className="p-3 bg-amber-50 border border-amber-300 rounded-md ring-1 ring-amber-200">
-            <div className="flex items-center justify-between font-bold text-amber-950 mb-1">
+          <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 rounded-md ring-1 ring-amber-200 dark:ring-amber-900">
+            <div className="flex items-center justify-between font-bold text-amber-950 dark:text-amber-200 mb-1">
               <span>{t('environment.stage_1_status')}</span>
-              <Clock className="w-4 h-4 text-amber-600 animate-spin" />
+              <CheckCircle2 className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
             </div>
-            <p className="text-amber-900 text-[11px]">{tr('Approved subject to CA Land transfer in Phagi', 'फागी में प्रतिपूरक वनीकरण भूमि अंतरण की शर्त पर स्वीकृत')}</p>
+            <p className="text-amber-900 dark:text-amber-300 text-[11px] font-medium leading-relaxed">
+              {tr('Approved subject to CA Land transfer in Phagi', 'फागी में प्रतिपूरक वनीकरण भूमि अंतरण की शर्त पर स्वीकृत')}
+            </p>
           </div>
 
-          <div className="p-3 bg-slate-100 border border-slate-200 rounded-md opacity-80">
-            <div className="font-bold text-slate-700 mb-1">{t('environment.stage_2_status')}</div>
-            <p className="text-slate-500 text-[11px]">{tr('Awaiting CAMPA payment & tree felling license', 'कैम्पा भुगतान एवं वृक्ष पातन अनुमति प्रतीक्षारत')}</p>
+          <div className="p-3 bg-slate-100/90 dark:bg-slate-900/80 border border-indigo-200 dark:border-indigo-900 rounded-md shadow-2xs">
+            <div className="font-bold text-slate-800 dark:text-slate-200 mb-1">{t('environment.stage_2_status')}</div>
+            <p className="text-slate-600 dark:text-slate-300 text-[11px] font-medium leading-relaxed">
+              {tr('Awaiting CAMPA payment & tree felling license', 'कैम्पा भुगतान एवं वृक्ष पातन अनुमति प्रतीक्षारत')}
+            </p>
           </div>
         </div>
       </div>

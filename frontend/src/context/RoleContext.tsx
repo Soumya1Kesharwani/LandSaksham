@@ -13,12 +13,20 @@ interface RoleContextType {
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
 export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [role, setRole] = useState<UserRole>('District Magistrate / Collector');
+  const [role, setRoleState] = useState<UserRole>(() => {
+    const saved = localStorage.getItem('nliis_user_role') as UserRole;
+    return saved || 'Central Government Officer';
+  });
+
+  const setRole = (newRole: UserRole) => {
+    setRoleState(newRole);
+    localStorage.setItem('nliis_user_role', newRole);
+  };
 
   const isCitizen = role === 'Citizen / Landowner';
   const canApproveActions = ['District Magistrate / Collector', 'Central Government Officer', 'State Government Officer'].includes(role);
-  const canDisburseFunds = ['Land Acquisition Officer (LAO)', 'District Magistrate / Collector'].includes(role);
-  const canEditLandRecords = ['Revenue Officer / Tehsildar', 'Land Acquisition Officer (LAO)'].includes(role);
+  const canDisburseFunds = ['Land Acquisition Officer (LAO)', 'District Magistrate / Collector', 'Central Government Officer'].includes(role);
+  const canEditLandRecords = ['Revenue Officer / Tehsildar', 'Land Acquisition Officer (LAO)', 'Central Government Officer'].includes(role);
 
   return (
     <RoleContext.Provider value={{

@@ -7,7 +7,8 @@ import { RiskBadge } from '../common/RiskBadge';
 import { 
   Building2, AlertOctagon, FileSpreadsheet, Landmark, 
   Scale, Trees, Users, Briefcase, ArrowUpRight, 
-  Clock, ShieldAlert, CheckCircle2, ChevronRight
+  Clock, ShieldAlert, CheckCircle2, ChevronRight,
+  Hash, Navigation, MapPin
 } from 'lucide-react';
 
 export const OverviewTab: React.FC = () => {
@@ -28,27 +29,43 @@ export const OverviewTab: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Project Banner */}
-      <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-mono font-bold bg-slate-100 text-gov-navy px-2 py-0.5 rounded border border-slate-300">
+      <div className="bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg p-4 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-4 transition-colors">
+        <div className="space-y-1.5 flex-1">
+          {/* Subtle Metadata Row */}
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className="font-mono font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">
               {activeProject.code}
             </span>
-            <span className="text-xs font-semibold text-slate-500">
+            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <span className="text-slate-600 dark:text-slate-400 font-medium">
               {t(activeProject.authority, activeProject.authority)}
             </span>
-            <span className="text-xs bg-blue-50 text-gov-blue px-2 py-0.5 rounded border border-blue-200 font-semibold">
+            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <span className="text-blue-700 dark:text-blue-300 bg-blue-50/80 dark:bg-blue-950/50 px-2 py-0.5 rounded border border-blue-100 dark:border-blue-900 font-medium">
               {t(activeProject.type, activeProject.type)}
             </span>
+            {activeProject.length_km && (
+              <>
+                <span className="text-slate-300 dark:text-slate-700">•</span>
+                <span className="text-slate-500 dark:text-slate-400">
+                  {activeProject.state || 'Rajasthan'} • {activeProject.length_km} km
+                </span>
+              </>
+            )}
           </div>
-          <h2 className="text-xl font-bold text-slate-900 tracking-tight">
+
+          {/* Clean Moderate Title */}
+          <h2 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
             {t(activeProject.name, activeProject.name)}
           </h2>
-          <p className="text-xs text-slate-500 mt-1 max-w-3xl leading-relaxed">
+
+          {/* Subtle Description */}
+          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-3xl">
             {t(activeProject.description, activeProject.description)}
           </p>
         </div>
 
+        {/* Readiness Gauge */}
         <div className="flex items-center gap-3 shrink-0">
           <ReadinessGauge
             score={activeProject.overall_readiness_score}
@@ -264,32 +281,32 @@ export const OverviewTab: React.FC = () => {
             </button>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm space-y-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+          <div className="bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg p-4 shadow-sm space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 pb-1 border-b border-slate-100 dark:border-slate-800">
               {t('overview.statutory_compliance_title')}
             </h4>
             <div className="space-y-2 text-xs">
-              <div className="flex justify-between items-center text-slate-700">
-                <span>{t('overview.section_11')}</span>
-                <span className="font-semibold text-emerald-700 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3" /> {t('overview.section_11_val')}
+              <div className="flex items-center justify-between gap-3 text-slate-700 dark:text-slate-300 py-1 border-b border-slate-100 dark:border-slate-800/60">
+                <span className="font-medium text-slate-700 dark:text-slate-300">{t('overview.section_11')}</span>
+                <span className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 shrink-0 text-right">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> {t('overview.section_11_val')}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-slate-700">
-                <span>{t('overview.section_19')}</span>
-                <span className="font-semibold text-emerald-700 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3" /> {t('overview.section_19_val')}
+              <div className="flex items-center justify-between gap-3 text-slate-700 dark:text-slate-300 py-1 border-b border-slate-100 dark:border-slate-800/60">
+                <span className="font-medium text-slate-700 dark:text-slate-300">{t('overview.section_19')}</span>
+                <span className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 shrink-0 text-right">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> {t('overview.section_19_val')}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-slate-700">
-                <span>{t('overview.section_23')}</span>
-                <span className="font-semibold text-amber-700">
+              <div className="flex items-center justify-between gap-3 text-slate-700 dark:text-slate-300 py-1 border-b border-slate-100 dark:border-slate-800/60">
+                <span className="font-medium text-slate-700 dark:text-slate-300">{t('overview.section_23')}</span>
+                <span className="font-semibold text-amber-600 dark:text-amber-400 shrink-0 text-right">
                   {t('overview.section_23_val')}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-slate-700">
-                <span>{t('overview.section_38')}</span>
-                <span className="font-semibold text-red-700">
+              <div className="flex items-center justify-between gap-3 text-slate-700 dark:text-slate-300 py-1">
+                <span className="font-medium text-slate-700 dark:text-slate-300">{t('overview.section_38')}</span>
+                <span className="font-semibold text-red-600 dark:text-red-400 shrink-0 text-right">
                   {t('overview.section_38_val')}
                 </span>
               </div>

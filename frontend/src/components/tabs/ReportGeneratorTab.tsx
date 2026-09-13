@@ -18,7 +18,8 @@ export const ReportGeneratorTab: React.FC = () => {
   };
 
   const handleDownloadReport = () => {
-    window.open(`http://127.0.0.1:8000/api/reports/html/${activeProject?.id || 'jaipur-ajmer-nh48'}`, '_blank');
+    const host = window.location.hostname || '127.0.0.1';
+    window.open(`http://${host}:8000/api/reports/html/${activeProject?.id || 'jaipur-ajmer-nh48'}`, '_blank');
   };
 
   return (

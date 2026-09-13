@@ -13,21 +13,21 @@ export const RiskBadge: React.FC<RiskBadgeProps> = ({ level, score, showScore = 
   const { t } = useLanguage();
   const lvl = String(level).toUpperCase();
 
-  let bgClass = "bg-slate-100 text-slate-700 border-slate-300";
-  let dotColor = "bg-slate-500";
+  let bgClass = "bg-slate-800 text-slate-300 border-slate-700";
+  let dotColor = "bg-slate-400";
 
   if (lvl === 'CRITICAL') {
-    bgClass = "bg-red-50 text-red-800 border-red-300 ring-1 ring-red-200";
-    dotColor = "bg-red-600 animate-pulse";
+    bgClass = "bg-red-950/80 text-red-300 border-red-800/80 ring-1 ring-red-900/50";
+    dotColor = "bg-red-500 animate-pulse";
   } else if (lvl === 'HIGH') {
-    bgClass = "bg-orange-50 text-orange-800 border-orange-300";
-    dotColor = "bg-orange-500";
+    bgClass = "bg-orange-950/80 text-orange-300 border-orange-800/80";
+    dotColor = "bg-orange-400";
   } else if (lvl === 'MEDIUM') {
-    bgClass = "bg-amber-50 text-amber-800 border-amber-300";
-    dotColor = "bg-amber-500";
+    bgClass = "bg-amber-950/80 text-amber-300 border-amber-800/80";
+    dotColor = "bg-amber-400";
   } else if (lvl === 'LOW') {
-    bgClass = "bg-emerald-50 text-emerald-800 border-emerald-300";
-    dotColor = "bg-emerald-600";
+    bgClass = "bg-emerald-950/80 text-emerald-300 border-emerald-800/80";
+    dotColor = "bg-emerald-400";
   }
 
   const sizeClasses = {

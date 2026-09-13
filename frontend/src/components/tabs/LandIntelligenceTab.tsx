@@ -85,7 +85,7 @@ export const LandIntelligenceTab: React.FC = () => {
                 placeholder={t('common.search_placeholder')}
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="pl-8 pr-3 py-1.5 border border-slate-300 rounded text-xs w-64 focus:ring-1 focus:ring-gov-blue outline-none bg-white"
+                className="pl-8 pr-3 py-1.5 border border-slate-300 rounded text-xs w-64 focus:ring-1 focus:ring-gov-blue outline-none bg-white text-slate-800 font-medium"
               />
             </div>
 

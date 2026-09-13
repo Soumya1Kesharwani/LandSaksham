@@ -1,6 +1,7 @@
 import { Project, Parcel, AlternativeRoute, ActionItem, Alert, AuditLog, CitizenTrackingResponse } from '../types';
 
-const API_BASE_URL = 'http://127.0.0.1:8000/api';
+const getHost = () => (typeof window !== 'undefined' && window.location && window.location.hostname) ? window.location.hostname : '127.0.0.1';
+const API_BASE_URL = `http://${getHost()}:8000/api`;
 
 // Realistic fallback state when backend API is starting up or in standalone preview
 const FALLBACK_PROJECTS: Project[] = [

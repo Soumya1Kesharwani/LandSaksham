@@ -1,16 +1,44 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useProject } from '../../context/ProjectContext';
+import { useTheme } from '../../context/ThemeContext';
 import { 
   LayoutDashboard, Map, FileSpreadsheet, Landmark, 
   Scale, Trees, Users, Briefcase, GitFork, 
   BrainCircuit, ListTodo, FileText, Bell, 
-  History, Download
+  History, Download, Sun, Moon
 } from 'lucide-react';
 
 export const GovSidebar: React.FC = () => {
   const { tr, t } = useLanguage();
   const { activeTab, setActiveTab, activeProject, actionItems, alerts } = useProject();
+  const { theme, toggleTheme } = useTheme();
+
+  const [fontSize, setFontSize] = useState<'small' | 'normal' | 'large'>(() => {
+    return (localStorage.getItem('nliis_font_size') as 'small' | 'normal' | 'large') || 'normal';
+  });
+
+  const handleFontSizeChange = (size: 'small' | 'normal' | 'large') => {
+    setFontSize(size);
+    localStorage.setItem('nliis_font_size', size);
+    if (size === 'small') {
+      document.documentElement.style.fontSize = '15px';
+    } else if (size === 'large') {
+      document.documentElement.style.fontSize = '19px';
+    } else {
+      document.documentElement.style.fontSize = '17px';
+    }
+  };
+
+  useEffect(() => {
+    if (fontSize === 'small') {
+      document.documentElement.style.fontSize = '15px';
+    } else if (fontSize === 'large') {
+      document.documentElement.style.fontSize = '19px';
+    } else {
+      document.documentElement.style.fontSize = '17px';
+    }
+  }, [fontSize]);
 
   const pendingActionsCount = actionItems.filter(a => a.status !== 'Resolved' && a.status !== 'Closed').length;
   const unreadAlertsCount = alerts.filter(a => !a.is_read).length;
@@ -100,6 +128,60 @@ export const GovSidebar: React.FC = () => {
         })}
       </div>
 
+      {/* Font Size Accessibility Controls (A- / A / A+) */}
+      <div className="p-3 border-t border-slate-800 bg-slate-950/40 flex items-center justify-between">
+        <span className="text-xs text-slate-300 font-medium">{tr('Font Size', 'फ़ॉन्ट आकार')}</span>
+        <div className="flex items-center bg-slate-800 border border-slate-700 rounded-md p-0.5 text-xs font-semibold text-slate-200">
+          <button
+            onClick={() => handleFontSizeChange('small')}
+            className={`px-2 py-0.5 rounded transition ${fontSize === 'small' ? 'bg-blue-600 text-white font-bold' : 'hover:bg-slate-700 text-slate-300'}`}
+            title="Decrease Font Size (A-)"
+          >
+            A-
+          </button>
+          <button
+            onClick={() => handleFontSizeChange('normal')}
+            className={`px-2 py-0.5 rounded transition ${fontSize === 'normal' ? 'bg-blue-600 text-white font-bold' : 'hover:bg-slate-700 text-slate-300'}`}
+            title="Normal Font Size (A)"
+          >
+            A
+          </button>
+          <button
+            onClick={() => handleFontSizeChange('large')}
+            className={`px-2 py-0.5 rounded transition ${fontSize === 'large' ? 'bg-blue-600 text-white font-bold' : 'hover:bg-slate-700 text-slate-300'}`}
+            title="Increase Font Size (A+)"
+          >
+            A+
+          </button>
+        </div>
+      </div>
+
+      {/* Dark / Light Mode Toggle */}
+      <div className="p-3 border-t border-slate-800 bg-slate-950/50 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-xs text-slate-200 font-medium">
+          {theme === 'dark' ? (
+            <Moon className="w-4 h-4 text-amber-300" />
+          ) : (
+            <Sun className="w-4 h-4 text-amber-400" />
+          )}
+          <span>{theme === 'dark' ? tr('Dark Mode', 'डार्क मोड') : tr('Light Mode', 'लाइट मोड')}</span>
+        </div>
+
+        <button
+          onClick={toggleTheme}
+          className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+            theme === 'dark' ? 'bg-gov-blue' : 'bg-slate-700'
+          }`}
+          title="Toggle Dark / Light Mode"
+        >
+          <span
+            className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+              theme === 'dark' ? 'translate-x-5' : 'translate-x-0'
+            }`}
+          />
+        </button>
+      </div>
+
       {/* Footer System Status */}
       <div className="p-3 border-t border-slate-800 bg-slate-950/80 text-[11px] text-slate-400 flex items-center justify-between">
         <div className="flex items-center gap-1.5">
@@ -111,3 +193,4 @@ export const GovSidebar: React.FC = () => {
     </aside>
   );
 };
+

@@ -204,10 +204,10 @@ export const GISMapTab: React.FC = () => {
     <div className="flex flex-col lg:flex-row gap-4 h-[calc(100vh-140px)] min-h-[600px]">
       
       {/* Left Column: GIS Map Container */}
-      <div className="flex-1 bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden flex flex-col relative">
+      <div className="flex-1 bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm overflow-hidden flex flex-col relative">
         
         {/* Top Control Bar inside Map */}
-        <div className="p-3 bg-white/95 backdrop-blur-xs border-b border-slate-200 z-10 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="p-3 bg-white/95 dark:bg-[#111c38]/95 backdrop-blur-xs border-b border-slate-200 dark:border-slate-800 z-10 flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
@@ -216,14 +216,14 @@ export const GISMapTab: React.FC = () => {
                 placeholder={t('common.search_placeholder')}
                 value={searchMap}
                 onChange={e => setSearchMap(e.target.value)}
-                className="pl-8 pr-3 py-1.5 border border-slate-300 rounded text-xs w-56 focus:ring-1 focus:ring-gov-blue outline-none"
+                className="pl-8 pr-3 py-1.5 border border-slate-300 dark:border-slate-700 rounded text-xs w-56 bg-white dark:bg-[#0b1329] text-slate-800 dark:text-slate-100 focus:ring-1 focus:ring-gov-blue outline-none"
               />
             </div>
 
             <select
               value={selectedRiskFilter}
               onChange={e => setSelectedRiskFilter(e.target.value)}
-              className="border border-slate-300 rounded px-2.5 py-1.5 text-xs bg-white font-medium"
+              className="border border-slate-300 dark:border-slate-700 rounded px-2.5 py-1.5 text-xs bg-white dark:bg-[#0b1329] text-slate-800 dark:text-slate-100 font-medium"
             >
               <option value="ALL">{t('land.all_risk_levels')}</option>
               <option value="CRITICAL">{t('land.critical_filter')}</option>
@@ -235,7 +235,7 @@ export const GISMapTab: React.FC = () => {
             <select
               value={selectedLandTypeFilter}
               onChange={e => setSelectedLandTypeFilter(e.target.value)}
-              className="border border-slate-300 rounded px-2.5 py-1.5 text-xs bg-white font-medium"
+              className="border border-slate-300 dark:border-slate-700 rounded px-2.5 py-1.5 text-xs bg-white dark:bg-[#0b1329] text-slate-800 dark:text-slate-100 font-medium"
             >
               <option value="ALL">{t('land.all_land_types')}</option>
               <option value="agricultural">{tr('Agricultural', 'कृषि भूमि')}</option>
@@ -247,14 +247,14 @@ export const GISMapTab: React.FC = () => {
 
           {/* Layer toggles */}
           <div className="flex items-center gap-3">
-            <label className="flex items-center gap-1.5 cursor-pointer font-semibold text-slate-700">
+            <label className="flex items-center gap-1.5 cursor-pointer font-semibold text-slate-800 dark:text-slate-200">
               <input
                 type="checkbox"
                 checked={showForestLayer}
                 onChange={e => setShowForestLayer(e.target.checked)}
                 className="rounded text-gov-blue"
               />
-              <span>{t('gis.forest_layer')}</span>
+              <span className="text-slate-800 dark:text-slate-200 font-semibold">{t('gis.forest_layer')}</span>
             </label>
           </div>
         </div>
@@ -263,9 +263,9 @@ export const GISMapTab: React.FC = () => {
         <div ref={mapContainerRef} className="flex-1 w-full h-full relative" />
 
         {/* Bottom Map Legend */}
-        <div className="p-2.5 bg-white border-t border-slate-200 z-10 flex items-center justify-between text-[11px] text-slate-600">
+        <div className="p-2.5 bg-white dark:bg-[#111c38] border-t border-slate-200 dark:border-slate-800 z-10 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-300">
           <div className="flex items-center gap-4">
-            <span className="font-bold text-slate-800 uppercase tracking-wide">{tr('Risk Heatmap:', 'जोखिम मानचित्र:')}</span>
+            <span className="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide">{tr('Risk Heatmap:', 'जोखिम मानचित्र:')}</span>
             <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-red-600"></span> {t('gis.legend_critical')}</span>
             <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-orange-500"></span> {t('gis.legend_high')}</span>
             <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> {t('gis.legend_medium')}</span>
@@ -273,15 +273,15 @@ export const GISMapTab: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1 text-emerald-800 font-semibold"><span className="w-4 h-1 bg-emerald-600 inline-block"></span> {t('gis.recommended_only')}</span>
-            <span className="flex items-center gap-1 text-red-800 font-semibold"><span className="w-4 h-1 bg-red-600 inline-block"></span> {tr('Route A (Widening)', 'रूट A (चौड़ीकरण)')}</span>
+            <span className="flex items-center gap-1 text-emerald-800 dark:text-emerald-400 font-semibold"><span className="w-4 h-1 bg-emerald-600 inline-block"></span> {t('gis.recommended_only')}</span>
+            <span className="flex items-center gap-1 text-red-800 dark:text-red-400 font-semibold"><span className="w-4 h-1 bg-red-600 inline-block"></span> {tr('Route A (Widening)', 'रूट A (चौड़ीकरण)')}</span>
           </div>
         </div>
 
       </div>
 
       {/* Right Column: Interactive Parcel List Drawer */}
-      <div className="w-full lg:w-80 bg-white border border-slate-200 rounded-lg shadow-sm flex flex-col overflow-hidden">
+      <div className="w-full lg:w-80 bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm flex flex-col overflow-hidden">
         <div className="p-3 bg-slate-900 text-white flex items-center justify-between">
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4 text-amber-400" />
@@ -292,28 +292,28 @@ export const GISMapTab: React.FC = () => {
           </span>
         </div>
 
-        <div className="flex-1 overflow-y-auto divide-y divide-slate-100 p-2 space-y-1.5">
+        <div className="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 p-2 space-y-1.5">
           {parcels.map(p => (
             <div
               key={p.id}
               onClick={() => handleZoomToParcel(p)}
-              className="p-2.5 rounded border border-slate-200 hover:border-gov-blue hover:bg-blue-50/50 cursor-pointer transition text-xs space-y-1"
+              className="p-2.5 rounded border border-slate-200 dark:border-slate-800 hover:border-gov-blue dark:hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-slate-800/60 cursor-pointer transition text-xs space-y-1"
             >
               <div className="flex items-center justify-between">
-                <span className="font-bold text-gov-navy font-mono">{p.id}</span>
+                <span className="font-bold text-gov-navy dark:text-blue-400 font-mono">{p.id}</span>
                 <RiskBadge level={p.delay_risk_level} score={p.delay_risk_score} showScore size="sm" />
               </div>
 
-              <div className="text-slate-700 font-medium">
+              <div className="text-slate-700 dark:text-slate-300 font-medium">
                 {tr('Khasra', 'खसरा')} {p.khasra_survey_no} • {t(p.village, p.village)}
               </div>
 
-              <div className="flex justify-between text-[11px] text-slate-500">
+              <div className="flex justify-between text-[11px] text-slate-500 dark:text-slate-400">
                 <span>{t(p.owner.name, p.owner.name)}</span>
                 <span>{p.area_acres} {t('common.acres')}</span>
               </div>
 
-              <div className="text-[11px] text-red-700 font-medium truncate pt-1 border-t border-slate-100">
+              <div className="text-[11px] text-red-700 dark:text-red-400 font-medium truncate pt-1 border-t border-slate-100 dark:border-slate-800">
                 {p.top_risk_factors[0]?.factor_name ? t(p.top_risk_factors[0]?.factor_name) : t('common.pending')} (+{p.expected_delay_days} {t('common.days')})
               </div>
             </div>

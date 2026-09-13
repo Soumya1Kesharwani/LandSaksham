@@ -2,15 +2,6 @@
 
 ### Smart India Hackathon 2026 — Flagship AI & GovTech Project
 
-[![Smart India Hackathon 2026](https://img.shields.io/badge/SIH-2026-orange.svg?style=for-the-badge&logo=target)](https://www.sih.gov.in/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![React 18](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
-[![Python 3.9+](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Official Indian Languages](https://img.shields.io/badge/Official_Languages-22_Indian_+_English-emerald.svg?style=for-the-badge)](#-22-official-indian-languages-support)
-
 > **Problem Statement**: *Predictive Analytics System for Early Detection of Land Acquisition Delays in Mega Infrastructure Projects*  
 > **Core USP**: *"From Reactive Infrastructure Management to Proactive Project Intelligence."*  
 > **One-Line Mission**: *Identify land, legal, environmental, social, and economic bottlenecks before they become infrastructure project delays.*
@@ -81,11 +72,11 @@ python3 -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 
 ### 2. Start the React Frontend
 ```bash
-cd frontend
+cd frontend 
 npm install
 npm run dev
 ```
-- **Open in Browser**: [http://localhost:5173](http://localhost:5173)
+- **Open in Browser**:[http://127.0.0.1:5173/]
 
 ---
 

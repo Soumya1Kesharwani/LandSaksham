@@ -27,44 +27,43 @@ export const MetricCard: React.FC<MetricCardProps> = ({
 }) => {
   const { t } = useLanguage();
   const badgeClasses = {
-    default: "bg-slate-100 text-slate-700 border-slate-300",
-    danger: "bg-red-100 text-red-800 border-red-200",
-    warning: "bg-amber-100 text-amber-800 border-amber-200",
-    success: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    default: "bg-slate-800 text-slate-300 border-slate-700",
+    danger: "bg-red-950/80 text-red-300 border-red-800/80",
+    warning: "bg-amber-950/80 text-amber-300 border-amber-800/80",
+    success: "bg-emerald-950/80 text-emerald-300 border-emerald-800/80",
   };
 
   return (
     <div
       onClick={onClick}
-      className={`bg-white border border-slate-200 rounded-lg p-4 shadow-sm hover:shadow transition-all ${
-        onClick ? 'cursor-pointer hover:border-gov-blue/50' : ''
-      }`}
+      className={`bg-[#111c38] border border-slate-800 rounded-lg p-4 shadow-sm hover:shadow transition-all ${onClick ? 'cursor-pointer hover:border-blue-500/50' : ''
+        }`}
     >
-      <div className="flex items-start justify-between">
-        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+      <div className="flex items-start justify-between gap-2.5">
+        <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-normal leading-tight flex-1 pr-1.5 min-w-0 break-words">
           {t(title)}
         </span>
-        <div className="p-2 rounded bg-slate-50 text-gov-navy border border-slate-200">
+        <div className="p-2 rounded bg-slate-800/80 text-blue-400 border border-slate-700 shrink-0">
           <Icon className="w-4 h-4" />
         </div>
       </div>
 
-      <div className="mt-2 flex items-baseline justify-between">
-        <div className="text-2xl font-bold font-mono text-slate-900 tracking-tight">
+      <div className="mt-2 flex flex-col items-center text-center gap-1">
+        <div className="text-2xl font-bold font-mono text-white tracking-tight whitespace-nowrap text-center">
           {value}
         </div>
         {badge && (
-          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded border ${badgeClasses[badgeType]}`}>
+          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded border inline-block text-center ${badgeClasses[badgeType]}`}>
             {t(badge)}
           </span>
         )}
       </div>
 
       {(subtitle || trend) && (
-        <div className="mt-2 text-xs text-slate-500 flex items-center justify-between border-t border-slate-100 pt-2">
+        <div className="mt-2 text-xs text-slate-400 flex items-center justify-between border-t border-slate-800/80 pt-2">
           <span>{subtitle ? t(subtitle) : ''}</span>
           {trend && (
-            <span className={`font-medium ${trendPositive ? 'text-emerald-700' : 'text-red-700'}`}>
+            <span className={`font-medium ${trendPositive ? 'text-emerald-400' : 'text-red-400'}`}>
               {t(trend)}
             </span>
           )}

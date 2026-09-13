@@ -76,7 +76,7 @@ cd frontend
 npm install
 npm run dev
 ```
-- **Open in Browser**: [http://localhost:5173]http://127.0.0.1:5173/
+- **Open in Browser**: [http://127.0.0.1:5173/]
 
 ---
 

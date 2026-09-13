@@ -6,10 +6,15 @@ import {
   LayoutDashboard, Map, FileSpreadsheet, Landmark, 
   Scale, Trees, Users, Briefcase, GitFork, 
   BrainCircuit, ListTodo, FileText, Bell, 
-  History, Download, Sun, Moon
+  History, Download, Sun, Moon, X
 } from 'lucide-react';
 
-export const GovSidebar: React.FC = () => {
+interface GovSidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export const GovSidebar: React.FC<GovSidebarProps> = ({ isOpen = true, onClose }) => {
   const { tr, t } = useLanguage();
   const { activeTab, setActiveTab, activeProject, actionItems, alerts } = useProject();
   const { theme, toggleTheme } = useTheme();
@@ -45,88 +50,119 @@ export const GovSidebar: React.FC = () => {
 
   const menuItems = [
     { id: 'overview', label: t('nav.overview', 'Project Overview'), icon: LayoutDashboard },
-    { 
-      id: 'land', 
-      label: t('nav.land_parcels', 'Land & Khasra Intelligence'), 
-      icon: FileSpreadsheet, 
-      badge: activeProject?.high_risk_parcels_count ? `${activeProject.high_risk_parcels_count} ${tr('at Risk', 'जोखिम')}` : undefined, 
-      badgeColor: 'bg-orange-100 text-orange-800' 
+    {
+      id: 'land',
+      label: t('nav.land_parcels', 'Land & Khasra Intelligence'),
+      icon: FileSpreadsheet,
+      badge: activeProject?.high_risk_parcels_count ? `${activeProject.high_risk_parcels_count} ${tr('at Risk', 'जोखिम')}` : undefined,
+      badgeColor: 'bg-orange-100 text-orange-800'
     },
     { id: 'gis', label: t('nav.gis_map', 'GIS Spatial Map'), icon: Map },
     { id: 'compensation', label: t('nav.compensation', 'RFCTLARR Compensation'), icon: Landmark },
-    { 
-      id: 'legal', 
-      label: t('nav.legal', 'e-Courts Legal Intelligence'), 
-      icon: Scale, 
-      badge: activeProject?.stay_orders_count ? `${activeProject.stay_orders_count} ${tr('Stays', 'स्थगन')}` : undefined, 
-      badgeColor: 'bg-red-100 text-red-800' 
+    {
+      id: 'legal',
+      label: t('nav.legal', 'e-Courts Legal Intelligence'),
+      icon: Scale,
+      badge: activeProject?.stay_orders_count ? `${activeProject.stay_orders_count} ${tr('Stays', 'स्थगन')}` : undefined,
+      badgeColor: 'bg-red-100 text-red-800'
     },
     { id: 'environment', label: t('nav.environmental', 'Parivesh Forest & Env'), icon: Trees },
     { id: 'social', label: t('nav.social', 'SIA & Rehabilitation'), icon: Users },
     { id: 'employment', label: t('nav.employment', 'Employment & Economy'), icon: Briefcase },
     { id: 'routes', label: t('nav.routes', 'Route Alternative Simulator'), icon: GitFork },
     { id: 'prediction', label: t('nav.ai_prediction', 'AI Delay Prediction & SHAP'), icon: BrainCircuit },
-    { 
-      id: 'actions', 
-      label: t('nav.actions', 'Priority Action Queue'), 
-      icon: ListTodo, 
-      badge: pendingActionsCount > 0 ? String(pendingActionsCount) : undefined, 
-      badgeColor: 'bg-blue-100 text-blue-800' 
+    {
+      id: 'actions',
+      label: t('nav.actions', 'Priority Action Queue'),
+      icon: ListTodo,
+      badge: pendingActionsCount > 0 ? String(pendingActionsCount) : undefined,
+      badgeColor: 'bg-blue-100 text-blue-800'
     },
     { id: 'documents', label: t('nav.documents', 'Document Intelligence & OCR'), icon: FileText },
-    { 
-      id: 'alerts', 
-      label: t('nav.alerts', 'Smart Proactive Alerts'), 
-      icon: Bell, 
-      badge: unreadAlertsCount > 0 ? String(unreadAlertsCount) : undefined, 
-      badgeColor: 'bg-red-100 text-red-800' 
+    {
+      id: 'alerts',
+      label: t('nav.alerts', 'Smart Proactive Alerts'),
+      icon: Bell,
+      badge: unreadAlertsCount > 0 ? String(unreadAlertsCount) : undefined,
+      badgeColor: 'bg-red-100 text-red-800'
     },
     { id: 'audit', label: t('nav.audit', 'Governance Audit Logs'), icon: History },
     { id: 'reports', label: t('nav.reports', 'Official Dossier Generator'), icon: Download }
   ];
 
   return (
-    <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 border-r border-slate-800 select-none">
-      {/* Officer Context Badge */}
-      <div className="p-3 border-b border-slate-800 bg-slate-950/60">
-        <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-          {tr('Intelligence Console', 'आसूचना नियंत्रण कक्ष')}
-        </div>
-        <div className="text-xs font-semibold text-white truncate mt-0.5">
-          {t(activeProject?.name, activeProject?.name || 'National Infrastructure Grid')}
-        </div>
-      </div>
+    <>
+      {/* Mobile Backdrop */}
+      {isOpen && (
+        <div
+          onClick={onClose}
+          className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-30 md:hidden"
+        />
+      )}
 
-      {/* Nav List */}
-      <div className="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
-        {menuItems.map(item => {
-          const Icon = item.icon;
-          const isActive = activeTab === item.id;
-          return (
+      <aside
+        className={`fixed md:relative inset-y-0 left-0 z-40 md:z-auto transition-all duration-300 ease-in-out bg-slate-900 text-slate-300 flex flex-col shrink-0 border-r border-slate-800 select-none ${
+          isOpen
+            ? 'w-64 translate-x-0 opacity-100'
+            : 'w-0 -translate-x-full md:translate-x-0 opacity-0 md:opacity-0 overflow-hidden border-none pointer-events-none'
+        }`}
+      >
+        {/* Officer Context Badge */}
+        <div className="p-3 border-b border-slate-800 bg-slate-950/60 flex items-center justify-between">
+          <div className="overflow-hidden">
+            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              {tr('Intelligence Console', 'आसूचना नियंत्रण कक्ष')}
+            </div>
+            <div className="text-xs font-semibold text-white truncate mt-0.5">
+              {t(activeProject?.name, activeProject?.name || 'National Infrastructure Grid')}
+            </div>
+          </div>
+          {onClose && (
             <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-xs font-medium transition-all ${
-                isActive
-                  ? 'bg-gov-blue text-white shadow-sm font-semibold'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-              }`}
+              onClick={onClose}
+              className="md:hidden p-1 text-slate-400 hover:text-white rounded"
+              title="Close Menu"
             >
-              <div className="flex items-center gap-2.5 truncate">
-                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                <span className="truncate">{item.label}</span>
-              </div>
-              {item.badge && (
-                <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded font-mono shrink-0 ml-1 ${
-                  isActive ? 'bg-white/20 text-white' : item.badgeColor || 'bg-slate-800 text-slate-300'
-                }`}>
-                  {item.badge}
-                </span>
-              )}
+              <X className="w-4 h-4" />
             </button>
-          );
-        })}
-      </div>
+          )}
+        </div>
+
+        {/* Nav List */}
+        <div className="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
+          {menuItems.map(item => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  if (onClose && window.innerWidth < 768) {
+                    onClose();
+                  }
+                }}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-xs font-medium transition-all ${
+                  isActive
+                    ? 'bg-gov-blue text-white shadow-sm font-semibold'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                  <span className="truncate">{item.label}</span>
+                </div>
+                {item.badge && (
+                  <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded font-mono shrink-0 ml-1 ${
+                    isActive ? 'bg-white/20 text-white' : item.badgeColor || 'bg-slate-800 text-slate-300'
+                  }`}>
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
 
       {/* Font Size Accessibility Controls (A- / A / A+) */}
       <div className="p-3 border-t border-slate-800 bg-slate-950/40 flex items-center justify-between">
@@ -169,15 +205,13 @@ export const GovSidebar: React.FC = () => {
 
         <button
           onClick={toggleTheme}
-          className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-            theme === 'dark' ? 'bg-gov-blue' : 'bg-slate-700'
-          }`}
+          className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${theme === 'dark' ? 'bg-gov-blue' : 'bg-slate-700'
+            }`}
           title="Toggle Dark / Light Mode"
         >
           <span
-            className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-              theme === 'dark' ? 'translate-x-5' : 'translate-x-0'
-            }`}
+            className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0'
+              }`}
           />
         </button>
       </div>
@@ -191,6 +225,7 @@ export const GovSidebar: React.FC = () => {
         <span className="font-mono text-[10px] text-slate-500">v2.4</span>
       </div>
     </aside>
+  </>
   );
 };
 

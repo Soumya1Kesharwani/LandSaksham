@@ -6,7 +6,9 @@ import { Parcel, RiskLevel } from '../../types';
 import { RiskBadge } from '../common/RiskBadge';
 import { 
   Layers, Search, Filter, ShieldAlert, Eye, 
-  MapPin, CheckCircle, Navigation, ZoomIn, ZoomOut
+  MapPin, CheckCircle, Navigation, ZoomIn, ZoomOut,
+  Compass, Droplets, Trees, Home, Sprout, Building, Mountain,
+  Train, Map as MapIcon, Globe
 } from 'lucide-react';
 
 export const GISMapTab: React.FC = () => {
@@ -15,15 +17,27 @@ export const GISMapTab: React.FC = () => {
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
+  const baseTileLayerGroupRef = useRef<L.LayerGroup | null>(null);
   const layerGroupRef = useRef<L.LayerGroup | null>(null);
 
   const [searchMap, setSearchMap] = useState('');
   const [selectedRiskFilter, setSelectedRiskFilter] = useState('ALL');
-  const [selectedLandTypeFilter, setSelectedLandTypeFilter] = useState('ALL');
+
+  // Basemap tile provider state
+  const [activeBasemap, setActiveBasemap] = useState<'SATELLITE_HYBRID' | 'OPEN_TOPO' | 'OPEN_STREET'>('OPEN_STREET');
+
+  // Spatial Feature Layer Toggles
+  const [showRiverLayer, setShowRiverLayer] = useState(true);
   const [showForestLayer, setShowForestLayer] = useState(true);
+  const [showHousesLayer, setShowHousesLayer] = useState(true);
+  const [showAgriLayer, setShowAgriLayer] = useState(true);
+  const [showBarrenLayer, setShowBarrenLayer] = useState(true);
+  const [showInfraLayer, setShowInfraLayer] = useState(true);
+  const [showLandOwnershipLayer, setShowLandOwnershipLayer] = useState(true);
+
   const [activeRouteId, setActiveRouteId] = useState<string>('ROUTE-A');
 
-  // Initialize Leaflet Map
+  // 1. Initialize Map Instance once
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -35,26 +49,66 @@ export const GISMapTab: React.FC = () => {
         zoomControl: false
       });
 
-      // Add OpenStreetMap tile layer
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 18
-      }).addTo(map);
-
-      // Add zoom control top right
       L.control.zoom({ position: 'topright' }).addTo(map);
 
-      const layerGroup = L.layerGroup().addTo(map);
-      layerGroupRef.current = layerGroup;
+      const baseTileGroup = L.layerGroup().addTo(map);
+      baseTileLayerGroupRef.current = baseTileGroup;
+
+      const featureLayerGroup = L.layerGroup().addTo(map);
+      layerGroupRef.current = featureLayerGroup;
+
       mapInstanceRef.current = map;
     }
-
-    return () => {
-      // Cleanup on unmount if needed
-    };
   }, []);
 
-  // Update Map Markers, Routes & Polygons when filters or parcels change
+  // 2. Update Map Tile Provider based on activeBasemap
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    const baseGroup = baseTileLayerGroupRef.current;
+    if (!map || !baseGroup) return;
+
+    baseGroup.clearLayers();
+
+    if (activeBasemap === 'SATELLITE_HYBRID') {
+      // High-Res Satellite Imagery (Esri World Imagery)
+      const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; Esri &mdash; Maxar, Earthstar Geographics, USDA, USGS, IGN',
+        maxZoom: 19
+      });
+
+      // Transportation & Roads Label Overlay
+      const esriRoads = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        opacity: 0.90
+      });
+
+      // Place Names & Administrative Boundaries Overlay
+      const esriLabels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        opacity: 0.95
+      });
+
+      baseGroup.addLayer(esriSat);
+      baseGroup.addLayer(esriRoads);
+      baseGroup.addLayer(esriLabels);
+    } else if (activeBasemap === 'OPEN_TOPO') {
+      // Topographic & Rivers Map (OpenTopoMap)
+      const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)',
+        maxZoom: 17
+      });
+      baseGroup.addLayer(topo);
+    } else {
+      // Standard OpenStreetMap
+      const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19
+      });
+      baseGroup.addLayer(osm);
+    }
+  }, [activeBasemap]);
+
+  // 3. Update Map Feature Layers (Routes, Rivers, Forests, Houses, Agri, Barren, Infra, Parcels)
   useEffect(() => {
     const map = mapInstanceRef.current;
     const layerGroup = layerGroupRef.current;
@@ -66,9 +120,9 @@ export const GISMapTab: React.FC = () => {
     routes.forEach(route => {
       const isSelected = route.route_id === activeRouteId;
       const polyline = L.polyline(route.coordinates as [number, number][], {
-        color: route.is_recommended ? '#059669' : (route.route_id === 'ROUTE-A' ? '#dc2626' : '#2563eb'),
+        color: route.is_recommended ? '#10b981' : (route.route_id === 'ROUTE-A' ? '#ef4444' : '#3b82f6'),
         weight: isSelected ? 6 : 3,
-        opacity: isSelected ? 0.9 : 0.4,
+        opacity: isSelected ? 0.95 : 0.45,
         dashArray: route.route_id === 'ROUTE-C' ? '6, 6' : undefined
       });
 
@@ -79,7 +133,36 @@ export const GISMapTab: React.FC = () => {
       polyline.addTo(layerGroup);
     });
 
-    // 2. Draw Forest & Eco-sensitive Buffer Polygons if enabled
+    // 2. Draw Rivers & Water Bodies Layer
+    if (showRiverLayer) {
+      // Bandi River Channel & Floodplain Buffer
+      const riverPoly = L.polygon([
+        [26.68, 75.05], [26.64, 75.15], [26.60, 75.25], [26.58, 75.32],
+        [26.60, 75.34], [26.63, 75.24], [26.67, 75.14], [26.70, 75.04]
+      ], {
+        color: '#0284c7',
+        fillColor: '#38bdf8',
+        fillOpacity: 0.40,
+        weight: 2,
+        dashArray: '3, 3'
+      });
+      riverPoly.bindTooltip("<strong>🌊 Bandi River Basin & Hydrological Buffer</strong><br>Water Channel Clearance Zone", { sticky: true });
+      riverPoly.addTo(layerGroup);
+
+      // Sambhar Salt Lake Eco-Buffer
+      const lakePoly = L.polygon([
+        [26.85, 75.10], [26.88, 75.15], [26.92, 75.12], [26.90, 75.05]
+      ], {
+        color: '#0369a1',
+        fillColor: '#0ea5e9',
+        fillOpacity: 0.35,
+        weight: 1.5
+      });
+      lakePoly.bindTooltip("<strong>🌊 Sambhar Salt Wetland Eco-Buffer Zone</strong>", { sticky: true });
+      lakePoly.addTo(layerGroup);
+    }
+
+    // 3. Draw Forest Layer
     if (showForestLayer) {
       // Dudu Protected Forest Zone
       const forestPolygon = L.polygon([
@@ -87,31 +170,100 @@ export const GISMapTab: React.FC = () => {
       ], {
         color: '#15803d',
         fillColor: '#22c55e',
-        fillOpacity: 0.18,
-        weight: 1.5,
+        fillOpacity: 0.30,
+        weight: 2,
         dashArray: '4, 4'
       });
-      forestPolygon.bindTooltip("<strong>MoEFCC Protected Forest Zone (Dudu Division)</strong><br>Statutory Stage-II Clearance Required", { sticky: true });
+      forestPolygon.bindTooltip("<strong>🌲 MoEFCC Protected Forest Zone (Dudu Division)</strong><br>Statutory Stage-II Clearance Required", { sticky: true });
       forestPolygon.addTo(layerGroup);
 
       // Sendra / Aravalli Eco-Sensitive Ridge
       const aravalliPolygon = L.polygon([
         [26.28, 74.15], [26.20, 74.18], [26.22, 74.30], [26.30, 74.28]
       ], {
-        color: '#b91c1c',
-        fillColor: '#ef4444',
-        fillOpacity: 0.18,
-        weight: 1.5,
+        color: '#166534',
+        fillColor: '#15803d',
+        fillOpacity: 0.35,
+        weight: 2,
         dashArray: '4, 4'
       });
-      aravalliPolygon.bindTooltip("<strong>Aravalli Eco-Sensitive Sanctuary Corridor</strong><br>Wildlife Mitigation Clearance Zone", { sticky: true });
+      aravalliPolygon.bindTooltip("<strong>🌲 Aravalli Eco-Sensitive Sanctuary Corridor</strong><br>Wildlife Mitigation Clearance Zone", { sticky: true });
       aravalliPolygon.addTo(layerGroup);
     }
 
-    // 3. Filter and Add Parcel Markers & Polygons
+    // 4. Draw Houses & Residential Habitation Settlement Layer
+    if (showHousesLayer) {
+      // Bagru Residential Settlement Cluster
+      const housesBagru = L.polygon([
+        [26.81, 75.54], [26.80, 75.56], [26.78, 75.55], [26.79, 75.52]
+      ], {
+        color: '#7c3aed',
+        fillColor: '#a78bfa',
+        fillOpacity: 0.40,
+        weight: 2
+      });
+      housesBagru.bindTooltip("<strong>🏡 Bagru Abadi Village Settlement (Residential Houses)</strong><br>High Household Displacement Risk Zone", { sticky: true });
+      housesBagru.addTo(layerGroup);
+
+      // Dudu Residential Houses Zone
+      const housesDudu = L.polygon([
+        [26.68, 75.22], [26.67, 75.24], [26.65, 75.23], [26.66, 75.20]
+      ], {
+        color: '#7c3aed',
+        fillColor: '#a78bfa',
+        fillOpacity: 0.40,
+        weight: 2
+      });
+      housesDudu.bindTooltip("<strong>🏡 Dudu Town Abadi Settlement (Houses & Residential Structures)</strong>", { sticky: true });
+      housesDudu.addTo(layerGroup);
+    }
+
+    // 5. Draw Agricultural Land Layer
+    if (showAgriLayer) {
+      const agriPoly = L.polygon([
+        [26.74, 75.32], [26.73, 75.42], [26.69, 75.40], [26.70, 75.30]
+      ], {
+        color: '#65a30d',
+        fillColor: '#84cc16',
+        fillOpacity: 0.25,
+        weight: 1.5
+      });
+      agriPoly.bindTooltip("<strong>🌾 Mozamabad Irrigated Agricultural Crop Belt</strong><br>Double-Crop Multi-harvest Farmland", { sticky: true });
+      agriPoly.addTo(layerGroup);
+    }
+
+    // 6. Draw Barren / Wasteland Layer
+    if (showBarrenLayer) {
+      const barrenPoly = L.polygon([
+        [26.60, 74.90], [26.58, 75.02], [26.54, 75.00], [26.55, 74.88]
+      ], {
+        color: '#d97706',
+        fillColor: '#f59e0b',
+        fillOpacity: 0.30,
+        weight: 1.5,
+        dashArray: '2, 4'
+      });
+      barrenPoly.bindTooltip("<strong>🏜️ Government Uncultivated Barren / Wasteland</strong><br>Optimal Low-Cost Alignment Route", { sticky: true });
+      barrenPoly.addTo(layerGroup);
+    }
+
+    // 7. Draw Major Infrastructure & Rail Layer
+    if (showInfraLayer) {
+      // DFCCIL Heavy Rail Line
+      const dfcRail = L.polyline([
+        [26.90, 75.60], [26.80, 75.45], [26.68, 75.20], [26.55, 74.90], [26.42, 74.60]
+      ], {
+        color: '#0284c7',
+        weight: 4,
+        dashArray: '8, 8'
+      });
+      dfcRail.bindTooltip("<strong>🚆 Dedicated Freight Corridor (DFCCIL Heavy Rail Infrastructure)</strong>", { sticky: true });
+      dfcRail.addTo(layerGroup);
+    }
+
+    // 8. Filter and Add Parcel Markers & Polygons
     const filteredParcels = parcels.filter(p => {
       if (selectedRiskFilter !== 'ALL' && p.delay_risk_level !== selectedRiskFilter) return false;
-      if (selectedLandTypeFilter !== 'ALL' && !p.land_type.toLowerCase().includes(selectedLandTypeFilter.toLowerCase())) return false;
       if (searchMap) {
         const s = searchMap.toLowerCase();
         return p.id.toLowerCase().includes(s) ||
@@ -123,19 +275,38 @@ export const GISMapTab: React.FC = () => {
     });
 
     filteredParcels.forEach(parcel => {
-      let color = '#10b981'; // Green
-      if (parcel.delay_risk_level === 'CRITICAL') color = '#dc2626';
-      else if (parcel.delay_risk_level === 'HIGH') color = '#ea580c';
-      else if (parcel.delay_risk_level === 'MEDIUM') color = '#d97706';
+      let color = '#10b981'; // Green default
+      const landLower = parcel.land_type.toLowerCase();
+
+      if (showLandOwnershipLayer) {
+        if (landLower.includes('government') || landLower.includes('railway') || landLower.includes('public')) {
+          color = '#06b6d4'; // Cyan for Government Land
+        } else if (landLower.includes('forest')) {
+          color = '#15803d'; // Forest Green for Forest Land
+        } else if (landLower.includes('residential') || landLower.includes('abadi') || landLower.includes('commercial') || landLower.includes('house')) {
+          color = '#8b5cf6'; // Purple for Residential / Houses
+        } else if (landLower.includes('barren') || landLower.includes('waste')) {
+          color = '#d97706'; // Sandy Brown for Barren Land
+        } else if (landLower.includes('agricultural') || landLower.includes('farm')) {
+          color = '#10b981'; // Emerald Green for Agricultural Land
+        } else {
+          color = '#f59e0b'; // Amber for Private Land
+        }
+      } else {
+        if (parcel.delay_risk_level === 'CRITICAL') color = '#dc2626';
+        else if (parcel.delay_risk_level === 'HIGH') color = '#ea580c';
+        else if (parcel.delay_risk_level === 'MEDIUM') color = '#d97706';
+      }
 
       // Draw Parcel boundary polygon
       if (parcel.polygon_coordinates && parcel.polygon_coordinates.length > 0) {
         const poly = L.polygon(parcel.polygon_coordinates as [number, number][], {
           color: color,
           fillColor: color,
-          fillOpacity: 0.45,
+          fillOpacity: 0.55,
           weight: 2
         });
+        poly.bindTooltip(`<strong>Khasra ${parcel.khasra_survey_no}</strong> (${t(parcel.land_type, parcel.land_type)})<br>${t(parcel.village, parcel.village)} • ${parcel.area_acres} Acres`, { sticky: true });
         poly.addTo(layerGroup);
       }
 
@@ -149,7 +320,7 @@ export const GISMapTab: React.FC = () => {
       });
 
       const popupHtml = `
-        <div style="font-family: 'Inter', sans-serif; padding: 12px; min-width: 240px;">
+        <div style="font-family: 'Inter', sans-serif; padding: 12px; min-width: 250px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <span style="font-weight: 800; font-size: 13px; color: #0f2942;">${parcel.id}</span>
             <span style="font-size: 11px; font-weight: bold; background: ${color}20; color: ${color}; padding: 2px 6px; border-radius: 4px; border: 1px solid ${color};">
@@ -158,6 +329,9 @@ export const GISMapTab: React.FC = () => {
           </div>
           <div style="font-size: 11px; color: #475569; margin-bottom: 4px;">
             <strong>${tr('Khasra', 'खसरा')}:</strong> ${parcel.khasra_survey_no} • ${t(parcel.village, parcel.village)}, ${t(parcel.tehsil, parcel.tehsil)}
+          </div>
+          <div style="font-size: 11px; color: #475569; margin-bottom: 4px;">
+            <strong>${tr('Land Category', 'भूमि श्रेणी')}:</strong> <span style="color: ${color}; font-weight: 700;">${t(parcel.land_type, parcel.land_type)}</span>
           </div>
           <div style="font-size: 11px; color: #475569; margin-bottom: 4px;">
             <strong>${tr('Owner', 'भूस्वामी')}:</strong> ${t(parcel.owner.name, parcel.owner.name)} (${parcel.area_acres} ${t('common.acres')})
@@ -191,7 +365,11 @@ export const GISMapTab: React.FC = () => {
       marker.addTo(layerGroup);
     });
 
-  }, [parcels, routes, searchMap, selectedRiskFilter, selectedLandTypeFilter, showForestLayer, activeRouteId, t, tr]);
+  }, [
+    parcels, routes, searchMap, selectedRiskFilter, 
+    showRiverLayer, showForestLayer, showHousesLayer, showAgriLayer, showBarrenLayer, showInfraLayer, showLandOwnershipLayer,
+    activeRouteId, t, tr
+  ]);
 
   const handleZoomToParcel = (parcel: Parcel) => {
     if (mapInstanceRef.current) {
@@ -201,14 +379,16 @@ export const GISMapTab: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4 h-[calc(100vh-140px)] min-h-[600px]">
+    <div className="flex flex-col lg:flex-row gap-4 h-[calc(100vh-140px)] min-h-[650px]">
       
       {/* Left Column: GIS Map Container */}
       <div className="flex-1 bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm overflow-hidden flex flex-col relative">
         
         {/* Top Control Bar inside Map */}
         <div className="p-3 bg-white/95 dark:bg-[#111c38]/95 backdrop-blur-xs border-b border-slate-200 dark:border-slate-800 z-10 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2">
+          
+          {/* Left Controls: Search & Filters */}
+          <div className="flex flex-wrap items-center gap-2">
             <div className="relative">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
               <input
@@ -216,8 +396,23 @@ export const GISMapTab: React.FC = () => {
                 placeholder={t('common.search_placeholder')}
                 value={searchMap}
                 onChange={e => setSearchMap(e.target.value)}
-                className="pl-8 pr-3 py-1.5 border border-slate-300 dark:border-slate-700 rounded text-xs w-56 bg-white dark:bg-[#0b1329] text-slate-800 dark:text-slate-100 focus:ring-1 focus:ring-gov-blue outline-none"
+                className="pl-8 pr-3 py-1.5 border border-slate-300 dark:border-slate-700 rounded text-xs w-48 sm:w-56 bg-white dark:bg-[#0b1329] text-slate-800 dark:text-slate-100 focus:ring-1 focus:ring-gov-blue outline-none"
               />
+            </div>
+
+            {/* Basemap Switcher Dropdown */}
+            <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1">
+              <Globe className="w-3.5 h-3.5 text-blue-500" />
+              <select
+                value={activeBasemap}
+                onChange={e => setActiveBasemap(e.target.value as any)}
+                className="bg-transparent text-xs text-slate-800 dark:text-slate-100 font-bold outline-none cursor-pointer"
+                title="Select Basemap Provider"
+              >
+                <option value="OPEN_STREET" className="dark:bg-slate-900">🗺️ {tr('Standard OpenStreetMap', 'मानक सड़क मानचित्र')}</option>
+                <option value="SATELLITE_HYBRID" className="dark:bg-slate-900">🛰️ {tr('Satellite Hybrid (Esri High-Res)', 'सैटेलाइट हाइब्रिड (हाई-रेस)')}</option>
+                <option value="OPEN_TOPO" className="dark:bg-slate-900">🏔️ {tr('Topographic & Rivers (OpenTopo)', 'टोपोग्राफिक एवं नदी मानचित्र')}</option>
+              </select>
             </div>
 
             <select
@@ -231,31 +426,90 @@ export const GISMapTab: React.FC = () => {
               <option value="MEDIUM">{t('land.medium_filter')}</option>
               <option value="LOW">{t('land.low_filter')}</option>
             </select>
-
-            <select
-              value={selectedLandTypeFilter}
-              onChange={e => setSelectedLandTypeFilter(e.target.value)}
-              className="border border-slate-300 dark:border-slate-700 rounded px-2.5 py-1.5 text-xs bg-white dark:bg-[#0b1329] text-slate-800 dark:text-slate-100 font-medium"
-            >
-              <option value="ALL">{t('land.all_land_types')}</option>
-              <option value="agricultural">{tr('Agricultural', 'कृषि भूमि')}</option>
-              <option value="government">{tr('Government', 'शासकीय भूमि')}</option>
-              <option value="forest">{tr('Forest', 'वन भूमि')}</option>
-              <option value="commercial">{tr('Commercial', 'व्यावसायिक')}</option>
-            </select>
           </div>
 
-          {/* Layer toggles */}
-          <div className="flex items-center gap-3">
-            <label className="flex items-center gap-1.5 cursor-pointer font-semibold text-slate-800 dark:text-slate-200">
-              <input
-                type="checkbox"
-                checked={showForestLayer}
-                onChange={e => setShowForestLayer(e.target.checked)}
-                className="rounded text-gov-blue"
-              />
-              <span className="text-slate-800 dark:text-slate-200 font-semibold">{t('gis.forest_layer')}</span>
-            </label>
+          {/* Right Controls: Feature Layer Toggles */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mr-1">
+              {tr('Layers:', 'परतें:')}
+            </span>
+
+            <button
+              onClick={() => setShowLandOwnershipLayer(!showLandOwnershipLayer)}
+              className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
+                showLandOwnershipLayer ? 'bg-cyan-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+              }`}
+              title="Toggle Govt vs Private Land Khasra Color Mode"
+            >
+              <Building className="w-3 h-3" />
+              <span>{tr('Govt vs Private', 'शासकीय/निजी')}</span>
+            </button>
+
+            <button
+              onClick={() => setShowRiverLayer(!showRiverLayer)}
+              className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
+                showRiverLayer ? 'bg-sky-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+              }`}
+              title="Toggle River & Water Bodies Layer"
+            >
+              <Droplets className="w-3 h-3" />
+              <span>{tr('Rivers', 'नदियां')}</span>
+            </button>
+
+            <button
+              onClick={() => setShowForestLayer(!showForestLayer)}
+              className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
+                showForestLayer ? 'bg-emerald-700 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+              }`}
+              title="Toggle Forest & Eco-sensitive Layer"
+            >
+              <Trees className="w-3 h-3" />
+              <span>{tr('Forest', 'वन')}</span>
+            </button>
+
+            <button
+              onClick={() => setShowHousesLayer(!showHousesLayer)}
+              className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
+                showHousesLayer ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+              }`}
+              title="Toggle Houses & Habitation Layer"
+            >
+              <Home className="w-3 h-3" />
+              <span>{tr('Houses', 'मकान')}</span>
+            </button>
+
+            <button
+              onClick={() => setShowAgriLayer(!showAgriLayer)}
+              className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
+                showAgriLayer ? 'bg-lime-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+              }`}
+              title="Toggle Agricultural Crop Belt Layer"
+            >
+              <Sprout className="w-3 h-3" />
+              <span>{tr('Agri', 'कृषि')}</span>
+            </button>
+
+            <button
+              onClick={() => setShowBarrenLayer(!showBarrenLayer)}
+              className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
+                showBarrenLayer ? 'bg-amber-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+              }`}
+              title="Toggle Barren Land Layer"
+            >
+              <Mountain className="w-3 h-3" />
+              <span>{tr('Barren', 'बंजर')}</span>
+            </button>
+
+            <button
+              onClick={() => setShowInfraLayer(!showInfraLayer)}
+              className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
+                showInfraLayer ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+              }`}
+              title="Toggle Rail & Infra Lines"
+            >
+              <Train className="w-3 h-3" />
+              <span>{tr('Infra', 'इन्फ्रा')}</span>
+            </button>
           </div>
         </div>
 
@@ -263,18 +517,20 @@ export const GISMapTab: React.FC = () => {
         <div ref={mapContainerRef} className="flex-1 w-full h-full relative" />
 
         {/* Bottom Map Legend */}
-        <div className="p-2.5 bg-white dark:bg-[#111c38] border-t border-slate-200 dark:border-slate-800 z-10 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-300">
-          <div className="flex items-center gap-4">
-            <span className="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide">{tr('Risk Heatmap:', 'जोखिम मानचित्र:')}</span>
-            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-red-600"></span> {t('gis.legend_critical')}</span>
-            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-orange-500"></span> {t('gis.legend_high')}</span>
-            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> {t('gis.legend_medium')}</span>
-            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> {t('gis.legend_low')}</span>
+        <div className="p-2.5 bg-white dark:bg-[#111c38] border-t border-slate-200 dark:border-slate-800 z-10 flex flex-wrap items-center justify-between text-[11px] text-slate-600 dark:text-slate-300 gap-2">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide">{tr('Land Categorization Legend:', 'भूमि वर्गीकरण किंवदंती:')}</span>
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-cyan-500"></span> {tr('Govt Land', 'शासकीय भूमि')}</span>
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> {tr('Private Land', 'निजी भूमि')}</span>
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-purple-500"></span> {tr('Houses / Abadi', 'मकान / आबादी')}</span>
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> {tr('Forest', 'वन')}</span>
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-lime-500"></span> {tr('Agricultural', 'कृषि')}</span>
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-sky-500"></span> {tr('River / Water', 'नदी / जल')}</span>
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1 text-emerald-800 dark:text-emerald-400 font-semibold"><span className="w-4 h-1 bg-emerald-600 inline-block"></span> {t('gis.recommended_only')}</span>
-            <span className="flex items-center gap-1 text-red-800 dark:text-red-400 font-semibold"><span className="w-4 h-1 bg-red-600 inline-block"></span> {tr('Route A (Widening)', 'रूट A (चौड़ीकरण)')}</span>
+            <span className="flex items-center gap-1 text-emerald-800 dark:text-emerald-400 font-semibold"><span className="w-4 h-1 bg-emerald-600 inline-block"></span> {tr('Bypass Route B (Recommended)', 'बायपास रूट B')}</span>
+            <span className="flex items-center gap-1 text-red-800 dark:text-red-400 font-semibold"><span className="w-4 h-1 bg-red-600 inline-block"></span> {tr('NH-48 Route A (Widening)', 'रूट A')}</span>
           </div>
         </div>
 
@@ -310,11 +566,14 @@ export const GISMapTab: React.FC = () => {
 
               <div className="flex justify-between text-[11px] text-slate-500 dark:text-slate-400">
                 <span>{t(p.owner.name, p.owner.name)}</span>
-                <span>{p.area_acres} {t('common.acres')}</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-300">{p.area_acres} {t('common.acres')}</span>
               </div>
 
-              <div className="text-[11px] text-red-700 dark:text-red-400 font-medium truncate pt-1 border-t border-slate-100 dark:border-slate-800">
-                {p.top_risk_factors[0]?.factor_name ? t(p.top_risk_factors[0]?.factor_name) : t('common.pending')} (+{p.expected_delay_days} {t('common.days')})
+              <div className="flex justify-between items-center text-[10px] pt-1 border-t border-slate-100 dark:border-slate-800">
+                <span className="font-bold text-slate-600 dark:text-slate-400 uppercase">{t(p.land_type, p.land_type)}</span>
+                <span className="text-red-700 dark:text-red-400 font-medium truncate max-w-[140px]">
+                  +{p.expected_delay_days} {t('common.days')}
+                </span>
               </div>
             </div>
           ))}

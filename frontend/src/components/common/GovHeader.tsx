@@ -83,6 +83,45 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
     'Citizen / Landowner'
   ];
 
+  const getBrandParts = (lang: string) => {
+    switch (lang) {
+      case 'hi': case 'mr': case 'mai': case 'ne': case 'sd':
+        return { p1: 'भूमि ', p2: 'स', p3: 'क्षम' };
+      case 'bn': case 'as':
+        return { p1: 'ভূমি ', p2: 'সক', p3: 'ষম' };
+      case 'te':
+        return { p1: 'భూమి ', p2: 'స', p3: 'క్షమ్' };
+      case 'ta':
+        return { p1: 'பூமி ', p2: 'சக்', p3: 'ஷம்' };
+      case 'gu':
+        return { p1: 'જમીન ', p2: 'સ', p3: 'ક્ષમ' };
+      case 'kn':
+        return { p1: 'ಭೂಮಿ ', p2: 'ಸ', p3: 'ಕ್ಷಮ್' };
+      case 'ml':
+        return { p1: 'ഭൂമി ', p2: 'സമ', p3: 'ർത്ഥം' };
+      case 'or':
+        return { p1: 'ଭୂମି ', p2: 'ସ', p3: 'କ୍ଷମ' };
+      case 'pa':
+        return { p1: 'ਜ਼ਮੀਨ ', p2: 'ਸਮ', p3: 'ਰੱਥ' };
+      case 'ur':
+        return { p1: 'لینڈ ', p2: 'سکھـ', p3: 'شام' };
+      case 'sa':
+        return { p1: 'भूमि ', p2: 'सक्ष', p3: 'मम्' };
+      case 'kok':
+        return { p1: 'जमीन ', p2: 'स', p3: 'क्षम' };
+      case 'mni':
+        return { p1: 'লৈবাক ', p2: 'সক', p3: 'ষম' };
+      case 'brx':
+        return { p1: 'हा ', p2: 'गोहो ', p3: 'गोनां' };
+      case 'ks':
+        return { p1: 'زمین ', p2: 'س', p3: 'کھشام' };
+      default:
+        return { p1: 'Land', p2: 'Sak', p3: 'sham' };
+    }
+  };
+
+  const brand = getBrandParts(language);
+
   return (
     <header className="sticky top-0 z-40 bg-[#0b1329] border-b border-slate-800 shadow-md transition-colors duration-200">
       {/* Tricolor Government Ribbon */}
@@ -105,7 +144,9 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
                 {t('system.title')}
               </h1>
               <div className="text-base font-extrabold tracking-tight leading-tight mt-0.5">
-                <span className="text-[#f97316]">Land</span><span className="text-white">Sak</span><span className="text-[#4ade80]">sham</span>
+                <span className="text-[#f97316]">{brand.p1}</span>
+                <span className="text-white">{brand.p2}</span>
+                <span className="text-[#4ade80]">{brand.p3}</span>
               </div>
             </div>
           </div>

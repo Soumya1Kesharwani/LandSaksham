@@ -126,14 +126,14 @@ export const RouteSimulatorTab: React.FC = () => {
                 onClick={() => setSelectedRouteId(r.route_id)}
                 className={`p-4 rounded-xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
                   isSelected
-                    ? 'bg-blue-950/80 dark:bg-[#16254c] border-blue-500 ring-2 ring-blue-500/50 shadow-lg scale-[1.01]'
-                    : 'bg-white dark:bg-[#111c38] border-slate-200 dark:border-slate-800 hover:border-blue-400/50'
+                    ? 'bg-blue-50/90 dark:bg-[#16254c] border-blue-500 ring-2 ring-blue-500/40 shadow-md scale-[1.01]'
+                    : 'bg-white dark:bg-[#111c38] border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-500/50'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-1.5">
                     <span className={`text-sm font-extrabold uppercase tracking-wide ${
-                      isSelected ? 'text-blue-400 dark:text-blue-300' : 'text-slate-900 dark:text-white'
+                      isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-slate-900 dark:text-white'
                     }`}>
                       {r.route_id}
                     </span>
@@ -142,17 +142,27 @@ export const RouteSimulatorTab: React.FC = () => {
                         ★ {tr('RECOMMENDED', 'अनुशंसित')}
                       </span>
                     ) : (
-                      <span className="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">
+                      <span className={`text-[10px] px-2 py-0.5 rounded border font-semibold ${
+                        isSelected 
+                          ? 'bg-blue-100/80 text-blue-900 border-blue-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                      }`}>
                         {tr('Option', 'विकल्प')}
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 min-h-[32px] font-medium">
+                  <p className={`text-xs line-clamp-2 min-h-[32px] font-medium ${
+                    isSelected ? 'text-slate-800 dark:text-slate-200' : 'text-slate-600 dark:text-slate-300'
+                  }`}>
                     {getRouteSubName(r)}
                   </p>
                 </div>
 
-                <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-mono font-bold text-slate-800 dark:text-slate-200">
+                <div className={`mt-3 pt-2.5 border-t flex items-center justify-between text-xs font-mono font-bold ${
+                  isSelected 
+                    ? 'border-blue-200 dark:border-slate-700 text-slate-900 dark:text-slate-100'
+                    : 'border-slate-100 dark:border-slate-800 text-slate-800 dark:text-slate-200'
+                }`}>
                   <span>{r.total_length_km} km</span>
                   <span className={r.is_recommended ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}>
                     +{r.expected_delay_days}d delay

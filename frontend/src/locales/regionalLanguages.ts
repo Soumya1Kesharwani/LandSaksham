@@ -9,7 +9,7 @@ export interface LanguageMeta {
 }
 
 export const SUPPORTED_LANGUAGES: LanguageMeta[] = [
-  { code: 'en', name: 'English', nativeName: 'English', script: 'Latin', region: 'Pan-India / Official', flag: '🇬🇧' },
+  { code: 'en', name: 'English', nativeName: 'English', script: 'Latin', region: 'Pan-India / Official', flag: '🇮🇳' },
   { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', script: 'Devanagari', region: 'North & Central India', flag: '🇮🇳' },
   { code: 'bn', name: 'Bengali', nativeName: 'বাংলা', script: 'Bengali', region: 'West Bengal, Tripura', flag: '🇮🇳' },
   { code: 'te', name: 'Telugu', nativeName: 'తెలుగు', script: 'Telugu', region: 'Andhra Pradesh, Telangana', flag: '🇮🇳' },

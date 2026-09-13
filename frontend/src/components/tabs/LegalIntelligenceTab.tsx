@@ -81,7 +81,7 @@ export const LegalIntelligenceTab: React.FC = () => {
 
       {/* Case Dossiers Grid */}
       <div className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200">
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-[#111c38] p-4 rounded-lg border border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-3">
             <div className="relative">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
@@ -90,11 +90,11 @@ export const LegalIntelligenceTab: React.FC = () => {
                 placeholder={t('common.search_placeholder')}
                 value={searchLegal}
                 onChange={e => setSearchLegal(e.target.value)}
-                className="pl-8 pr-3 py-1.5 border border-slate-300 rounded text-xs w-64 focus:ring-1 focus:ring-gov-blue outline-none bg-white text-slate-800 font-medium"
+                className="pl-8 pr-3 py-1.5 border border-slate-300 dark:border-slate-700 rounded text-xs w-64 focus:ring-1 focus:ring-gov-blue outline-none bg-white dark:bg-[#0b1329] text-slate-800 dark:text-slate-100 font-medium"
               />
             </div>
 
-            <label className="flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-slate-700">
+            <label className="flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-slate-700 dark:text-slate-300">
               <input
                 type="checkbox"
                 checked={filterStayOnly}
@@ -105,7 +105,7 @@ export const LegalIntelligenceTab: React.FC = () => {
             </label>
           </div>
 
-          <span className="text-xs font-semibold text-slate-500">
+          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
             {litigationParcels.length} {tr('Active Dossiers Listed', 'सक्रिय वाद सूचीबद्ध')}
           </span>
         </div>

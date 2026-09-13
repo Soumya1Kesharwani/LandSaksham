@@ -281,32 +281,32 @@ export const OverviewTab: React.FC = () => {
             </button>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm space-y-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+          <div className="bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg p-4 shadow-sm space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 pb-1 border-b border-slate-100 dark:border-slate-800">
               {t('overview.statutory_compliance_title')}
             </h4>
             <div className="space-y-2 text-xs">
-              <div className="flex justify-between items-center text-slate-700">
-                <span>{t('overview.section_11')}</span>
-                <span className="font-semibold text-emerald-700 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3" /> {t('overview.section_11_val')}
+              <div className="flex items-center justify-between gap-3 text-slate-700 dark:text-slate-300 py-1 border-b border-slate-100 dark:border-slate-800/60">
+                <span className="font-medium text-slate-700 dark:text-slate-300">{t('overview.section_11')}</span>
+                <span className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 shrink-0 text-right">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> {t('overview.section_11_val')}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-slate-700">
-                <span>{t('overview.section_19')}</span>
-                <span className="font-semibold text-emerald-700 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3" /> {t('overview.section_19_val')}
+              <div className="flex items-center justify-between gap-3 text-slate-700 dark:text-slate-300 py-1 border-b border-slate-100 dark:border-slate-800/60">
+                <span className="font-medium text-slate-700 dark:text-slate-300">{t('overview.section_19')}</span>
+                <span className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 shrink-0 text-right">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> {t('overview.section_19_val')}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-slate-700">
-                <span>{t('overview.section_23')}</span>
-                <span className="font-semibold text-amber-700">
+              <div className="flex items-center justify-between gap-3 text-slate-700 dark:text-slate-300 py-1 border-b border-slate-100 dark:border-slate-800/60">
+                <span className="font-medium text-slate-700 dark:text-slate-300">{t('overview.section_23')}</span>
+                <span className="font-semibold text-amber-600 dark:text-amber-400 shrink-0 text-right">
                   {t('overview.section_23_val')}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-slate-700">
-                <span>{t('overview.section_38')}</span>
-                <span className="font-semibold text-red-700">
+              <div className="flex items-center justify-between gap-3 text-slate-700 dark:text-slate-300 py-1">
+                <span className="font-medium text-slate-700 dark:text-slate-300">{t('overview.section_38')}</span>
+                <span className="font-semibold text-red-600 dark:text-red-400 shrink-0 text-right">
                   {t('overview.section_38_val')}
                 </span>
               </div>

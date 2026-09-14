@@ -5,8 +5,8 @@ import { useProject } from '../../context/ProjectContext';
 import { useTheme } from '../../context/ThemeContext';
 import { UserRole } from '../../types';
 import { LanguageSelector } from './LanguageSelector';
-import { 
-  Building2, Globe, Shield, Bell, ChevronDown, 
+import {
+  Building2, Globe, Shield, Bell, ChevronDown,
   MapPin, Clock, ExternalLink, Sparkles, User, Sun, Moon, Info, X
 } from 'lucide-react';
 
@@ -15,13 +15,17 @@ interface GovHeaderProps {
   onOpenCopilot?: () => void;
   onNavigateLanding?: () => void;
   onNavigateCitizen?: () => void;
+  onToggleSidebar?: () => void;
+  isSidebarOpen?: boolean;
 }
 
 export const GovHeader: React.FC<GovHeaderProps> = ({
   onOpenCreateProject,
   onOpenCopilot,
   onNavigateLanding,
-  onNavigateCitizen
+  onNavigateCitizen,
+  onToggleSidebar = () => {},
+  isSidebarOpen = true
 }) => {
   const { language, setLanguage, t, tr } = useLanguage();
   const { role, setRole } = useRole();
@@ -135,9 +139,16 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
       <div className="px-4 py-6 flex items-center justify-between gap-4">
         {/* Left: Identity & Branding */}
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-full bg-white p-0.5 shadow-sm border border-slate-700 flex items-center justify-center overflow-hidden shrink-0">
+          {/* Logo (Clickable Sidebar Toggle) */}
+          <button
+            onClick={onToggleSidebar}
+            className="w-11 h-11 rounded-full bg-white p-0.5 shadow-sm border border-slate-700 hover:border-blue-400 flex items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all duration-200 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+            title={isSidebarOpen ? "Click logo to close sidebar" : "Click logo to open sidebar"}
+            aria-label="Toggle Navigation Sidebar"
+          >
             <img src="/logo.png" alt="NLIIS Official Logo" className="w-full h-full object-contain rounded-full" />
-          </div>
+          </button>
+
           <div>
             <div className="flex flex-col justify-center">
               <h1 className="text-base font-bold text-slate-100 tracking-tight leading-tight">
@@ -191,9 +202,8 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
                         }
                         setProjectDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-800 flex items-start justify-between ${
-                        p.id === activeProject?.id ? 'bg-blue-950/80 font-bold text-blue-300' : 'text-slate-200'
-                      }`}
+                      className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-800 flex items-start justify-between ${p.id === activeProject?.id ? 'bg-blue-950/80 font-bold text-blue-300' : 'text-slate-200'
+                        }`}
                     >
                       <div>
                         <div className="flex items-center gap-2">
@@ -243,9 +253,8 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
                       }
                       setRoleDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-800 flex items-center justify-between ${
-                      r === role ? 'bg-blue-950/80 font-bold text-blue-300' : 'text-slate-200'
-                    }`}
+                    className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-800 flex items-center justify-between ${r === role ? 'bg-blue-950/80 font-bold text-blue-300' : 'text-slate-200'
+                      }`}
                   >
                     <div className="flex items-center gap-2">
                       <span>{t(r)}</span>

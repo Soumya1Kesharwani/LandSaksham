@@ -36,19 +36,21 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
 
   return (
     <div className="flex items-center gap-4 bg-[#111c38] border border-slate-800 rounded-lg p-4 shadow-sm">
-      <div className="relative flex items-center justify-center">
-        <svg className="w-20 h-20 transform -rotate-90">
+      <div className="relative flex items-center justify-center shrink-0 w-20 h-20">
+        <svg className="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 100 100">
+          {/* Background Track Circle */}
           <circle
-            cx="40"
-            cy="40"
+            cx="50"
+            cy="50"
             r={radius}
             stroke="#1e293b"
             strokeWidth="7"
             fill="transparent"
           />
+          {/* Progress Circle Arc */}
           <circle
-            cx="40"
-            cy="40"
+            cx="50"
+            cy="50"
             r={radius}
             stroke={strokeColor}
             strokeWidth="7"
@@ -63,7 +65,7 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
           <span className="text-xl font-extrabold font-mono text-white leading-none">
             {clampedScore}
           </span>
-          <span className="text-[10px] text-slate-400 font-semibold uppercase">
+          <span className="text-[10px] text-slate-400 font-semibold uppercase mt-0.5">
             / 100
           </span>
         </div>

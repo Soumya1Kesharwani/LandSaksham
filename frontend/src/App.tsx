@@ -38,6 +38,7 @@ const DashboardContent: React.FC<{
   const { activeTab, selectedParcel, setSelectedParcel } = useProject();
   const { role } = useRole();
   const { t } = useLanguage();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -83,10 +84,12 @@ const DashboardContent: React.FC<{
         onOpenCopilot={onOpenCopilot}
         onNavigateLanding={onNavigateLanding}
         onNavigateCitizen={onNavigateCitizen}
+        onToggleSidebar={() => setSidebarOpen(prev => !prev)}
+        isSidebarOpen={sidebarOpen}
       />
 
-      <div className="flex-1 flex overflow-hidden">
-        <GovSidebar />
+      <div className="flex-1 flex overflow-hidden relative">
+        <GovSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
           {/* Active Role Indicator Bar */}

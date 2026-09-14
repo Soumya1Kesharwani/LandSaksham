@@ -58,7 +58,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose 
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-[99999] bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
       <div className="bg-white rounded-lg border border-slate-300 shadow-2xl max-w-2xl w-full flex flex-col overflow-hidden">
         
         {/* Header */}

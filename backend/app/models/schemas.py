@@ -201,7 +201,7 @@ class AlternativeRoute(BaseModel):
     estimated_cost_cr: float
     compensation_cost_cr: float
     affected_households: int
-    forest_diverted_ha: float
+    forest_diverted_acres: float
     water_crossings: int
     legal_risk_score: int
     delay_probability: float

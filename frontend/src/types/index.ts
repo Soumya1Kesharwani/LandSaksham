@@ -142,7 +142,7 @@ export interface AlternativeRoute {
   estimated_cost_cr: number;
   compensation_cost_cr: number;
   affected_households: number;
-  forest_diverted_ha: number;
+  forest_diverted_acres: number;
   water_crossings: number;
   legal_risk_score: number;
   delay_probability: number;

@@ -54,11 +54,13 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
   }, [messages]);
 
   const quickPrompts = [
-    { label: tr("Why is this project delayed?", "परियोजना में देरी क्यों हो रही है?"), query: "Why is Jaipur-Ajmer project delayed?" },
-    { label: tr("What is blocking Parcel P127?", "पार्सल P127 का विवरण दें"), query: "What is blocking Parcel P127?" },
-    { label: tr("How much compensation is pending?", "मुआवजा संवितरण सारांश"), query: "How much compensation is pending?" },
-    { label: tr("Compare Route A and Route B", "रूट A और B की तुलना करें"), query: "Compare Route A vs Route B" },
-    { label: tr("Employment & Economic Impact", "रोजगार एवं आर्थिक प्रभाव"), query: "What is the employment generation estimate?" }
+    { label: tr("Why is Jaipur-Ajmer delayed?", "जयपुर-अजमेर परियोजना में देरी क्यों?"), query: "Why is Jaipur-Ajmer project delayed?" },
+    { label: tr("What is blocking Parcel P127?", "पार्सल P127 (खसरा 142/1) का ब्यौरा"), query: "What is blocking Parcel P127?" },
+    { label: tr("Active High Court Stay Orders", "उच्च न्यायालय के सक्रिय स्थगनादेश"), query: "Show active High Court stay orders on Mahapura & Bagru parcels" },
+    { label: tr("How much compensation is pending?", "मुआवजा संवितरण एवं एस्क्रो बकाया"), query: "How much compensation is pending?" },
+    { label: tr("Compare Route A vs Route B", "रूट A बनाम रूट B तुलनात्मक विश्लेषण"), query: "Compare Route A vs Route B" },
+    { label: tr("Dudu Forest Clearance Status", "दूदू वन प्रभाग (परिवेश) स्वीकृति स्थिति"), query: "What is the status of Parivesh forest clearances in Dudu division?" },
+    { label: tr("Employment & Job Creation", "रोजगार एवं आर्थिक प्रभाव विश्लेषण"), query: "What is the employment generation estimate?" }
   ];
 
   const handleSendMessage = async (queryText?: string) => {
@@ -97,7 +99,7 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
     return (
       <button
         onClick={onToggle || onClose}
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold px-4 py-3 rounded-2xl shadow-2xl border border-blue-400/40 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer group"
+        className="fixed bottom-6 right-6 z-[99990] flex items-center gap-2.5 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold px-4 py-3 rounded-2xl shadow-2xl border border-blue-400/40 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer group"
         title={tr("Open AI Officer Copilot", "एआई अधिकारी सहायक खोलें")}
       >
         <Sparkles className="w-5 h-5 text-amber-300 animate-pulse" />
@@ -107,7 +109,7 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-96 sm:w-[440px] h-[580px] bg-[#111c38] rounded-xl shadow-2xl border border-slate-700 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200">
+    <div className="fixed bottom-6 right-6 z-[99990] w-96 sm:w-[440px] h-[580px] bg-[#111c38] rounded-xl shadow-2xl border border-slate-700 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200">
       
       {/* Copilot Header */}
       <div className="px-4 py-3 bg-gradient-to-r from-gov-navy to-slate-900 text-white flex items-center justify-between border-b border-slate-800">

@@ -18,7 +18,7 @@ const FALLBACK_PROJECTS: Project[] = [
     revised_completion_date: "2027-11-30",
     length_km: 135.0,
     total_cost_cr: 3420.0,
-    total_land_required_acres: 1840.0,
+    total_land_required_acres: 1740.0,
     government_land_acres: 620.0,
     private_land_acres: 940.0,
     forest_land_acres: 180.0,

@@ -35,7 +35,7 @@ export const ParcelDetailModal: React.FC<ParcelDetailModalProps> = ({ parcel, on
   ];
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-[99999] bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
       <div className="bg-white rounded-lg border border-slate-300 shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
@@ -88,39 +88,43 @@ export const ParcelDetailModal: React.FC<ParcelDetailModalProps> = ({ parcel, on
           {activeSubTab === 'overview' && (
             <div className="space-y-4">
               {/* Landowner Card */}
-              <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
-                <div className="text-xs font-bold uppercase text-slate-500 tracking-wider mb-2 flex items-center justify-between">
-                  <span>{tr('Recorded Landowner Information (Jamabandi RoR)', 'पंजीकृत खातेदार विवरण (जमाबंदी प्रति)')}</span>
-                  <span className="text-gov-blue font-mono font-normal">ID: {parcel.owner.id}</span>
+              <div className="bg-slate-50 dark:bg-[#0d162d] border border-slate-200 dark:border-slate-800 rounded-lg p-4 shadow-xs">
+                <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 tracking-wider mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+                  <span className="flex items-center gap-1.5 text-gov-navy dark:text-blue-300">
+                    {tr('Recorded Landowner Information (Jamabandi RoR)', 'पंजीकृत खातेदार विवरण (जमाबंदी प्रति)')}
+                  </span>
+                  <span className="text-gov-blue dark:text-blue-400 font-mono font-bold bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800 text-[11px]">
+                    Khasra No: {parcel.khasra_survey_no} • ID: {parcel.owner.id}
+                  </span>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  <div>
-                    <span className="text-slate-400 block text-[11px]">{tr('Primary Owner Name', 'मुख्य खातेदार का नाम')}</span>
-                    <strong className="text-slate-900 text-sm">{t(parcel.owner.name, parcel.owner.name)}</strong>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <div className="p-3 bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-md">
+                    <span className="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">{tr('Primary Owner Name', 'मुख्य खातेदार का नाम')}</span>
+                    <strong className="text-slate-900 dark:text-white text-sm block mt-0.5">{t(parcel.owner.name, parcel.owner.name)}</strong>
                   </div>
-                  <div>
-                    <span className="text-slate-400 block text-[11px]">{tr('Parentage / Relation', 'पिता/पति का नाम')}</span>
-                    <span className="text-slate-800">{t(parcel.owner.relation, parcel.owner.relation)} {t(parcel.owner.father_or_spouse_name, parcel.owner.father_or_spouse_name)}</span>
+                  <div className="p-3 bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-md">
+                    <span className="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">{tr('Parentage / Relation', 'पिता/पति का नाम')}</span>
+                    <span className="text-slate-800 dark:text-slate-200 block mt-0.5 font-medium">{t(parcel.owner.relation, parcel.owner.relation)} {t(parcel.owner.father_or_spouse_name, parcel.owner.father_or_spouse_name)}</span>
                   </div>
-                  <div>
-                    <span className="text-slate-400 block text-[11px]">{tr('Share Ownership', 'स्वामित्व हिस्सा')}</span>
-                    <span className="text-slate-800 font-semibold">{parcel.owner.share_percentage}% ({parcel.co_owners_count} {tr('Co-heirs', 'सह-खातेदार')})</span>
+                  <div className="p-3 bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-md">
+                    <span className="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">{tr('Share Ownership', 'स्वामित्व हिस्सा')}</span>
+                    <span className="text-slate-800 dark:text-slate-200 block mt-0.5 font-semibold font-mono">{parcel.owner.share_percentage}% ({parcel.co_owners_count} {tr('Co-heirs', 'सह-खातेदार')})</span>
                   </div>
-                  <div>
-                    <span className="text-slate-400 block text-[11px]">{tr('Aadhaar / Bank Verification', 'आधार / बैंक खाता सत्यापन')}</span>
-                    <span className={`inline-flex items-center gap-1 font-semibold ${parcel.owner.bank_account_verified ? 'text-emerald-700' : 'text-amber-700'}`}>
+                  <div className="p-3 bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-md">
+                    <span className="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">{tr('Aadhaar / Bank Verification', 'आधार / बैंक खाता सत्यापन')}</span>
+                    <span className={`inline-flex items-center gap-1 font-semibold text-xs mt-0.5 ${parcel.owner.bank_account_verified ? 'text-emerald-700 dark:text-emerald-400' : 'text-amber-700 dark:text-amber-400'}`}>
                       {parcel.owner.bank_account_verified 
                         ? tr('Aadhaar & Bank Verified', 'आधार एवं बैंक खाता सत्यापित') 
                         : tr('Aadhaar Seeded / Bank Mismatch', 'आधार लिंक / बैंक खाता बेमेल')}
                     </span>
                   </div>
-                  <div>
-                    <span className="text-slate-400 block text-[11px]">{tr('Revenue Mutation Status', 'राजस्व नामांतरण स्थिति')}</span>
-                    <span className="text-slate-800 font-medium">{t(parcel.mutation_status, parcel.mutation_status)}</span>
+                  <div className="p-3 bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-md">
+                    <span className="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">{tr('Revenue Mutation Status', 'राजस्व नामांतरण स्थिति')}</span>
+                    <span className="text-slate-800 dark:text-slate-200 block mt-0.5 font-medium">{t(parcel.mutation_status, parcel.mutation_status)}</span>
                   </div>
-                  <div>
-                    <span className="text-slate-400 block text-[11px]">{tr('Physical Possession', 'भौतिक कब्जा')}</span>
-                    <span className="text-slate-800 font-bold font-mono">{parcel.possession_percentage}% {tr('Taken', 'अधिग्रहीत')}</span>
+                  <div className="p-3 bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-md">
+                    <span className="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">{tr('Physical Possession', 'भौतिक कब्जा')}</span>
+                    <span className="text-slate-800 dark:text-slate-200 block mt-0.5 font-bold font-mono text-sm">{parcel.possession_percentage}% {tr('Taken', 'अधिग्रहीत')}</span>
                   </div>
                 </div>
               </div>

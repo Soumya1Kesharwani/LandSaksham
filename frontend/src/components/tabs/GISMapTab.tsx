@@ -19,21 +19,22 @@ export const GISMapTab: React.FC = () => {
   const mapInstanceRef = useRef<L.Map | null>(null);
   const baseTileLayerGroupRef = useRef<L.LayerGroup | null>(null);
   const layerGroupRef = useRef<L.LayerGroup | null>(null);
+  const parcelMarkersRef = useRef<{ [key: string]: L.CircleMarker }>({});
 
   const [searchMap, setSearchMap] = useState('');
-  const [selectedRiskFilter, setSelectedRiskFilter] = useState('ALL');
+  const [selectedRiskFilter, setSelectedRiskFilter] = useState('CRITICAL');
 
   // Basemap tile provider state
   const [activeBasemap, setActiveBasemap] = useState<'SATELLITE_HYBRID' | 'OPEN_TOPO' | 'OPEN_STREET'>('OPEN_STREET');
 
-  // Spatial Feature Layer Toggles
-  const [showRiverLayer, setShowRiverLayer] = useState(true);
-  const [showForestLayer, setShowForestLayer] = useState(true);
-  const [showHousesLayer, setShowHousesLayer] = useState(true);
-  const [showAgriLayer, setShowAgriLayer] = useState(true);
-  const [showBarrenLayer, setShowBarrenLayer] = useState(true);
-  const [showInfraLayer, setShowInfraLayer] = useState(true);
-  const [showLandOwnershipLayer, setShowLandOwnershipLayer] = useState(true);
+  // Spatial Feature Layer Toggles (Default OFF as per settings)
+  const [showRiverLayer, setShowRiverLayer] = useState(false);
+  const [showForestLayer, setShowForestLayer] = useState(false);
+  const [showHousesLayer, setShowHousesLayer] = useState(false);
+  const [showAgriLayer, setShowAgriLayer] = useState(false);
+  const [showBarrenLayer, setShowBarrenLayer] = useState(false);
+  const [showInfraLayer, setShowInfraLayer] = useState(false);
+  const [showLandOwnershipLayer, setShowLandOwnershipLayer] = useState(false);
 
   const [activeRouteId, setActiveRouteId] = useState<string>('ROUTE-A');
 
@@ -118,11 +119,11 @@ export const GISMapTab: React.FC = () => {
 
     // 1. Draw Route Alignment Polylines
     routes.forEach(route => {
-      const isSelected = route.route_id === activeRouteId;
+      const isPrimary = route.route_id === 'ROUTE-A' || route.route_id === 'ROUTE-B';
       const polyline = L.polyline(route.coordinates as [number, number][], {
         color: route.is_recommended ? '#10b981' : (route.route_id === 'ROUTE-A' ? '#ef4444' : '#3b82f6'),
-        weight: isSelected ? 6 : 3,
-        opacity: isSelected ? 0.95 : 0.45,
+        weight: isPrimary ? 6 : 4,
+        opacity: isPrimary ? 0.90 : 0.60,
         dashArray: route.route_id === 'ROUTE-C' ? '6, 6' : undefined
       });
 
@@ -319,6 +320,8 @@ export const GISMapTab: React.FC = () => {
         fillOpacity: 0.95
       });
 
+      parcelMarkersRef.current[parcel.id] = marker;
+
       const popupHtml = `
         <div style="font-family: 'Inter', sans-serif; padding: 12px; min-width: 250px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
@@ -371,9 +374,25 @@ export const GISMapTab: React.FC = () => {
     activeRouteId, t, tr
   ]);
 
-  const handleZoomToParcel = (parcel: Parcel) => {
-    if (mapInstanceRef.current) {
-      mapInstanceRef.current.setView([parcel.lat, parcel.lng], 14, { animate: true });
+  const handleZoomToParcel = (parcel: Parcel, openModal = false) => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+
+    if (parcel.polygon_coordinates && parcel.polygon_coordinates.length > 0) {
+      const bounds = L.polygon(parcel.polygon_coordinates as [number, number][]).getBounds();
+      map.fitBounds(bounds, { padding: [80, 80], maxZoom: 15, animate: true });
+    } else {
+      map.setView([parcel.lat, parcel.lng], 15, { animate: true });
+    }
+
+    const marker = parcelMarkersRef.current[parcel.id];
+    if (marker) {
+      setTimeout(() => {
+        marker.openPopup();
+      }, 350);
+    }
+
+    if (openModal) {
       setSelectedParcel(parcel);
     }
   };
@@ -552,27 +571,40 @@ export const GISMapTab: React.FC = () => {
           {parcels.map(p => (
             <div
               key={p.id}
-              onClick={() => handleZoomToParcel(p)}
-              className="p-2.5 rounded border border-slate-200 dark:border-slate-800 hover:border-gov-blue dark:hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-slate-800/60 cursor-pointer transition text-xs space-y-1"
+              onClick={() => handleZoomToParcel(p, false)}
+              className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-gov-blue dark:hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-slate-800/60 cursor-pointer transition text-xs space-y-1.5 group"
             >
               <div className="flex items-center justify-between">
-                <span className="font-bold text-gov-navy dark:text-blue-400 font-mono">{p.id}</span>
-                <RiskBadge level={p.delay_risk_level} score={p.delay_risk_score} showScore size="sm" />
+                <span className="font-bold text-gov-navy dark:text-blue-400 font-mono text-xs">{p.id}</span>
+                <div className="flex items-center gap-1.5">
+                  <RiskBadge level={p.delay_risk_level} score={p.delay_risk_score} showScore size="sm" />
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleZoomToParcel(p, true);
+                    }}
+                    className="p-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-gov-blue hover:text-white dark:hover:bg-blue-600 text-slate-600 dark:text-slate-300 transition"
+                    title={tr('Open Full Dossier Report', 'पूर्ण डोजियर रिपोर्ट खोलें')}
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
-              <div className="text-slate-700 dark:text-slate-300 font-medium">
-                {tr('Khasra', 'खसरा')} {p.khasra_survey_no} • {t(p.village, p.village)}
+              <div className="text-slate-800 dark:text-slate-200 font-semibold text-xs flex items-center justify-between">
+                <span>{tr('Khasra', 'खसरा')} {p.khasra_survey_no} • {t(p.village, p.village)}</span>
+                <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400">{p.area_acres} {tr('Acres', 'एकड़')}</span>
               </div>
 
-              <div className="flex justify-between text-[11px] text-slate-500 dark:text-slate-400">
-                <span>{t(p.owner.name, p.owner.name)}</span>
-                <span className="font-semibold text-slate-700 dark:text-slate-300">{p.area_acres} {t('common.acres')}</span>
+              <div className="flex justify-between items-center text-[11px] text-slate-600 dark:text-slate-300">
+                <span className="truncate max-w-[170px] font-medium">{t(p.owner.name, p.owner.name)}</span>
+                <span className="font-bold text-[10px] uppercase text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">{t(p.land_type, p.land_type)}</span>
               </div>
 
-              <div className="flex justify-between items-center text-[10px] pt-1 border-t border-slate-100 dark:border-slate-800">
-                <span className="font-bold text-slate-600 dark:text-slate-400 uppercase">{t(p.land_type, p.land_type)}</span>
-                <span className="text-red-700 dark:text-red-400 font-medium truncate max-w-[140px]">
-                  +{p.expected_delay_days} {t('common.days')}
+              <div className="flex justify-between items-center text-[10px] pt-1.5 border-t border-slate-100 dark:border-slate-800/80">
+                <span className="text-slate-500 dark:text-slate-400 font-mono">Tehsil: {t(p.tehsil, p.tehsil)}</span>
+                <span className="text-red-700 dark:text-red-400 font-bold">
+                  +{p.expected_delay_days} {t('common.days')} {tr('delay', 'विलंब')}
                 </span>
               </div>
             </div>

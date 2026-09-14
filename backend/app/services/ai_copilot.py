@@ -120,7 +120,59 @@ class AIOfficerCopilotService:
                     "⭐ **AI Recommendation**: Route B is strongly recommended. The ₹260 Cr capital premium is offset by saving ~140 days of construction delay and avoiding heavy commercial litigation."
                 )
 
-        # 5. Employment and Economy query
+        # 5. High Court Stay Orders query
+        elif any(term in q for term in ["stay order", "stay", "litigation", "court", "high court", "न्यायालय", "स्टे", "कोर्ट"]):
+            citations = [
+                "Writ Petition WP(C) 8492/2025 - Rajasthan High Court (Jaipur Bench)",
+                "Writ Petition WP(C) 11204/2025 - Rajasthan High Court",
+                "Civil Court Injunction Registry - Sanganer & Kishangarh"
+            ]
+            if is_hindi:
+                answer = (
+                    "**राजस्थान उच्च न्यायालय एवं दीवानी न्यायालय में लंबित प्रमुख 4 स्थगनादेश:**\n\n"
+                    "1. **खसरा 142/1 (पार्सल P127 - महापुरा)**: WP(C) 8492/2025 में यथास्थिति (Status Quo) आदेश जारी। कारण: वारिसान नामान्तरण लंबित होने से मुआवजा एस्क्रो में रुका।\n"
+                    "2. **खसरा 204/1 (पार्सल P201 - मोखमपुरा)**: वनाधिकार अधिनियम के अंतर्गत ग्राम सभा याचिका।\n"
+                    "3. **बगरू कमर्शियल बेल्ट (पार्सल P112 - खसरा 102/4)**: चौधरी वेयरहाउसिंग द्वारा भूमि अर्जन अधिसूचना को चुनौती।\n"
+                    "4. **किशनगढ़ मार्बल एसोसिएशन ट्रिब्यूनल वाद**: मुआवजा संरचना क्षति मूल्यांकन विवाद।\n\n"
+                    "👉 **अनुशंसित कार्रवाई**: अतिरिक्त महाधिवक्ता (AAG) द्वारा उच्च न्यायालय में स्टे वैकेशन (Stay Vacation) अर्जी दाखिल करें।"
+                )
+            else:
+                answer = (
+                    "**Active High Court & Civil Injunction Stay Orders on Jaipur–Ajmer Project:**\n\n"
+                    "1. **Parcel P127 (Khasra 142/1, Mahapura)**: Interim Status Quo under WP(C) 8492/2025 at Rajasthan High Court due to pending succession mutation.\n"
+                    "2. **Parcel P201 (Khasra 204/1, Mokhampura)**: Forest Rights Act (FRA) Gram Sabha injunction in Dudu court.\n"
+                    "3. **Parcel P112 (Khasra 102/4, Bagru Commercial)**: Commercial building acquisition challenge by Choudhary Warehousing LLP.\n"
+                    "4. **Kishangarh Marble Belt Tribunal Dispute**: Valuation dispute over industrial marble cutting structures.\n\n"
+                    "👉 **Officer Action**: Direct AAG Jaipur Bench to file early hearing and stay vacation applications for Parcels P127 and P112."
+                )
+
+        # 6. Forest Clearances (Parivesh / Dudu Division) query
+        elif any(term in q for term in ["forest", "parivesh", "dudu forest", "tree", "वन", "पर्यावरण", "परिवेश"]):
+            citations = [
+                "MoEFCC Parivesh Portal File #FP/RJ/ROAD/48921/2024",
+                "Forest Diversion Proposal - Dudu Divisional Forest Officer",
+                "Regional Empowered Committee (REC) Jaipur Scrutiny Report"
+            ]
+            if is_hindi:
+                answer = (
+                    "**दूदू वन प्रभाग एवं परिवेश पोर्टल स्वीकृति स्थिति:**\n\n"
+                    "- **अपवर्तित वन भूमि (Route B)**: 35.1 एकड़ (जबकि Route A पर 180.0 एकड़ वन भूमि प्रभावित होती)।\n"
+                    "- **परिवेश पोर्टल चरण**: इन-प्रिंसिपल स्टेज-I स्वीकृति (In-Principle Clearance) प्राप्त।\n"
+                    "- **लंबित स्थिति**: 48 दिनों से स्टेज-II अंतिम अनापत्ति (Stage-II Final NOC) क्षेत्रीय शक्ति प्राप्त समिति में समीक्षाधीन।\n"
+                    "- **प्रतिपूरक वनीकरण (Compensatory Afforestation)**: सम्भर लेक बफर क्षेत्र में दोगुनी क्षतिपूरक वृक्षारोपण भूमि चिह्नित।\n\n"
+                    "👉 **अनुशंसित कार्रवाई**: डीएफओ दूदू द्वारा स्टेज-II अनुपालन रिपोर्ट पोर्टल पर अपलोड कराएं।"
+                )
+            else:
+                answer = (
+                    "**MoEFCC Parivesh Portal & Forest Clearance Status (Dudu Division):**\n\n"
+                    "- **Forest Land Diverted (Route B)**: 35.1 Acres (vs 180.0 Acres on Route A).\n"
+                    "- **Parivesh Approval Stage**: Stage-I In-Principle Approval Granted.\n"
+                    "- **Current Pendency**: Stage-II Final Clearance pending for 48 days at Regional Empowered Committee (REC) Jaipur.\n"
+                    "- **Compensatory Afforestation (CA)**: CA land earmarked adjacent to Sambhar wetland buffer zone.\n\n"
+                    "👉 **Recommended Action**: DFO Dudu to upload Stage-I compliance report on Parivesh portal to issue Stage-II clearance."
+                )
+
+        # 7. Employment and Economy query
         elif any(term in q for term in ["employment", "jobs", "economic", "gdp", "रोजगार", "आर्थिक", "नौकरी"]):
             citations = [
                 "NHAI Direct Labor Multiplier Index",
@@ -128,20 +180,20 @@ class AIOfficerCopilotService:
             ]
             if is_hindi:
                 answer = (
-                    f"**रोजगार एवं क्षेत्रीय आर्थिक प्रभाव मॉडल:**\n\n"
+                    f"**रोजगार एवं क्षेत्रीय आर्थिक प्रभाव मॉडल ({project.name}):**\n\n"
                     f"- **प्रत्यक्ष निर्माण रोजगार**: 8,500 पद (36 माह निर्माण अवधि)\n"
-                    f"- **अप्रत्यक्ष आपूर्ति श्रृंखला रोजगार**: 21,000 पद (सीमेंट, स्टील, लॉजिस्टिक्स)\n"
-                    f"- **स्थानीय श्रमिक भागीदारी**: 68.5%\n"
-                    f"- **यात्रा समय बचत**: 18.4% की औसत कमी (जयपुर-अजमेर फ्रेट गति में 24% सुधार)\n"
-                    f"- **अनुमानित स्थानीय जीडीपी वृद्धि**: ₹480 करोड़ प्रतिवर्ष (किशनगढ़ मार्बल, दूदू कृषि मंडियां)।"
+                    f"- **अप्रत्यक्ष आपूर्ति श्रृंखला रोजगार**: 22,200 पद (सीमेंट, स्टील, लॉजिस्टिक्स)\n"
+                    f"- **कुल रोजगार सृजन**: 30,700 पद\n"
+                    f"- **स्थानीय श्रमिक भागीदारी**: 68.5% (जयपुर, दूदू एवं अजमेर जिले से)\n"
+                    f"- **अनुमानित स्थानीय जीडीपी वृद्धि**: ₹480 करोड़ प्रतिवर्ष।"
                 )
             else:
                 answer = (
                     f"**Employment & Macroeconomic Impact Analysis for {project.name}:**\n\n"
                     f"- **Direct Construction Employment**: 8,500 jobs across a 36-month active build phase.\n"
-                    f"- **Indirect Supply Chain Employment**: 21,000 jobs (Aggregates, cement, fabrication, logistics).\n"
-                    f"- **Local Labor Absorption Ratio**: 68.5% sourced from Jaipur and Ajmer districts.\n"
-                    f"- **Connectivity & Travel Time**: 18.4% average reduction in transit duration; 24% freight speed gain.\n"
+                    f"- **Indirect Supply Chain Employment**: 22,200 jobs (Aggregates, cement, fabrication, logistics).\n"
+                    f"- **Total Employment Generated**: 30,700 total jobs.\n"
+                    f"- **Local Labor Absorption Ratio**: 68.5% sourced from Jaipur, Dudu, and Ajmer districts.\n"
                     f"- **Regional GDP Multiplier**: Estimated ₹480 Crore annual regional economic stimulation."
                 )
 
@@ -153,17 +205,17 @@ class AIOfficerCopilotService:
             ]
             if is_hindi:
                 answer = (
-                    f"**{project.name} सारांश:**\n\n"
-                    f"परियोजना में कुल 1,840 एकड़ भूमि (342 पार्सल) की आवश्यकता है, जिसमें 42 पार्सल उच्च जोखिम में हैं। "
-                    f"परियोजना की कुल तैयारी (Readiness Score) **59/100** है तथा विलंब जोखिम **71%** है।\n\n"
-                    f"आप पार्सल P127, मुआवजा बकाया, रूट तुलना, न्यायालयीन प्रकरण या रोजगार सृजन के संबंध में विशिष्ट प्रश्न पूछ सकते हैं।"
+                    f"**{project.name} मास्टर सारांश:**\n\n"
+                    f"परियोजना में कुल 1,740 एकड़ भूमि (342 पार्सल) की आवश्यकता है, जिसमें 42 पार्सल उच्च जोखिम में हैं। "
+                    f"परियोजना की कुल तैयारी (Readiness Score) **59/100** है तथा विलंब जोखिम **71%** है (अनुमानित विलंब: 185 दिन)।\n\n"
+                    f"आप पार्सल P127, उच्च न्यायालय स्थगनादेश, मुआवजा बकाया, दूदू वन स्वीकृति, रूट B तुलना या रोजगार सृजन के संबंध में विशिष्ट प्रश्न पूछ सकते हैं।"
                 )
             else:
                 answer = (
                     f"**Master Summary for {project.name}:**\n\n"
-                    f"The project requires 1,840 acres across 342 land parcels (42 identified as high/critical delay risk). "
+                    f"The project requires 1,740 acres across 342 land parcels (42 identified as high/critical delay risk). "
                     f"The current Project Readiness Score is **59/100**, and the overall Delay Risk is **71%** (expected delay: 185 days).\n\n"
-                    f"You can query about specific high-risk parcels (e.g. `P127`), compensation pendency, route alternatives, environmental clearances, or employment impact."
+                    f"You can query about specific high-risk parcels (e.g. `P127`), High Court stay orders, compensation pendency, Dudu forest clearance, route alternatives, or employment impact."
                 )
 
         return {

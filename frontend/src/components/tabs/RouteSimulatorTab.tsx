@@ -20,13 +20,13 @@ export const RouteSimulatorTab: React.FC = () => {
     }
     if (routeId === 'ROUTE-B') {
       return tr(
-        '★ Optimal Alignment: Minimal displacement (412 families), lowest forest diversion (14.2 ha), and shortest delay (45 days).',
-        '★ इष्टतम संरेखन: न्यूनतम विस्थापन (412 परिवार), न्यूनतम वन क्षति (14.2 हे.) तथा 45 दिनों का न्यूनतम विलंब।'
+        '★ Optimal Alignment: Minimal displacement (412 families), lowest forest diversion (35.1 acres), and shortest delay (45 days).',
+        '★ इष्टतम संरेखन: न्यूनतम विस्थापन (412 परिवार), न्यूनतम वन क्षति (35.1 एकड़) तथा 45 दिनों का न्यूनतम विलंब।'
       );
     }
     return tr(
-      'Environmentally unacceptable: 112.5 ha dense forest diversion and wildlife corridor fragmentation.',
-      'पर्यावरणीय दृष्टि से अस्वीकार्य: 112.5 हेक्टेयर सघन वन अपवर्तन एवं वन्यजीव गलियारे में व्यवधान।'
+      'Environmentally unacceptable: 278 acres dense forest diversion and wildlife corridor fragmentation.',
+      'पर्यावरणीय दृष्टि से अस्वीकार्य: 278 एकड़ सघन वन अपवर्तन एवं वन्यजीव गलियारे में व्यवधान।'
     );
   };
 
@@ -71,14 +71,14 @@ export const RouteSimulatorTab: React.FC = () => {
               <strong>{tr('reduces overall project delay probability by 40% (saving ~140 calendar days)', 'समग्र परियोजना विलंब प्रायिकता को 40% कम करता है (~140 दिनों की बचत)')}</strong>,{' '}
               <strong>{tr('displaces 68% fewer rural households (412 vs 1,284)', '68% कम ग्रामीण परिवारों को विस्थापित करता है (412 बनाम 1,284)')}</strong>,{' '}
               {tr('and decreases forest land diversion from', 'तथा वन भूमि अपवर्तन को')}{' '}
-              <strong>{tr('72.8 ha to 14.2 ha.', '72.8 हेक्टेयर से घटाकर 14.2 हेक्टेयर करता है।')}</strong>
+              <strong>{tr('180.0 acres to 35.1 acres.', '180.0 एकड़ से घटाकर 35.1 एकड़ करता है।')}</strong>
             </>
           ) : (
             <>
               While Route B requires an additional capital outlay of ₹260 Cr, the AI predictive engine forecasts that it 
               <strong> reduces overall project delay probability by 40% (saving ~140 calendar days)</strong>, 
               displaces <strong>68% fewer rural households</strong> (412 vs 1,284), and 
-              decreases forest land diversion from <strong>72.8 ha to 14.2 ha</strong>.
+              decreases forest land diversion from <strong>180.0 acres to 35.1 acres</strong>.
             </>
           )}
         </p>
@@ -221,7 +221,7 @@ export const RouteSimulatorTab: React.FC = () => {
           </div>
           <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
             <span className="text-slate-500 dark:text-slate-400 block text-[11px]">{tr('Forest Diverted', 'वन अपवर्तन')}</span>
-            <span className="font-bold text-slate-900 dark:text-white text-base font-mono">{selectedRoute.forest_diverted_ha} Ha</span>
+            <span className="font-bold text-slate-900 dark:text-white text-base font-mono">{selectedRoute.forest_diverted_acres} Acres</span>
           </div>
         </div>
 
@@ -363,8 +363,8 @@ export const RouteSimulatorTab: React.FC = () => {
                   {tr('Forest Land Diverted', 'अपवर्तित वन भूमि')}
                 </td>
                 {routes.map(r => (
-                  <td key={r.route_id} className={`p-3 text-center ${selectedRouteId === r.route_id ? 'bg-blue-50/50 dark:bg-blue-950/30' : ''} ${r.forest_diverted_ha > 50 ? 'text-red-700 dark:text-red-400 font-bold' : 'text-emerald-700 dark:text-emerald-400 font-semibold'}`}>
-                    {r.forest_diverted_ha} {tr('Hectares', 'हेक्टेयर')}
+                  <td key={r.route_id} className={`p-3 text-center ${selectedRouteId === r.route_id ? 'bg-blue-50/50 dark:bg-blue-950/30' : ''} ${r.forest_diverted_acres > 100 ? 'text-red-700 dark:text-red-400 font-bold' : 'text-emerald-700 dark:text-emerald-400 font-semibold'}`}>
+                    {r.forest_diverted_acres} {tr('Acres', 'एकड़')}
                   </td>
                 ))}
               </tr>

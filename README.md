@@ -53,7 +53,7 @@ LandSaksham provides comprehensive, native-script localization across all **22 l
 
 - **Frontend**: React 18, TypeScript, Tailwind CSS, Lucide Icons, Leaflet.js, Canvas Confetti, Vite.
 - **Backend**: Python 3.9+, FastAPI, Pydantic v2, Uvicorn, Scikit-Learn/XGBoost formulation, SHAP explainability.
-- **Architecture**: Modular Provider Pattern (`/providers/base.py`, `/providers/mock_data_provider.py`) enabling seamless integration of live State government APIs (Bhulekh, Bhoomi, e-Courts NJDG, Parivesh, PM GatiShakti).
+
 
 ---
 
@@ -113,6 +113,7 @@ npm run dev
 
 ## 📚 Technical Documentation & Integration Guides
 
+- [Render Cloud Deployment Guide](docs/DEPLOYMENT_RENDER.md)
 - [Government Data & Live API Integration Guide](docs/GOVERNMENT_DATA_INTEGRATION.md)
 - [Multilingual Localization & Adding New Indian Languages](docs/I18N_LOCALIZATION_GUIDE.md)
 

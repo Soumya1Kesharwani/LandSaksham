@@ -53,8 +53,6 @@ LandSaksham provides comprehensive, native-script localization across all **22 l
 
 - **Frontend**: React 18, TypeScript, Tailwind CSS, Lucide Icons, Leaflet.js, Canvas Confetti, Vite.
 - **Backend**: Python 3.9+, FastAPI, Pydantic v2, Uvicorn, Scikit-Learn/XGBoost formulation, SHAP explainability.
-- **Architecture**: Modular Provider Pattern (`/providers/base.py`, `/providers/mock_data_provider.py`) enabling seamless integration of live State government APIs (Bhulekh, Bhoomi, e-Courts NJDG, Parivesh, PM GatiShakti).
-
 ---
 
 ## 🏃 Quick Start Guide
@@ -77,6 +75,17 @@ npm install
 npm run dev
 ```
 - **Open in Browser**: [http://127.0.0.1:5173/]
+
+---
+
+## ☁️ Cloud Deployment (Render)
+
+LandSaksham includes pre-configured **1-Click Render Blueprint** (`render.yaml`) and multi-stage `Dockerfile`.
+
+1. Push this repository to GitHub.
+2. Go to [Render Dashboard](https://dashboard.render.com/) → **New +** → **Blueprint**.
+3. Select your repository and click **Apply**.
+4. Full instructions available in [DEPLOY_RENDER.md](file:///Users/soumyakesharwani/Desktop/FINAL/LandSaksham/DEPLOY_RENDER.md).
 
 ---
 

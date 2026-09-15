@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useProject } from '../../context/ProjectContext';
 import { Download, Printer } from 'lucide-react';
+import { API_BASE_URL } from '../../services/api';
 
 export const ReportGeneratorTab: React.FC = () => {
   const { language, tr, t } = useLanguage();
@@ -18,8 +19,7 @@ export const ReportGeneratorTab: React.FC = () => {
   };
 
   const handleDownloadReport = () => {
-    const host = window.location.hostname || '127.0.0.1';
-    window.open(`http://${host}:8000/api/reports/html/${activeProject?.id || 'jaipur-ajmer-nh48'}`, '_blank');
+    window.open(`${API_BASE_URL}/reports/html/${activeProject?.id || 'jaipur-ajmer-nh48'}`, '_blank');
   };
 
   return (

@@ -99,17 +99,17 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
     return (
       <button
         onClick={onToggle || onClose}
-        className="fixed bottom-6 right-6 z-[99990] flex items-center gap-2.5 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold px-4 py-3 rounded-2xl shadow-2xl border border-blue-400/40 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer group"
+        className="fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-[99990] flex items-center gap-2.5 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-2xl shadow-2xl border border-blue-400/40 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer group"
         title={tr("Open AI Officer Copilot", "एआई अधिकारी सहायक खोलें")}
       >
-        <Sparkles className="w-5 h-5 text-amber-300 animate-pulse" />
+        <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300 animate-pulse" />
         <span className="text-xs font-bold text-white tracking-wide">{t('AI Copilot')}</span>
       </button>
     );
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-[99990] w-96 sm:w-[440px] h-[580px] bg-[#111c38] rounded-xl shadow-2xl border border-slate-700 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200">
+    <div className="fixed inset-x-3 bottom-18 top-16 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[440px] sm:h-[580px] z-[99990] bg-[#111c38] rounded-xl shadow-2xl border border-slate-700 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200">
       
       {/* Copilot Header */}
       <div className="px-4 py-3 bg-gradient-to-r from-gov-navy to-slate-900 text-white flex items-center justify-between border-b border-slate-800">

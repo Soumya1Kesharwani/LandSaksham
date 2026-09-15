@@ -13,7 +13,8 @@ out/
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
+*.sols
+*.pyc
 .Python
 env/
 venv/

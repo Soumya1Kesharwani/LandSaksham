@@ -7,7 +7,7 @@ import { UserRole } from '../../types';
 import { LanguageSelector } from './LanguageSelector';
 import {
   Building2, Globe, Shield, Bell, ChevronDown,
-  MapPin, Clock, ExternalLink, Sparkles, User, Sun, Moon, Info, X
+  MapPin, Clock, ExternalLink, Sparkles, User, Sun, Moon, Info, X, Menu
 } from 'lucide-react';
 
 interface GovHeaderProps {
@@ -136,13 +136,22 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
       </div>
 
       {/* Main Bar */}
-      <div className="px-4 py-6 flex items-center justify-between gap-4">
+      <div className="px-3 sm:px-4 py-2.5 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-4">
         {/* Left: Identity & Branding */}
-        <div className="flex items-center gap-3">
-          {/* Logo (Clickable Sidebar Toggle) */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Mobile Sidebar Hamburger Toggle */}
           <button
             onClick={onToggleSidebar}
-            className="w-11 h-11 rounded-full bg-white p-0.5 shadow-sm border border-slate-700 hover:border-blue-400 flex items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all duration-200 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+            className="md:hidden p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 active:scale-95 transition"
+            aria-label="Toggle Navigation Menu"
+          >
+            {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+
+          {/* Logo (Desktop Sidebar Toggle) */}
+          <button
+            onClick={onToggleSidebar}
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white p-0.5 shadow-sm border border-slate-700 hover:border-blue-400 flex items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all duration-200 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
             title={isSidebarOpen ? "Click logo to close sidebar" : "Click logo to open sidebar"}
             aria-label="Toggle Navigation Sidebar"
           >
@@ -151,10 +160,10 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
 
           <div>
             <div className="flex flex-col justify-center">
-              <h1 className="text-base font-bold text-slate-100 tracking-tight leading-tight">
+              <h1 className="text-xs sm:text-sm font-bold text-slate-100 tracking-tight leading-tight hidden xs:block">
                 {t('system.title')}
               </h1>
-              <div className="text-base font-extrabold tracking-tight leading-tight mt-0.5">
+              <div className="text-sm sm:text-base font-extrabold tracking-tight leading-tight">
                 <span className="text-[#f97316]">{brand.p1}</span>
                 <span className="text-white">{brand.p2}</span>
                 <span className="text-[#4ade80]">{brand.p3}</span>

@@ -6,6 +6,7 @@ import { ProjectProvider, useProject } from './context/ProjectContext';
 
 import { GovHeader } from './components/common/GovHeader';
 import { GovSidebar } from './components/common/GovSidebar';
+import { MobileBottomNav } from './components/common/MobileBottomNav';
 
 import { OverviewTab } from './components/tabs/OverviewTab';
 import { LandIntelligenceTab } from './components/tabs/LandIntelligenceTab';
@@ -91,19 +92,19 @@ const DashboardContent: React.FC<{
       <div className="flex-1 flex overflow-hidden relative">
         <GovSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+        <main className="flex-1 overflow-y-auto p-3 sm:p-6 pb-20 md:pb-6 space-y-4 sm:space-y-6">
           {/* Active Role Indicator Bar */}
-          <div className="flex items-center justify-between bg-blue-50/80 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 px-4 py-2 rounded-lg text-xs transition-colors">
+          <div className="flex items-center justify-between bg-blue-50/80 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 px-3 sm:px-4 py-2 rounded-lg text-xs transition-colors">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400 animate-pulse"></span>
               <span className="text-slate-800 dark:text-blue-100">{t('system.active_viewport')}: <strong className="text-slate-900 dark:text-white font-bold">{t(role)}</strong></span>
-              <span className="text-slate-400 dark:text-blue-600">|</span>
-              <span className="text-slate-700 dark:text-blue-200">{t('system.all_permissions_active')}</span>
+              <span className="text-slate-400 dark:text-blue-600 hidden sm:inline">|</span>
+              <span className="text-slate-700 dark:text-blue-200 hidden sm:inline">{t('system.all_permissions_active')}</span>
             </div>
 
             <button
               onClick={onOpenCreateProject}
-              className="text-blue-700 dark:text-blue-300 hover:underline font-semibold"
+              className="text-blue-700 dark:text-blue-300 hover:underline font-semibold text-[11px] sm:text-xs"
             >
               {t('system.register_new_project')}
             </button>
@@ -112,6 +113,13 @@ const DashboardContent: React.FC<{
           {renderActiveTab()}
         </main>
       </div>
+
+      {/* Mobile Sticky Bottom Navigation Bar */}
+      <MobileBottomNav
+        onToggleSidebar={() => setSidebarOpen(prev => !prev)}
+        onOpenCopilot={onOpenCopilot}
+        isSidebarOpen={sidebarOpen}
+      />
 
       {/* Global Modals */}
       {selectedParcel && (

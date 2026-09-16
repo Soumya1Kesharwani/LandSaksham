@@ -10,7 +10,7 @@
 
 ### 🌐 **Live Demo**
 
-🚀 **[Open LandSaksham Live]([https://landsaksham-hh5l.onrender.com/](https://landsaksham-hh5l.onrender.com))**
+🚀 **[Open LandSaksham Live](https://landsaksham-hh5l.onrender.com/)**
 
 > **⚡ Try the fully interactive LandSaksham prototype directly in your browser.**
 

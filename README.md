@@ -8,6 +8,14 @@
 
 ---
 
+### 🌐 **Live Demo**
+
+🚀 **[Open LandSaksham Live]([https://landsaksham-hh5l.onrender.com/](https://landsaksham-hh5l.onrender.com))**
+
+> **⚡ Try the fully interactive LandSaksham prototype directly in your browser.**
+
+---
+
 ## 🏛️ Executive Summary
 
 Infrastructure delays in India often stem from fragmented inter-departmental data: land records (RoR/Khasra) sit in Revenue departments, stay orders sit in e-Courts registries, compensation claims sit in LAO treasuries, and forest clearances sit in MoEFCC PARIVESH.

@@ -68,12 +68,12 @@ export const CitizenPortal: React.FC<CitizenPortalProps> = ({ onBackToDashboard 
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen w-full max-w-full bg-slate-100 flex flex-col font-sans overflow-x-hidden">
       
       {/* Citizen Header */}
-      <header className="bg-gov-navy text-white border-b border-slate-800 py-3 sm:py-4 px-3 sm:px-6 shadow-md">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-          <div className="flex items-center gap-2.5 sm:gap-3">
+      <header className="bg-gov-navy text-white border-b border-slate-800 py-3 sm:py-4 px-3 sm:px-6 shadow-md w-full max-w-full overflow-hidden">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 min-w-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white p-0.5 shadow-sm border border-slate-200 flex items-center justify-center overflow-hidden shrink-0">
               <img src="/logo.png" alt="NLIIS Citizen Portal Logo" className="w-full h-full object-contain rounded-full" />
             </div>
@@ -109,7 +109,7 @@ export const CitizenPortal: React.FC<CitizenPortalProps> = ({ onBackToDashboard 
       </header>
 
       {/* Main Tracker Container */}
-      <main className="max-w-4xl w-full mx-auto p-3 sm:p-6 flex-1 space-y-4 sm:space-y-6">
+      <main className="max-w-4xl w-full mx-auto p-3 sm:p-6 pb-20 flex-1 space-y-4 sm:space-y-6 min-w-0 overflow-x-hidden">
         
         {/* Search Box */}
         <div className="bg-white dark:bg-[#111c38] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-4 sm:p-6 space-y-3 sm:space-y-4">

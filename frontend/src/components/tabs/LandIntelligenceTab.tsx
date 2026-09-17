@@ -33,11 +33,11 @@ export const LandIntelligenceTab: React.FC = () => {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-full min-w-0">
       
       {/* Land Breakdown Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
-        <div className="bg-white border border-slate-200 rounded-lg p-3 sm:p-4 shadow-sm">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 min-w-0 w-full">
+        <div className="bg-white border border-slate-200 rounded-lg p-3 sm:p-4 shadow-sm min-w-0 overflow-hidden">
           <div className="text-xs font-semibold uppercase text-slate-500 truncate">{t('land.total_land_required')}</div>
           <div className="text-xl sm:text-2xl font-bold font-mono text-slate-900 mt-1 truncate">
             {activeProject?.total_land_required_acres.toLocaleString()} {t('common.acres')}
@@ -73,19 +73,19 @@ export const LandIntelligenceTab: React.FC = () => {
       </div>
 
       {/* Main Table Card */}
-      <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden min-w-0 w-full max-w-full">
         
         {/* Table Controls */}
-        <div className="p-3.5 sm:p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-          <div className="flex flex-wrap items-center gap-2 flex-1">
-            <div className="relative w-full sm:w-64">
+        <div className="p-3.5 sm:p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs min-w-0">
+          <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
+            <div className="relative w-full sm:w-64 min-w-0">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
               <input
                 type="text"
                 placeholder={t('common.search_placeholder')}
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="pl-8 pr-3 py-1.5 border border-slate-300 rounded text-xs w-full focus:ring-1 focus:ring-gov-blue outline-none bg-white text-slate-800 font-medium"
+                className="pl-8 pr-3 py-1.5 border border-slate-300 rounded text-xs w-full focus:ring-1 focus:ring-gov-blue outline-none bg-white text-slate-800 font-medium min-w-0"
               />
             </div>
 
@@ -122,7 +122,7 @@ export const LandIntelligenceTab: React.FC = () => {
         </div>
 
         {/* Table Content */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto touch-scroll max-w-full">
           <table className="w-full min-w-[780px] text-left text-xs border-collapse">
             <thead className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
               <tr>

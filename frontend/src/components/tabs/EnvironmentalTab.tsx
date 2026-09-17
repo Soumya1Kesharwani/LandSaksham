@@ -10,10 +10,10 @@ export const EnvironmentalTab: React.FC = () => {
   const envParcels = parcels.filter(p => p.environmental && (p.environmental.overlaps_forest || p.environmental.waterbody_overlap || p.environmental.in_eco_sensitive_zone));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-full min-w-0">
       
       {/* Top Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 items-stretch">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 items-stretch min-w-0 w-full">
         {/* Card 1: Forest Land Diversion (Emerald Tint) */}
         <div className="bg-emerald-50/70 border border-emerald-200/80 dark:bg-emerald-950/30 dark:border-emerald-900 rounded-lg p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
           <div>
@@ -139,12 +139,12 @@ export const EnvironmentalTab: React.FC = () => {
       </div>
 
       {/* Sensitive Parcels List */}
-      <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
-        <div className="p-3.5 sm:p-4 border-b border-slate-200 bg-slate-50 font-bold text-xs uppercase tracking-wide text-slate-700">
+      <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden min-w-0 w-full max-w-full">
+        <div className="p-3.5 sm:p-4 border-b border-slate-200 bg-slate-50 font-bold text-xs uppercase tracking-wide text-slate-700 min-w-0">
           {tr('Environmentally Sensitive Land Parcels', 'पर्यावरण-संवेदनशील भूमि पार्सल')}
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto touch-scroll max-w-full">
           <table className="w-full min-w-[700px] text-left text-xs">
             <thead className="bg-slate-100 text-slate-700 font-semibold border-b">
               <tr>

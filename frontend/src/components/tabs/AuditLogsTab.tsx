@@ -41,10 +41,10 @@ export const AuditLogsTab: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-full min-w-0">
       
       {/* Top Banner */}
-      <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-w-0">
         <div>
           <div className="flex items-center gap-2">
             <History className="w-5 h-5 text-gov-navy shrink-0" />
@@ -67,8 +67,8 @@ export const AuditLogsTab: React.FC = () => {
       </div>
 
       {/* Audit Log Table */}
-      <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
-        <div className="overflow-x-auto touch-scroll">
+      <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden min-w-0 w-full max-w-full">
+        <div className="overflow-x-auto touch-scroll max-w-full">
           <table className="w-full text-left text-xs border-collapse font-mono min-w-[760px]">
             <thead className="bg-slate-100 text-slate-700 font-sans font-semibold border-b border-slate-200">
               <tr>

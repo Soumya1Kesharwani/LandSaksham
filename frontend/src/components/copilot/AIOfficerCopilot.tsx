@@ -109,22 +109,22 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
   }
 
   return (
-    <div className="fixed inset-x-2 bottom-18 top-14 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[440px] sm:h-[580px] z-[99990] bg-[#111c38] rounded-xl shadow-2xl border border-slate-700 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200">
+    <div className="fixed inset-x-2 bottom-16 sm:bottom-6 sm:right-6 sm:inset-x-auto top-14 sm:top-auto sm:w-[440px] sm:h-[580px] max-w-[calc(100vw-16px)] z-[99990] bg-[#111c38] rounded-xl shadow-2xl border border-slate-700 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200">
       
       {/* Copilot Header */}
-      <div className="px-3.5 sm:px-4 py-2.5 sm:py-3 bg-gradient-to-r from-gov-navy to-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+      <div className="px-3.5 sm:px-4 py-2.5 sm:py-3 bg-gradient-to-r from-gov-navy to-slate-900 text-white flex items-center justify-between border-b border-slate-800 min-w-0">
         <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white p-0.5 border border-slate-300 flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
             <img src="/logo.png" alt="Copilot" className="w-full h-full object-contain rounded-full" />
           </div>
           <div className="min-w-0">
             <h3 className="font-bold text-xs flex items-center gap-1.5 truncate">
-              <span>{tr('NLIIS AI Officer Copilot', 'NLIIS एआई अधिकारी सहायक')}</span>
+              <span className="truncate">{tr('NLIIS AI Officer Copilot', 'NLIIS एआई अधिकारी सहायक')}</span>
               <span className="text-[9px] sm:text-[10px] font-mono bg-blue-900 text-blue-200 px-1.5 py-0.2 rounded shrink-0">
                 {tr('RAG Grounded', 'RAG आधारित')}
               </span>
             </h3>
-            <p className="text-[10px] sm:text-[11px] text-slate-300 truncate max-w-[200px] sm:max-w-[220px]">
+            <p className="text-[10px] sm:text-[11px] text-slate-300 truncate max-w-[180px] sm:max-w-[220px]">
               {t(activeProject?.name, activeProject?.name)}
             </p>
           </div>
@@ -139,7 +139,7 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
       </div>
 
       {/* Quick Prompts Bar */}
-      <div className="p-2 bg-[#0d162d] border-b border-slate-800 flex gap-1.5 overflow-x-auto text-[11px] no-scrollbar">
+      <div className="p-2 bg-[#0d162d] border-b border-slate-800 flex gap-1.5 overflow-x-auto max-w-full touch-scroll text-[11px] no-scrollbar">
         {quickPrompts.map((qp, idx) => (
           <button
             key={idx}

@@ -42,10 +42,10 @@ export const RouteSimulatorTab: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-full min-w-0">
       
       {/* Top AI Decision Callout Banner */}
-      <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-900 text-white rounded-xl p-6 shadow-md border border-emerald-800/60 space-y-3">
+      <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-900 text-white rounded-xl p-4 sm:p-6 shadow-md border border-emerald-800/60 space-y-3 min-w-0 w-full max-w-full">
         <div className="flex items-center gap-2">
           <span className="bg-emerald-500 text-slate-950 text-[11px] font-extrabold px-2.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
             <Sparkles className="w-3.5 h-3.5" />
@@ -119,32 +119,32 @@ export const RouteSimulatorTab: React.FC = () => {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 min-w-0 w-full">
           {activeRoutes.map(r => {
             const isSelected = selectedRouteId === r.route_id;
             return (
               <button
                 key={r.route_id}
                 onClick={() => setSelectedRouteId(r.route_id)}
-                className={`p-4 rounded-xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
+                className={`p-3.5 sm:p-4 rounded-xl border text-left transition-all flex flex-col justify-between cursor-pointer min-w-0 overflow-hidden ${
                   isSelected
                     ? 'bg-blue-50/90 dark:bg-[#16254c] border-blue-500 ring-2 ring-blue-500/40 shadow-md scale-[1.01]'
                     : 'bg-white dark:bg-[#111c38] border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-500/50'
                 }`}
               >
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <span className={`text-sm font-extrabold uppercase tracking-wide ${
+                <div className="min-w-0 w-full">
+                  <div className="flex items-center justify-between gap-2 mb-1.5 min-w-0">
+                    <span className={`text-sm font-extrabold uppercase tracking-wide truncate ${
                       isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-slate-900 dark:text-white'
                     }`}>
                       {r.route_id}
                     </span>
                     {r.is_recommended ? (
-                      <span className="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-wide flex items-center gap-1">
+                      <span className="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-wide flex items-center gap-1 shrink-0">
                         ★ {tr('RECOMMENDED', 'अनुशंसित')}
                       </span>
                     ) : (
-                      <span className={`text-[10px] px-2 py-0.5 rounded border font-semibold ${
+                      <span className={`text-[10px] px-2 py-0.5 rounded border font-semibold shrink-0 ${
                         isSelected 
                           ? 'bg-blue-100/80 text-blue-900 border-blue-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
                           : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
@@ -177,8 +177,8 @@ export const RouteSimulatorTab: React.FC = () => {
       </div>
 
       {/* Selected Route Deep-Dive Panel */}
-      <div className="bg-white dark:bg-[#111c38] border border-blue-500/40 rounded-xl p-3.5 sm:p-5 shadow-sm space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
+      <div className="bg-white dark:bg-[#111c38] border border-blue-500/40 rounded-xl p-3.5 sm:p-5 shadow-sm space-y-4 min-w-0 w-full max-w-full overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3 min-w-0">
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-base font-extrabold text-gov-navy dark:text-white font-mono">{selectedRoute.route_id}</span>
@@ -206,37 +206,37 @@ export const RouteSimulatorTab: React.FC = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
-          <div className="p-2.5 sm:p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 text-xs min-w-0 w-full">
+          <div className="p-2.5 sm:p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 min-w-0 overflow-hidden">
             <span className="text-slate-500 dark:text-slate-400 block text-[11px] truncate">{tr('Total Distance', 'कुल दूरी')}</span>
-            <span className="font-bold text-slate-900 dark:text-white text-sm sm:text-base font-mono">{selectedRoute.total_length_km} km</span>
+            <span className="font-bold text-slate-900 dark:text-white text-sm sm:text-base font-mono truncate block">{selectedRoute.total_length_km} km</span>
           </div>
-          <div className="p-2.5 sm:p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
+          <div className="p-2.5 sm:p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 min-w-0 overflow-hidden">
             <span className="text-slate-500 dark:text-slate-400 block text-[11px] truncate">{tr('Estimated Outlay', 'अनुमानित व्यय')}</span>
-            <span className="font-bold text-slate-900 dark:text-white text-sm sm:text-base font-mono">₹{selectedRoute.estimated_cost_cr.toLocaleString()} Cr</span>
+            <span className="font-bold text-slate-900 dark:text-white text-sm sm:text-base font-mono truncate block">₹{selectedRoute.estimated_cost_cr.toLocaleString()} Cr</span>
           </div>
-          <div className="p-2.5 sm:p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
+          <div className="p-2.5 sm:p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 min-w-0 overflow-hidden">
             <span className="text-slate-500 dark:text-slate-400 block text-[11px] truncate">{tr('Predicted Delay', 'अनुमानित विलंब')}</span>
-            <span className={`font-bold text-sm sm:text-base font-mono ${selectedRoute.is_recommended ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+            <span className={`font-bold text-sm sm:text-base font-mono truncate block ${selectedRoute.is_recommended ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
               +{selectedRoute.expected_delay_days} Days
             </span>
           </div>
-          <div className="p-2.5 sm:p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
+          <div className="p-2.5 sm:p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 min-w-0 overflow-hidden">
             <span className="text-slate-500 dark:text-slate-400 block text-[11px] truncate">{tr('Forest Diverted', 'वन अपवर्तन')}</span>
-            <span className="font-bold text-slate-900 dark:text-white text-sm sm:text-base font-mono">{selectedRoute.forest_diverted_acres} Acres</span>
+            <span className="font-bold text-slate-900 dark:text-white text-sm sm:text-base font-mono truncate block">{selectedRoute.forest_diverted_acres} Acres</span>
           </div>
         </div>
 
-        <div className="p-3 sm:p-3.5 rounded-lg bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+        <div className="p-3 sm:p-3.5 rounded-lg bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 leading-relaxed min-w-0">
           <strong className="text-slate-900 dark:text-white block mb-1 font-bold">{tr('Detailed AI Evaluation & Risk Impact:', 'विस्तृत एआई मूल्यांकन एवं जोखिम प्रभाव:')}</strong>
           {getVerdictText(selectedRoute.ai_recommendation_verdict, selectedRoute.route_id)}
         </div>
       </div>
 
       {/* Side-by-Side Comparison Table */}
-      <div className="bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden">
-        <div className="p-3.5 sm:p-4 bg-slate-50 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-          <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-slate-800 dark:text-slate-200 truncate">
+      <div className="bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden min-w-0 w-full max-w-full">
+        <div className="p-3.5 sm:p-4 bg-slate-50 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between min-w-0 gap-2">
+          <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-slate-800 dark:text-slate-200 truncate min-w-0">
             <GitFork className="w-4 h-4 text-gov-blue dark:text-blue-400 shrink-0" />
             <span className="truncate">{tr('Multi-Criteria Alignment Trade-off Comparison', 'बहु-मानदंड संरेखन व्यापार-तुलना')}</span>
           </div>
@@ -245,7 +245,7 @@ export const RouteSimulatorTab: React.FC = () => {
           </span>
         </div>
 
-        <div className="overflow-x-auto touch-scroll">
+        <div className="overflow-x-auto touch-scroll max-w-full">
           <table className="w-full min-w-[700px] text-left text-xs border-collapse">
             <thead className="bg-slate-100 dark:bg-slate-900/90 text-slate-800 dark:text-slate-200 font-semibold border-b border-slate-200 dark:border-slate-800">
               <tr>

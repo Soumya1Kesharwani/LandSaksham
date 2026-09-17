@@ -35,8 +35,8 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
     : tr("Low Readiness — Critical Bottlenecks", "न्यून तत्परता — गंभीर अवरोध विद्यमान");
 
   return (
-    <div className="flex items-center gap-4 bg-[#111c38] border border-slate-800 rounded-lg p-4 shadow-sm">
-      <div className="relative flex items-center justify-center shrink-0 w-20 h-20">
+    <div className="flex items-center gap-3 sm:gap-4 bg-[#111c38] border border-slate-800 rounded-lg p-3 sm:p-4 shadow-sm w-full min-w-0">
+      <div className="relative flex items-center justify-center shrink-0 w-16 h-16 sm:w-20 sm:h-20">
         <svg className="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 100 100">
           {/* Background Track Circle */}
           <circle
@@ -62,24 +62,24 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-          <span className="text-xl font-extrabold font-mono text-white leading-none">
+          <span className="text-lg sm:text-xl font-extrabold font-mono text-white leading-none">
             {clampedScore}
           </span>
-          <span className="text-[10px] text-slate-400 font-semibold uppercase mt-0.5">
+          <span className="text-[9px] sm:text-[10px] text-slate-400 font-semibold uppercase mt-0.5">
             / 100
           </span>
         </div>
       </div>
 
-      <div className="flex-1">
-        <div className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+      <div className="flex-1 min-w-0">
+        <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400 truncate">
           {displayTitle}
         </div>
-        <div className="text-sm font-bold text-slate-100 mt-0.5">
+        <div className="text-xs sm:text-sm font-bold text-slate-100 mt-0.5 leading-snug">
           {statusText}
         </div>
         {delayProbability !== undefined && (
-          <div className="mt-1.5 flex items-center gap-2 text-xs text-slate-300">
+          <div className="mt-1 flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-slate-300">
             <span>{tr("Delay Risk Probability:", "विलंब जोखिम संभावना:")}</span>
             <span className={`font-mono font-bold ${delayProbability > 0.6 ? 'text-red-400' : 'text-amber-400'}`}>
               {(delayProbability * 100).toFixed(0)}%

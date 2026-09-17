@@ -8,10 +8,10 @@ export const SocialImpactTab: React.FC = () => {
   const { activeProject } = useProject();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-full min-w-0">
       
       {/* Top Social Impact Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 min-w-0 w-full">
         <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-4 shadow-sm">
           <div className="text-xs font-semibold uppercase text-slate-500 truncate">{t('social.affected_families')}</div>
           <div className="text-xl sm:text-2xl font-bold font-mono text-slate-900 mt-1 truncate">1,284 {tr('Families', 'परिवार')}</div>
@@ -86,12 +86,12 @@ export const SocialImpactTab: React.FC = () => {
       </div>
 
       {/* Village-Level Social Impact Summary */}
-      <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
-        <div className="p-3.5 sm:p-4 border-b border-slate-200 bg-slate-50 font-bold text-xs uppercase tracking-wide text-slate-700">
+      <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden min-w-0 w-full max-w-full">
+        <div className="p-3.5 sm:p-4 border-b border-slate-200 bg-slate-50 font-bold text-xs uppercase tracking-wide text-slate-700 min-w-0">
           {tr('Village-Level Social & Displacement Impact Breakdown', 'ग्राम-वार सामाजिक एवं विस्थापन प्रभाव विवरण')}
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto touch-scroll max-w-full">
           <table className="w-full min-w-[650px] text-left text-xs">
             <thead className="bg-slate-100 text-slate-700 font-semibold border-b">
               <tr>

@@ -424,37 +424,37 @@ export const GISMapTab: React.FC = () => {
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 w-full max-w-full min-w-0">
       {/* Mobile Segmented View Switcher: Map View vs Parcel List */}
-      <div className="lg:hidden flex items-center bg-slate-200 dark:bg-slate-800/80 p-1 rounded-lg text-xs font-bold shadow-2xs gap-1">
+      <div className="lg:hidden flex items-center bg-slate-200 dark:bg-slate-800/80 p-1 rounded-lg text-xs font-bold shadow-2xs gap-1 min-w-0 w-full">
         <button
           onClick={() => setActiveMobileView('map')}
-          className={`flex-1 py-2 px-3 rounded-md flex items-center justify-center gap-1.5 transition ${
+          className={`flex-1 py-2 px-2 sm:px-3 rounded-md flex items-center justify-center gap-1 sm:gap-1.5 transition min-w-0 ${
             activeMobileView === 'map'
               ? 'bg-gov-blue text-white shadow-sm'
               : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <MapIcon className="w-3.5 h-3.5" />
-          <span>{tr('Spatial Map View', 'स्थानिक मानचित्र दृश्य')}</span>
+          <MapIcon className="w-3.5 h-3.5 shrink-0" />
+          <span className="truncate">{tr('Spatial Map View', 'स्थानिक मानचित्र दृश्य')}</span>
         </button>
         <button
           onClick={() => setActiveMobileView('parcels')}
-          className={`flex-1 py-2 px-3 rounded-md flex items-center justify-center gap-1.5 transition ${
+          className={`flex-1 py-2 px-2 sm:px-3 rounded-md flex items-center justify-center gap-1 sm:gap-1.5 transition min-w-0 ${
             activeMobileView === 'parcels'
               ? 'bg-gov-blue text-white shadow-sm'
               : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <MapPin className="w-3.5 h-3.5" />
-          <span>{tr('Khasra Parcels', 'खसरा पार्सल सूची')} ({parcels.length})</span>
+          <MapPin className="w-3.5 h-3.5 shrink-0" />
+          <span className="truncate">{tr('Khasra Parcels', 'खसरा पार्सल सूची')} ({parcels.length})</span>
         </button>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-4 h-[calc(100vh-210px)] min-h-[500px] lg:h-[calc(100vh-140px)] lg:min-h-[650px]">
+      <div className="flex flex-col lg:flex-row gap-4 h-[calc(100vh-210px)] min-h-[500px] lg:h-[calc(100vh-140px)] lg:min-h-[650px] min-w-0 w-full max-w-full">
         
         {/* Left Column: GIS Map Container */}
-        <div className={`flex-1 bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm overflow-hidden flex-col relative ${
+        <div className={`flex-1 min-w-0 w-full max-w-full bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm overflow-hidden flex-col relative ${
           activeMobileView === 'parcels' ? 'hidden lg:flex' : 'flex'
         }`}>
           

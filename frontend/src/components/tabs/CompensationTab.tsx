@@ -30,24 +30,24 @@ export const CompensationTab: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Financial Dashboard */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+        <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase text-slate-500">{t('compensation.total_award')}</span>
             <Landmark className="w-4 h-4 text-gov-navy" />
           </div>
-          <div className="text-2xl font-bold font-mono text-slate-900 mt-2">
+          <div className="text-xl sm:text-2xl font-bold font-mono text-slate-900 mt-2">
             ₹{totalCompensation.toFixed(2)} {t('common.crore')}
           </div>
           <p className="text-xs text-slate-500 mt-1">{t('compensation.total_award_sub')}</p>
         </div>
 
-        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-5 shadow-sm">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3.5 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase text-emerald-800">{t('compensation.disbursed')}</span>
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
           </div>
-          <div className="text-2xl font-bold font-mono text-emerald-950 mt-2">
+          <div className="text-xl sm:text-2xl font-bold font-mono text-emerald-950 mt-2">
             ₹{paidCompensation.toFixed(2)} {t('common.crore')} ({paidPct}%)
           </div>
           <div className="w-full bg-emerald-200 rounded-full h-1.5 mt-2">
@@ -55,12 +55,12 @@ export const CompensationTab: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-red-50 border border-red-200 rounded-lg p-5 shadow-sm">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3.5 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase text-red-800">{t('compensation.pending_escrow')}</span>
             <AlertCircle className="w-4 h-4 text-red-600" />
           </div>
-          <div className="text-2xl font-bold font-mono text-red-950 mt-2">
+          <div className="text-xl sm:text-2xl font-bold font-mono text-red-950 mt-2">
             ₹{pendingCompensation.toFixed(2)} {t('common.crore')}
           </div>
           <p className="text-xs text-red-700 mt-1">{t('compensation.pending_escrow_sub')}</p>
@@ -68,17 +68,17 @@ export const CompensationTab: React.FC = () => {
       </div>
 
       {/* RFCTLARR 2013 Calculation Framework Card */}
-      <div className="bg-slate-900 text-white rounded-lg p-5 shadow-sm space-y-3">
+      <div className="bg-slate-900 text-white rounded-lg p-3.5 sm:p-5 shadow-sm space-y-3">
         <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-          <h3 className="text-sm font-bold text-amber-400 uppercase tracking-wide">
+          <h3 className="text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-wide">
             {t('compensation.valuation_matrix_title')}
           </h3>
-          <span className="text-xs bg-slate-800 px-2 py-0.5 rounded text-slate-300">
+          <span className="text-[11px] sm:text-xs bg-slate-800 px-2 py-0.5 rounded text-slate-300 shrink-0">
             {t('compensation.form_23')}
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
           <div className="bg-slate-800/80 p-3 rounded border border-slate-700">
             <span className="text-slate-400 block text-[11px]">{t('compensation.multiplier_factor')}</span>
             <strong className="text-white text-sm">1.25x – 2.0x</strong>
@@ -105,21 +105,21 @@ export const CompensationTab: React.FC = () => {
       {/* Parcel Level Compensation Ledger */}
       <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
         
-        <div className="p-4 border-b border-slate-200 bg-slate-50/50 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2">
-            <Search className="w-3.5 h-3.5 text-slate-400" />
+        <div className="p-3.5 sm:p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             <input
               type="text"
               placeholder={t('common.search_placeholder')}
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="border border-slate-300 rounded px-3 py-1.5 text-xs w-64 focus:ring-1 focus:ring-gov-blue outline-none bg-white"
+              className="border border-slate-300 rounded px-3 py-1.5 text-xs w-full sm:w-64 focus:ring-1 focus:ring-gov-blue outline-none bg-white"
             />
           </div>
 
           <button
             onClick={() => alert(tr("PFMS Treasury Export Generated in XLSX format.", "PFMS राजकोष बहीखाता XLSX प्रारूप में निर्यात किया गया।"))}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold border border-slate-300"
+            className="w-full sm:w-auto justify-center flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold border border-slate-300"
           >
             <Download className="w-3.5 h-3.5" />
             <span>{tr('Export PFMS Treasury Ledger', 'PFMS राजकोष बहीखाता निर्यात')}</span>
@@ -127,7 +127,7 @@ export const CompensationTab: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse font-mono">
+          <table className="w-full min-w-[850px] text-left text-xs border-collapse font-mono">
             <thead className="bg-slate-100 text-slate-700 font-sans font-semibold border-b border-slate-200">
               <tr>
                 <th className="p-3">{t('compensation.col_khasra')}</th>

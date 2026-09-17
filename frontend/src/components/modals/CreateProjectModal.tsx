@@ -58,24 +58,24 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose 
   };
 
   return (
-    <div className="fixed inset-0 z-[99999] bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-lg border border-slate-300 shadow-2xl max-w-2xl w-full flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-[99999] bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-lg border border-slate-300 shadow-2xl max-w-2xl w-full max-h-[92vh] flex flex-col overflow-hidden">
         
         {/* Header */}
-        <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
-          <div className="flex items-center gap-2">
-            <Plus className="w-5 h-5 text-amber-400" />
-            <h2 className="text-base font-bold">
+        <div className="px-4 sm:px-6 py-3 sm:py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+          <div className="flex items-center gap-2 min-w-0">
+            <Plus className="w-5 h-5 text-amber-400 shrink-0" />
+            <h2 className="text-sm sm:text-base font-bold truncate">
               {tr('Create New Infrastructure Project', 'नई अवसंरचना परियोजना पंजीकृत करें')}
             </h2>
           </div>
-          <button onClick={onClose} className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white">
+          <button onClick={onClose} className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white shrink-0">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 text-xs text-slate-700">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-3.5 sm:space-y-4 text-xs text-slate-700 overflow-y-auto flex-1">
           {success ? (
             <div className="p-8 text-center space-y-3">
               <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto animate-bounce" />
@@ -91,8 +91,8 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose 
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="col-span-1 sm:col-span-2">
                   <label className="block font-semibold mb-1 text-slate-700">
                     {tr('Project Name *', 'परियोजना का नाम *')}
                   </label>
@@ -193,7 +193,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose 
               </div>
 
               {/* File Upload Ingestion */}
-              <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-gov-blue transition bg-slate-50">
+              <div className="border-2 border-dashed border-slate-300 rounded-lg p-3 sm:p-4 text-center hover:border-gov-blue transition bg-slate-50">
                 <Upload className="w-6 h-6 text-slate-400 mx-auto mb-1.5" />
                 <span className="text-xs font-semibold text-slate-700 block">
                   {tr('Ingest Land Records, DPR, GeoJSON or Survey Files', 'भू-अभिलेख, डीपीआर, GeoJSON या सर्वेक्षण फाइलें अपलोड करें')}
@@ -227,18 +227,18 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose 
               )}
 
               {/* Submit Buttons */}
-              <div className="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
+              <div className="pt-3 border-t border-slate-200 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 rounded border border-slate-300 text-slate-700 font-semibold hover:bg-slate-50"
+                  className="w-full sm:w-auto px-4 py-2 rounded border border-slate-300 text-slate-700 font-semibold hover:bg-slate-50 text-center"
                 >
                   {tr('Cancel', 'रद्द करें')}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded bg-gov-blue text-white font-semibold hover:bg-blue-700 transition disabled:opacity-50"
+                  className="w-full sm:w-auto px-5 py-2 rounded bg-gov-blue text-white font-semibold hover:bg-blue-700 transition disabled:opacity-50 text-center"
                 >
                   {isSubmitting 
                     ? tr('Processing & Ingesting...', 'प्रसंस्करण एवं अंतर्ग्रहण जारी...') 

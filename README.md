@@ -8,6 +8,14 @@
 
 ---
 
+### 🌐 **Live Demo**
+
+🚀 **[Open LandSaksham Live](https://landsaksham-hh5l.onrender.com/)**
+
+> **⚡ Try the fully interactive LandSaksham prototype directly in your browser.**
+
+---
+
 ## 🏛️ Executive Summary
 
 Infrastructure delays in India often stem from fragmented inter-departmental data: land records (RoR/Khasra) sit in Revenue departments, stay orders sit in e-Courts registries, compensation claims sit in LAO treasuries, and forest clearances sit in MoEFCC PARIVESH.
@@ -53,6 +61,7 @@ LandSaksham provides comprehensive, native-script localization across all **22 l
 
 - **Frontend**: React 18, TypeScript, Tailwind CSS, Lucide Icons, Leaflet.js, Canvas Confetti, Vite.
 - **Backend**: Python 3.9+, FastAPI, Pydantic v2, Uvicorn, Scikit-Learn/XGBoost formulation, SHAP explainability.
+
 ---
 
 ## 🏃 Quick Start Guide
@@ -122,9 +131,11 @@ LandSaksham includes pre-configured **1-Click Render Blueprint** (`render.yaml`)
 
 ## 📚 Technical Documentation & Integration Guides
 
+- [Render Cloud Deployment Guide](docs/DEPLOYMENT_RENDER.md)
 - [Government Data & Live API Integration Guide](docs/GOVERNMENT_DATA_INTEGRATION.md)
 - [Multilingual Localization & Adding New Indian Languages](docs/I18N_LOCALIZATION_GUIDE.md)
 
 ---
 
 *Disclaimer: This prototype uses realistic fictional demonstration datasets and does not expose citizens' private personal records or claim live statutory affiliation with the Government of India.*
+

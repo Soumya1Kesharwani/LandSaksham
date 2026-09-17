@@ -26,7 +26,7 @@ export const ReportGeneratorTab: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Banner */}
-      <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[11px] font-bold bg-gov-navy text-white px-2 py-0.5 rounded uppercase tracking-wider">
@@ -50,10 +50,10 @@ export const ReportGeneratorTab: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
           <button
             onClick={handlePrint}
-            className="px-3.5 py-2 rounded border border-slate-300 hover:bg-slate-50 text-slate-800 text-xs font-semibold flex items-center gap-1.5 shadow-xs"
+            className="w-full sm:w-auto justify-center px-3.5 py-2 rounded border border-slate-300 hover:bg-slate-50 text-slate-800 text-xs font-semibold flex items-center gap-1.5 shadow-xs"
           >
             <Printer className="w-4 h-4 text-slate-600" />
             <span>{tr('Print Report', 'रिपोर्ट प्रिंट करें')}</span>
@@ -61,7 +61,7 @@ export const ReportGeneratorTab: React.FC = () => {
 
           <button
             onClick={handleDownloadReport}
-            className="px-4 py-2 rounded bg-gov-blue hover:bg-blue-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition"
+            className="w-full sm:w-auto justify-center px-4 py-2 rounded bg-gov-blue hover:bg-blue-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition"
           >
             <Download className="w-4 h-4" />
             <span>{tr('Download Official PDF Dossier', 'आधिकारिक पीडीएफ डोजियर डाउनलोड करें')}</span>
@@ -99,7 +99,7 @@ export const ReportGeneratorTab: React.FC = () => {
       </div>
 
       {/* Live Printable Report Preview */}
-      <div className="bg-white border border-slate-300 rounded-lg shadow-lg p-8 max-w-4xl mx-auto text-slate-800 space-y-6 print:shadow-none print:border-none">
+      <div className="bg-white border border-slate-300 rounded-lg shadow-lg p-4 sm:p-8 max-w-4xl mx-auto text-slate-800 space-y-6 print:shadow-none print:border-none">
         
         {/* Report Header */}
         <div className="text-center border-b-2 border-double border-slate-900 pb-4 space-y-2">
@@ -186,28 +186,30 @@ export const ReportGeneratorTab: React.FC = () => {
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
               {tr('1. Critical Priority Land Parcels', '1. संवेदनशील प्राथमिकता भूमि पार्सल')}
             </h3>
-            <table className="w-full text-left text-xs border-collapse">
-              <thead className="bg-slate-100 font-semibold border-b">
-                <tr>
-                  <th className="p-2">{tr('Parcel / Khasra', 'पार्सल / खसरा')}</th>
-                  <th className="p-2">{tr('Village / Tehsil', 'ग्राम / तहसील')}</th>
-                  <th className="p-2">{tr('Owner Name', 'खातेदार का नाम')}</th>
-                  <th className="p-2">{tr('Risk Score', 'जोखिम स्कोर')}</th>
-                  <th className="p-2">{tr('Primary Bottleneck', 'प्राथमिक अड़चन')}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200">
-                {parcels.slice(0, 5).map(p => (
-                  <tr key={p.id}>
-                    <td className="p-2 font-bold font-mono">{p.id} ({p.khasra_survey_no})</td>
-                    <td className="p-2">{t(p.village, p.village)}, {t(p.tehsil, p.tehsil)}</td>
-                    <td className="p-2">{t(p.owner.name, p.owner.name)}</td>
-                    <td className="p-2 font-bold text-red-700">{p.delay_risk_score}% ({t(p.delay_risk_level, p.delay_risk_level)})</td>
-                    <td className="p-2 text-[11px]">{t(p.top_risk_factors[0]?.factor_name, p.top_risk_factors[0]?.factor_name || 'Documentation hold')}</td>
+            <div className="overflow-x-auto touch-scroll">
+              <table className="w-full text-left text-xs border-collapse min-w-[550px]">
+                <thead className="bg-slate-100 font-semibold border-b">
+                  <tr>
+                    <th className="p-2">{tr('Parcel / Khasra', 'पार्सल / खसरा')}</th>
+                    <th className="p-2">{tr('Village / Tehsil', 'ग्राम / तहसील')}</th>
+                    <th className="p-2">{tr('Owner Name', 'खातेदार का नाम')}</th>
+                    <th className="p-2">{tr('Risk Score', 'जोखिम स्कोर')}</th>
+                    <th className="p-2">{tr('Primary Bottleneck', 'प्राथमिक अड़चन')}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-200">
+                  {parcels.slice(0, 5).map(p => (
+                    <tr key={p.id}>
+                      <td className="p-2 font-bold font-mono">{p.id} ({p.khasra_survey_no})</td>
+                      <td className="p-2">{t(p.village, p.village)}, {t(p.tehsil, p.tehsil)}</td>
+                      <td className="p-2">{t(p.owner.name, p.owner.name)}</td>
+                      <td className="p-2 font-bold text-red-700">{p.delay_risk_score}% ({t(p.delay_risk_level, p.delay_risk_level)})</td>
+                      <td className="p-2 text-[11px]">{t(p.top_risk_factors[0]?.factor_name, p.top_risk_factors[0]?.factor_name || 'Documentation hold')}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
@@ -220,7 +222,7 @@ export const ReportGeneratorTab: React.FC = () => {
             <div className="space-y-2 text-xs">
               {actionItems.map(act => (
                 <div key={act.id} className="p-2.5 bg-slate-50 border border-slate-200 rounded">
-                  <div className="flex justify-between font-bold text-slate-900">
+                  <div className="flex flex-col sm:flex-row sm:justify-between font-bold text-slate-900 gap-1">
                     <span>{act.id}: {t(act.title, act.title)}</span>
                     <span className="font-mono text-gov-blue">
                       {tr('Due:', 'नियत:')} {act.due_date} ({t(act.status, act.status)})
@@ -234,12 +236,12 @@ export const ReportGeneratorTab: React.FC = () => {
         )}
 
         {/* Signature Block */}
-        <div className="pt-10 flex justify-between items-end text-xs text-slate-700 border-t border-slate-200">
-          <div className="text-center w-52 border-t border-slate-600 pt-1">
+        <div className="pt-8 sm:pt-10 flex flex-col sm:flex-row justify-between items-center sm:items-end gap-6 sm:gap-4 text-xs text-slate-700 border-t border-slate-200">
+          <div className="text-center w-full sm:w-52 border-t border-slate-600 pt-1">
             <strong>{tr('Special Land Acquisition Officer', 'विशेष भूमि अधिग्रहण अधिकारी')}</strong><br />
             {tr('PIU Jaipur / Ajmer', 'पीआईयू जयपुर / अजमेर')}
           </div>
-          <div className="text-center w-52 border-t border-slate-600 pt-1">
+          <div className="text-center w-full sm:w-52 border-t border-slate-600 pt-1">
             <strong>{tr('District Magistrate & Collector', 'जिला मजिस्ट्रेट एवं कलेक्टर')}</strong><br />
             {tr('Chairperson, District LA Committee', 'अध्यक्ष, जिला भूमि अधिग्रहण समिति')}
           </div>

@@ -135,8 +135,8 @@ export const OverviewTab: React.FC = () => {
       </div>
 
       {/* Project Health Readiness Matrix */}
-      <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
-        <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+      <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-2 border-b border-slate-100 gap-2">
           <div>
             <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide">
               {t('overview.health_matrix_title')}
@@ -145,12 +145,12 @@ export const OverviewTab: React.FC = () => {
               {t('overview.health_matrix_subtitle')}
             </p>
           </div>
-          <span className="text-xs font-mono font-bold bg-slate-100 px-2.5 py-1 rounded text-slate-700">
+          <span className="text-xs font-mono font-bold bg-slate-100 px-2.5 py-1 rounded text-slate-700 self-start sm:self-auto">
             {t('overview.overall')}: {activeProject.overall_readiness_score}/100
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
           {[
             { label: t('overview.land_mutation'), score: activeProject.readiness_breakdown.land, tab: 'land' },
             { label: t('overview.legal_litigation'), score: activeProject.readiness_breakdown.legal, tab: 'legal' },
@@ -168,15 +168,15 @@ export const OverviewTab: React.FC = () => {
               <div
                 key={dim.label}
                 onClick={() => setActiveTab(dim.tab)}
-                className="bg-slate-50 border border-slate-200 rounded-md p-3 hover:border-gov-blue/50 cursor-pointer transition"
+                className="bg-slate-50 border border-slate-200 rounded-md p-2.5 sm:p-3 hover:border-gov-blue/50 cursor-pointer transition"
               >
                 <div className="text-[11px] font-semibold text-slate-600 truncate">{dim.label}</div>
                 <div className="flex items-baseline justify-between mt-1.5">
-                  <span className={`text-lg font-bold font-mono ${textClass}`}>
+                  <span className={`text-base sm:text-lg font-bold font-mono ${textClass}`}>
                     {dim.score}
                     <span className="text-[10px] text-slate-400 font-normal">/100</span>
                   </span>
-                  <span className="text-[10px] font-semibold text-slate-500">
+                  <span className="text-[9px] sm:text-[10px] font-semibold text-slate-500">
                     {dim.score >= 70 ? t('common.optimal') : dim.score >= 50 ? t('common.moderate') : t('common.critical')}
                   </span>
                 </div>
@@ -192,25 +192,25 @@ export const OverviewTab: React.FC = () => {
       {/* Critical Priority Parcels Table & Early Warning Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left 2 Cols: High Risk Parcels */}
-        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-red-600" />
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide">
+              <ShieldAlert className="w-4 h-4 text-red-600 shrink-0" />
+              <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wide truncate">
                 {t('overview.critical_parcels_title')}
               </h3>
             </div>
             <button
               onClick={() => setActiveTab('land')}
-              className="text-xs font-semibold text-gov-blue hover:underline flex items-center gap-0.5"
+              className="text-xs font-semibold text-gov-blue hover:underline flex items-center gap-0.5 shrink-0"
             >
               <span>{t('overview.view_all_parcels')} ({parcels.length})</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="border border-slate-200 rounded-md overflow-hidden">
-            <table className="w-full text-left text-xs">
+          <div className="border border-slate-200 rounded-md overflow-x-auto">
+            <table className="w-full min-w-[650px] text-left text-xs">
               <thead className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
                 <tr>
                   <th className="p-2.5">{t('overview.table_parcel_khasra')}</th>

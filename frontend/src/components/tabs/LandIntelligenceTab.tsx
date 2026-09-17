@@ -36,39 +36,39 @@ export const LandIntelligenceTab: React.FC = () => {
     <div className="space-y-6">
       
       {/* Land Breakdown Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-          <div className="text-xs font-semibold uppercase text-slate-500">{t('land.total_land_required')}</div>
-          <div className="text-2xl font-bold font-mono text-slate-900 mt-1">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
+        <div className="bg-white border border-slate-200 rounded-lg p-3 sm:p-4 shadow-sm">
+          <div className="text-xs font-semibold uppercase text-slate-500 truncate">{t('land.total_land_required')}</div>
+          <div className="text-xl sm:text-2xl font-bold font-mono text-slate-900 mt-1 truncate">
             {activeProject?.total_land_required_acres.toLocaleString()} {t('common.acres')}
           </div>
-          <div className="text-xs text-slate-500 mt-1">{activeProject?.total_parcels_count} {t('land.total_parcels')}</div>
+          <div className="text-xs text-slate-500 mt-1 truncate">{activeProject?.total_parcels_count} {t('land.total_parcels')}</div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-          <div className="text-xs font-semibold uppercase text-slate-500">{t('land.private_land')}</div>
-          <div className="text-2xl font-bold font-mono text-slate-900 mt-1">
+        <div className="bg-white border border-slate-200 rounded-lg p-3 sm:p-4 shadow-sm">
+          <div className="text-xs font-semibold uppercase text-slate-500 truncate">{t('land.private_land')}</div>
+          <div className="text-xl sm:text-2xl font-bold font-mono text-slate-900 mt-1 truncate">
             {activeProject?.private_land_acres.toLocaleString()} {t('common.acres')}
           </div>
-          <div className="text-xs text-amber-700 font-semibold mt-1">
+          <div className="text-xs text-amber-700 font-semibold mt-1 truncate">
             {activeProject?.high_risk_parcels_count} {t('land.parcels_at_risk')}
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-          <div className="text-xs font-semibold uppercase text-slate-500">{t('land.govt_land')}</div>
-          <div className="text-2xl font-bold font-mono text-slate-900 mt-1">
+        <div className="bg-white border border-slate-200 rounded-lg p-3 sm:p-4 shadow-sm">
+          <div className="text-xs font-semibold uppercase text-slate-500 truncate">{t('land.govt_land')}</div>
+          <div className="text-xl sm:text-2xl font-bold font-mono text-slate-900 mt-1 truncate">
             {activeProject?.government_land_acres.toLocaleString()} {t('common.acres')}
           </div>
-          <div className="text-xs text-emerald-700 font-semibold mt-1">{t('land.direct_transfer')}</div>
+          <div className="text-xs text-emerald-700 font-semibold mt-1 truncate">{t('land.direct_transfer')}</div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-          <div className="text-xs font-semibold uppercase text-slate-500">{t('land.forest_land')}</div>
-          <div className="text-2xl font-bold font-mono text-slate-900 mt-1">
+        <div className="bg-white border border-slate-200 rounded-lg p-3 sm:p-4 shadow-sm">
+          <div className="text-xs font-semibold uppercase text-slate-500 truncate">{t('land.forest_land')}</div>
+          <div className="text-xl sm:text-2xl font-bold font-mono text-slate-900 mt-1 truncate">
             {activeProject?.forest_land_acres.toLocaleString()} {t('common.acres')}
           </div>
-          <div className="text-xs text-red-700 font-semibold mt-1">{t('land.stage_in_progress')}</div>
+          <div className="text-xs text-red-700 font-semibold mt-1 truncate">{t('land.stage_in_progress')}</div>
         </div>
       </div>
 
@@ -76,23 +76,23 @@ export const LandIntelligenceTab: React.FC = () => {
       <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
         
         {/* Table Controls */}
-        <div className="p-4 border-b border-slate-200 bg-slate-50/50 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="p-3.5 sm:p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div className="flex flex-wrap items-center gap-2 flex-1">
-            <div className="relative">
+            <div className="relative w-full sm:w-64">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
               <input
                 type="text"
                 placeholder={t('common.search_placeholder')}
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="pl-8 pr-3 py-1.5 border border-slate-300 rounded text-xs w-64 focus:ring-1 focus:ring-gov-blue outline-none bg-white text-slate-800 font-medium"
+                className="pl-8 pr-3 py-1.5 border border-slate-300 rounded text-xs w-full focus:ring-1 focus:ring-gov-blue outline-none bg-white text-slate-800 font-medium"
               />
             </div>
 
             <select
               value={riskFilter}
               onChange={e => setRiskFilter(e.target.value)}
-              className="border border-slate-300 rounded px-2.5 py-1.5 text-xs bg-white font-medium"
+              className="border border-slate-300 rounded px-2.5 py-1.5 text-xs bg-white font-medium flex-1 sm:flex-none"
             >
               <option value="ALL">{t('land.all_risk_levels')}</option>
               <option value="CRITICAL">{t('land.critical_filter')}</option>
@@ -104,7 +104,7 @@ export const LandIntelligenceTab: React.FC = () => {
             <select
               value={landTypeFilter}
               onChange={e => setLandTypeFilter(e.target.value)}
-              className="border border-slate-300 rounded px-2.5 py-1.5 text-xs bg-white font-medium"
+              className="border border-slate-300 rounded px-2.5 py-1.5 text-xs bg-white font-medium flex-1 sm:flex-none"
             >
               <option value="ALL">{t('land.all_land_types')}</option>
               <option value="agricultural">{tr('Private Agricultural', 'निजी कृषि भूमि')}</option>
@@ -116,14 +116,14 @@ export const LandIntelligenceTab: React.FC = () => {
             </select>
           </div>
 
-          <span className="text-xs font-semibold text-slate-500">
+          <span className="text-xs font-semibold text-slate-500 shrink-0">
             {tr('Showing', 'प्रदर्शित')} {filteredParcels.length} / {parcels.length} {tr('Records', 'रिकॉर्ड्स')}
           </span>
         </div>
 
         {/* Table Content */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
+          <table className="w-full min-w-[780px] text-left text-xs border-collapse">
             <thead className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
               <tr>
                 <th className="p-3">{t('land.col_parcel_id')}</th>

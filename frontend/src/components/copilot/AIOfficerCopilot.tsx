@@ -99,7 +99,7 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
     return (
       <button
         onClick={onToggle || onClose}
-        className="fixed bottom-6 right-6 z-[99990] flex items-center gap-2.5 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold px-4 py-3 rounded-2xl shadow-2xl border border-blue-400/40 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer group"
+        className="hidden md:flex fixed bottom-6 right-6 z-40 items-center gap-2.5 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold px-4 py-3 rounded-2xl shadow-2xl border border-blue-400/40 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer group"
         title={tr("Open AI Officer Copilot", "एआई अधिकारी सहायक खोलें")}
       >
         <Sparkles className="w-5 h-5 text-amber-300 animate-pulse" />
@@ -109,22 +109,22 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-[99990] w-96 sm:w-[440px] h-[580px] bg-[#111c38] rounded-xl shadow-2xl border border-slate-700 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200">
+    <div className="fixed inset-x-2 bottom-18 top-14 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[440px] sm:h-[580px] z-[99990] bg-[#111c38] rounded-xl shadow-2xl border border-slate-700 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200">
       
       {/* Copilot Header */}
-      <div className="px-4 py-3 bg-gradient-to-r from-gov-navy to-slate-900 text-white flex items-center justify-between border-b border-slate-800">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-white p-0.5 border border-slate-300 flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
+      <div className="px-3.5 sm:px-4 py-2.5 sm:py-3 bg-gradient-to-r from-gov-navy to-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white p-0.5 border border-slate-300 flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
             <img src="/logo.png" alt="Copilot" className="w-full h-full object-contain rounded-full" />
           </div>
-          <div>
-            <h3 className="font-bold text-xs flex items-center gap-1.5">
+          <div className="min-w-0">
+            <h3 className="font-bold text-xs flex items-center gap-1.5 truncate">
               <span>{tr('NLIIS AI Officer Copilot', 'NLIIS एआई अधिकारी सहायक')}</span>
-              <span className="text-[10px] font-mono bg-blue-900 text-blue-200 px-1.5 py-0.2 rounded">
+              <span className="text-[9px] sm:text-[10px] font-mono bg-blue-900 text-blue-200 px-1.5 py-0.2 rounded shrink-0">
                 {tr('RAG Grounded', 'RAG आधारित')}
               </span>
             </h3>
-            <p className="text-[11px] text-slate-300 truncate max-w-[220px]">
+            <p className="text-[10px] sm:text-[11px] text-slate-300 truncate max-w-[200px] sm:max-w-[220px]">
               {t(activeProject?.name, activeProject?.name)}
             </p>
           </div>
@@ -132,19 +132,19 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
 
         <button
           onClick={onClose}
-          className="p-1 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition"
+          className="p-1.5 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition shrink-0"
         >
           <X className="w-4 h-4" />
         </button>
       </div>
 
       {/* Quick Prompts Bar */}
-      <div className="p-2 bg-[#0d162d] border-b border-slate-800 flex gap-1.5 overflow-x-auto text-[11px]">
+      <div className="p-2 bg-[#0d162d] border-b border-slate-800 flex gap-1.5 overflow-x-auto text-[11px] no-scrollbar">
         {quickPrompts.map((qp, idx) => (
           <button
             key={idx}
             onClick={() => handleSendMessage(qp.query)}
-            className="whitespace-nowrap px-2.5 py-1 rounded-full bg-[#162347] border border-slate-700 hover:border-blue-500 hover:text-blue-300 text-slate-200 font-medium transition shadow-2xs"
+            className="whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full bg-[#162347] border border-slate-700 hover:border-blue-500 hover:text-blue-300 text-slate-200 font-medium transition shadow-2xs"
           >
             {qp.label}
           </button>
@@ -200,7 +200,7 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
       </div>
 
       {/* Chat Input & Disclaimer */}
-      <div className="p-3 bg-[#0b1329] border-t border-slate-800 space-y-1.5">
+      <div className="p-2.5 sm:p-3 bg-[#0b1329] border-t border-slate-800 space-y-1.5 safe-area-bottom">
         <form
           onSubmit={e => {
             e.preventDefault();
@@ -213,12 +213,12 @@ export const AIOfficerCopilot: React.FC<AIOfficerCopilotProps> = ({ isOpen, onCl
             placeholder={tr("Ask a query about land, cases, or compensation...", "परियोजना से संबंधित प्रश्न पूछें...")}
             value={inputMessage}
             onChange={e => setInputMessage(e.target.value)}
-            className="flex-1 border border-slate-700 rounded-md px-3 py-2 text-xs bg-[#090d16] text-white focus:ring-1 focus:ring-blue-500 outline-none"
+            className="flex-1 border border-slate-700 rounded-md px-3 py-2 sm:py-2 min-h-[38px] text-xs bg-[#090d16] text-white focus:ring-1 focus:ring-blue-500 outline-none"
           />
           <button
             type="submit"
             disabled={isLoading || !inputMessage.trim()}
-            className="bg-blue-600 hover:bg-blue-500 text-white p-2 rounded-md disabled:opacity-50 transition"
+            className="bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-md disabled:opacity-50 transition min-w-[38px] min-h-[38px] flex items-center justify-center shrink-0"
           >
             <Send className="w-4 h-4" />
           </button>

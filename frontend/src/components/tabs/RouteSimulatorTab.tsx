@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useProject } from '../../context/ProjectContext';
+import { FALLBACK_ROUTES } from '../../services/api';
 import { GitFork, CheckCircle2, Sparkles, MapPin, AlertTriangle } from 'lucide-react';
 
 export const RouteSimulatorTab: React.FC = () => {
@@ -8,7 +9,8 @@ export const RouteSimulatorTab: React.FC = () => {
   const { routes, setActiveTab } = useProject();
   const [selectedRouteId, setSelectedRouteId] = useState<string>('ROUTE-B');
 
-  const selectedRoute = routes.find(r => r.route_id === selectedRouteId) || routes[0];
+  const activeRoutes = routes && routes.length > 0 ? routes : FALLBACK_ROUTES;
+  const selectedRoute = activeRoutes.find(r => r.route_id === selectedRouteId) || activeRoutes[0];
 
   const getVerdictText = (verdict: string, routeId: string) => {
     if (language === 'en') return verdict;
@@ -83,10 +85,10 @@ export const RouteSimulatorTab: React.FC = () => {
           )}
         </p>
 
-        <div className="flex flex-wrap items-center gap-3 pt-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 pt-2">
           <button
             onClick={() => setSelectedRouteId('ROUTE-B')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
               selectedRouteId === 'ROUTE-B'
                 ? 'bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-400'
                 : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
@@ -98,7 +100,7 @@ export const RouteSimulatorTab: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('gis')}
-            className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center gap-1.5"
+            className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center justify-center gap-1.5"
           >
             <MapPin className="w-4 h-4 text-blue-400" />
             <span>{tr('View Alignments on GIS Map', 'जीआईएस मानचित्र पर संरेखन देखें')}</span>
@@ -118,7 +120,7 @@ export const RouteSimulatorTab: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {routes.map(r => {
+          {activeRoutes.map(r => {
             const isSelected = selectedRouteId === r.route_id;
             return (
               <button
@@ -175,10 +177,10 @@ export const RouteSimulatorTab: React.FC = () => {
       </div>
 
       {/* Selected Route Deep-Dive Panel */}
-      <div className="bg-white dark:bg-[#111c38] border border-blue-500/40 rounded-xl p-5 shadow-sm space-y-4">
+      <div className="bg-white dark:bg-[#111c38] border border-blue-500/40 rounded-xl p-3.5 sm:p-5 shadow-sm space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="text-base font-extrabold text-gov-navy dark:text-white font-mono">{selectedRoute.route_id}</span>
               {selectedRoute.is_recommended ? (
                 <span className="text-xs bg-emerald-600 text-white px-2.5 py-0.5 rounded-full font-bold">
@@ -190,42 +192,42 @@ export const RouteSimulatorTab: React.FC = () => {
                 </span>
               )}
             </div>
-            <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-1">
+            <h4 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 mt-1">
               {getRouteSubName(selectedRoute)}
             </h4>
           </div>
 
           <button
             onClick={() => setActiveTab('gis')}
-            className="px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs shrink-0 cursor-pointer"
+            className="w-full sm:w-auto justify-center px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs shrink-0 cursor-pointer"
           >
             <MapPin className="w-4 h-4" />
             <span>{tr('Inspect Alignment on GIS Map', 'जीआईएस मानचित्र पर संरेखन देखें')}</span>
           </button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
-            <span className="text-slate-500 dark:text-slate-400 block text-[11px]">{tr('Total Distance', 'कुल दूरी')}</span>
-            <span className="font-bold text-slate-900 dark:text-white text-base font-mono">{selectedRoute.total_length_km} km</span>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
+          <div className="p-2.5 sm:p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
+            <span className="text-slate-500 dark:text-slate-400 block text-[11px] truncate">{tr('Total Distance', 'कुल दूरी')}</span>
+            <span className="font-bold text-slate-900 dark:text-white text-sm sm:text-base font-mono">{selectedRoute.total_length_km} km</span>
           </div>
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
-            <span className="text-slate-500 dark:text-slate-400 block text-[11px]">{tr('Estimated Outlay', 'अनुमानित व्यय')}</span>
-            <span className="font-bold text-slate-900 dark:text-white text-base font-mono">₹{selectedRoute.estimated_cost_cr.toLocaleString()} Cr</span>
+          <div className="p-2.5 sm:p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
+            <span className="text-slate-500 dark:text-slate-400 block text-[11px] truncate">{tr('Estimated Outlay', 'अनुमानित व्यय')}</span>
+            <span className="font-bold text-slate-900 dark:text-white text-sm sm:text-base font-mono">₹{selectedRoute.estimated_cost_cr.toLocaleString()} Cr</span>
           </div>
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
-            <span className="text-slate-500 dark:text-slate-400 block text-[11px]">{tr('Predicted Delay', 'अनुमानित विलंब')}</span>
-            <span className={`font-bold text-base font-mono ${selectedRoute.is_recommended ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+          <div className="p-2.5 sm:p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
+            <span className="text-slate-500 dark:text-slate-400 block text-[11px] truncate">{tr('Predicted Delay', 'अनुमानित विलंब')}</span>
+            <span className={`font-bold text-sm sm:text-base font-mono ${selectedRoute.is_recommended ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
               +{selectedRoute.expected_delay_days} Days
             </span>
           </div>
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
-            <span className="text-slate-500 dark:text-slate-400 block text-[11px]">{tr('Forest Diverted', 'वन अपवर्तन')}</span>
-            <span className="font-bold text-slate-900 dark:text-white text-base font-mono">{selectedRoute.forest_diverted_acres} Acres</span>
+          <div className="p-2.5 sm:p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
+            <span className="text-slate-500 dark:text-slate-400 block text-[11px] truncate">{tr('Forest Diverted', 'वन अपवर्तन')}</span>
+            <span className="font-bold text-slate-900 dark:text-white text-sm sm:text-base font-mono">{selectedRoute.forest_diverted_acres} Acres</span>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-lg bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+        <div className="p-3 sm:p-3.5 rounded-lg bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
           <strong className="text-slate-900 dark:text-white block mb-1 font-bold">{tr('Detailed AI Evaluation & Risk Impact:', 'विस्तृत एआई मूल्यांकन एवं जोखिम प्रभाव:')}</strong>
           {getVerdictText(selectedRoute.ai_recommendation_verdict, selectedRoute.route_id)}
         </div>
@@ -233,22 +235,22 @@ export const RouteSimulatorTab: React.FC = () => {
 
       {/* Side-by-Side Comparison Table */}
       <div className="bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden">
-        <div className="p-4 bg-slate-50 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-          <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-slate-800 dark:text-slate-200">
-            <GitFork className="w-4 h-4 text-gov-blue dark:text-blue-400" />
-            <span>{tr('Multi-Criteria Alignment Trade-off Comparison', 'बहु-मानदंड संरेखन व्यापार-तुलना')}</span>
+        <div className="p-3.5 sm:p-4 bg-slate-50 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-slate-800 dark:text-slate-200 truncate">
+            <GitFork className="w-4 h-4 text-gov-blue dark:text-blue-400 shrink-0" />
+            <span className="truncate">{tr('Multi-Criteria Alignment Trade-off Comparison', 'बहु-मानदंड संरेखन व्यापार-तुलना')}</span>
           </div>
-          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
-            {routes.length} {tr('Candidate Alignments', 'प्रस्तावित संरेखन')}
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono shrink-0">
+            {activeRoutes.length} {tr('Candidate Alignments', 'प्रस्तावित संरेखन')}
           </span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
+        <div className="overflow-x-auto touch-scroll">
+          <table className="w-full min-w-[700px] text-left text-xs border-collapse">
             <thead className="bg-slate-100 dark:bg-slate-900/90 text-slate-800 dark:text-slate-200 font-semibold border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="p-3 w-1/4">{tr('Evaluation Parameter', 'मूल्यांकन मापदंड')}</th>
-                {routes.map(r => {
+                {activeRoutes.map(r => {
                   const isSelected = selectedRouteId === r.route_id;
                   return (
                     <th
@@ -263,7 +265,7 @@ export const RouteSimulatorTab: React.FC = () => {
                       <div className="flex items-center justify-center gap-1.5 font-bold text-sm">
                         <span>{r.route_id}</span>
                         {r.is_recommended && (
-                          <span className="text-[10px] bg-emerald-600 text-white px-1.5 py-0.2 rounded font-mono">
+                           <span className="text-[10px] bg-emerald-600 text-white px-1.5 py-0.2 rounded font-mono">
                             ★ {tr('RECOMMENDED', 'अनुशंसित')}
                           </span>
                         )}
@@ -283,7 +285,7 @@ export const RouteSimulatorTab: React.FC = () => {
                 <td className="p-3 font-sans font-semibold text-slate-800 dark:text-slate-200">
                   {tr('Total Route Length', 'कुल मार्ग लंबाई')}
                 </td>
-                {routes.map(r => (
+                {activeRoutes.map(r => (
                   <td key={r.route_id} className={`p-3 text-center font-bold text-slate-900 dark:text-white ${selectedRouteId === r.route_id ? 'bg-blue-50/50 dark:bg-blue-950/30' : ''}`}>
                     {r.total_length_km} {tr('km', 'किमी')}
                   </td>
@@ -294,7 +296,7 @@ export const RouteSimulatorTab: React.FC = () => {
                 <td className="p-3 font-sans font-semibold text-slate-800 dark:text-slate-200">
                   {tr('Estimated Total Cost', 'अनुमानित कुल लागत')}
                 </td>
-                {routes.map(r => (
+                {activeRoutes.map(r => (
                   <td key={r.route_id} className={`p-3 text-center font-bold text-slate-900 dark:text-white ${selectedRouteId === r.route_id ? 'bg-blue-50/50 dark:bg-blue-950/30' : ''}`}>
                     ₹{r.estimated_cost_cr.toLocaleString()} {tr('Cr', 'करोड़')}
                   </td>
@@ -305,7 +307,7 @@ export const RouteSimulatorTab: React.FC = () => {
                 <td className="p-3 font-sans font-semibold text-slate-800 dark:text-slate-200">
                   {tr('Land Compensation Outlay', 'भूमि मुआवजा परिव्यय')}
                 </td>
-                {routes.map(r => (
+                {activeRoutes.map(r => (
                   <td key={r.route_id} className={`p-3 text-center text-slate-700 dark:text-slate-300 ${selectedRouteId === r.route_id ? 'bg-blue-50/50 dark:bg-blue-950/30 font-bold' : ''}`}>
                     ₹{r.compensation_cost_cr} {tr('Cr', 'करोड़')}
                   </td>
@@ -317,7 +319,7 @@ export const RouteSimulatorTab: React.FC = () => {
                 <td className="p-3 font-sans font-bold text-red-900 dark:text-red-300">
                   {tr('Predicted Delay Probability', 'अनुमानित विलंब प्रायिकता')}
                 </td>
-                {routes.map(r => (
+                {activeRoutes.map(r => (
                   <td key={r.route_id} className={`p-3 text-center font-bold text-sm ${selectedRouteId === r.route_id ? 'bg-blue-50/50 dark:bg-blue-950/30' : ''} ${r.is_recommended ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-700 dark:text-red-400'}`}>
                     {(r.delay_probability * 100).toFixed(0)}% {tr('Risk', 'जोखिम')}
                   </td>
@@ -328,7 +330,7 @@ export const RouteSimulatorTab: React.FC = () => {
                 <td className="p-3 font-sans font-semibold text-slate-800 dark:text-slate-200">
                   {tr('Expected Project Delay', 'अनुमानित परियोजना विलंब')}
                 </td>
-                {routes.map(r => (
+                {activeRoutes.map(r => (
                   <td key={r.route_id} className={`p-3 text-center font-bold ${selectedRouteId === r.route_id ? 'bg-blue-50/50 dark:bg-blue-950/30' : ''} ${r.is_recommended ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-700 dark:text-red-400'}`}>
                     +{r.expected_delay_days} {tr('Days', 'दिन')}
                   </td>
@@ -339,7 +341,7 @@ export const RouteSimulatorTab: React.FC = () => {
                 <td className="p-3 font-sans font-bold text-gov-blue dark:text-blue-400">
                   {tr('Overall Project Readiness', 'समग्र परियोजना तत्परता')}
                 </td>
-                {routes.map(r => (
+                {activeRoutes.map(r => (
                   <td key={r.route_id} className={`p-3 text-center font-bold text-sm text-gov-navy dark:text-blue-300 ${selectedRouteId === r.route_id ? 'bg-blue-50/50 dark:bg-blue-950/30 font-extrabold' : ''}`}>
                     {r.project_readiness_score} / 100
                   </td>
@@ -351,7 +353,7 @@ export const RouteSimulatorTab: React.FC = () => {
                 <td className="p-3 font-sans font-semibold text-slate-800 dark:text-slate-200">
                   {tr('Affected Households', 'प्रभावित परिवार')}
                 </td>
-                {routes.map(r => (
+                {activeRoutes.map(r => (
                   <td key={r.route_id} className={`p-3 text-center font-bold ${selectedRouteId === r.route_id ? 'bg-blue-50/50 dark:bg-blue-950/30' : ''} ${r.affected_households > 1000 ? 'text-red-700 dark:text-red-400' : 'text-slate-800 dark:text-slate-200'}`}>
                     {r.affected_households.toLocaleString()} {tr('Families', 'परिवार')}
                   </td>
@@ -362,7 +364,7 @@ export const RouteSimulatorTab: React.FC = () => {
                 <td className="p-3 font-sans font-semibold text-slate-800 dark:text-slate-200">
                   {tr('Forest Land Diverted', 'अपवर्तित वन भूमि')}
                 </td>
-                {routes.map(r => (
+                {activeRoutes.map(r => (
                   <td key={r.route_id} className={`p-3 text-center ${selectedRouteId === r.route_id ? 'bg-blue-50/50 dark:bg-blue-950/30' : ''} ${r.forest_diverted_acres > 100 ? 'text-red-700 dark:text-red-400 font-bold' : 'text-emerald-700 dark:text-emerald-400 font-semibold'}`}>
                     {r.forest_diverted_acres} {tr('Acres', 'एकड़')}
                   </td>
@@ -373,7 +375,7 @@ export const RouteSimulatorTab: React.FC = () => {
                 <td className="p-3 font-sans font-semibold text-slate-800 dark:text-slate-200">
                   {tr('Legal Dispute Risk Score', 'विधिक विवाद जोखिम स्कोर')}
                 </td>
-                {routes.map(r => (
+                {activeRoutes.map(r => (
                   <td key={r.route_id} className={`p-3 text-center text-slate-800 dark:text-slate-200 ${selectedRouteId === r.route_id ? 'bg-blue-50/50 dark:bg-blue-950/30 font-bold' : ''}`}>
                     {r.legal_risk_score} / 100
                   </td>
@@ -384,7 +386,7 @@ export const RouteSimulatorTab: React.FC = () => {
                 <td className="p-3 font-sans font-semibold text-slate-800 dark:text-slate-200">
                   {tr('Employment Potential', 'रोजगार क्षमता')}
                 </td>
-                {routes.map(r => (
+                {activeRoutes.map(r => (
                   <td key={r.route_id} className={`p-3 text-center font-semibold text-emerald-700 dark:text-emerald-400 ${selectedRouteId === r.route_id ? 'bg-blue-50/50 dark:bg-blue-950/30 font-bold' : ''}`}>
                     {r.employment_potential_jobs.toLocaleString()} {tr('Jobs', 'रोजगार')}
                   </td>
@@ -396,7 +398,7 @@ export const RouteSimulatorTab: React.FC = () => {
                 <td className="p-3 font-sans font-bold text-slate-900 dark:text-white">
                   {tr('AI Recommendation Verdict', 'एआई अनुशंसा निष्कर्ष')}
                 </td>
-                {routes.map(r => (
+                {activeRoutes.map(r => (
                   <td key={r.route_id} className={`p-3 font-sans text-slate-700 dark:text-slate-300 text-[11px] leading-relaxed ${selectedRouteId === r.route_id ? 'bg-blue-50/50 dark:bg-blue-950/30 font-semibold' : ''}`}>
                     {getVerdictText(r.ai_recommendation_verdict, r.route_id)}
                   </td>

@@ -80,7 +80,7 @@ export const DocumentIntelligenceTab: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Banner */}
-      <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[11px] font-bold bg-indigo-50 dark:bg-indigo-950/80 text-indigo-800 dark:text-indigo-200 px-2.5 py-1 rounded-md border border-indigo-200 dark:border-indigo-800 uppercase tracking-wider flex items-center gap-1.5 shadow-2xs">
@@ -102,8 +102,8 @@ export const DocumentIntelligenceTab: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="bg-gov-navy hover:bg-slate-800 text-white text-xs font-semibold px-3 py-2 rounded flex items-center gap-1.5 cursor-pointer shadow-sm transition">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <label className="w-full sm:w-auto justify-center bg-gov-navy hover:bg-slate-800 text-white text-xs font-semibold px-3 py-2 rounded flex items-center gap-1.5 cursor-pointer shadow-sm transition">
             <Upload className="w-3.5 h-3.5" />
             <span>{tr('Upload New Document', 'नया दस्तावेज अपलोड करें')}</span>
             <input
@@ -119,7 +119,7 @@ export const DocumentIntelligenceTab: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Document Selector List */}
-        <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-4 space-y-3">
+        <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-3.5 sm:p-4 space-y-3">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
             {tr('Ingested Project Documents', 'अंतर्ग्रहीत परियोजना दस्तावेज')} ({sampleDocuments.length})
           </h3>
@@ -136,8 +136,8 @@ export const DocumentIntelligenceTab: React.FC = () => {
                 }`}
               >
                 <div className="flex items-center justify-between font-bold text-slate-900">
-                  <span className="truncate max-w-[180px]">{doc.filename}</span>
-                  <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded font-mono">
+                  <span className="truncate max-w-[160px] xs:max-w-[220px] sm:max-w-none">{doc.filename}</span>
+                  <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded font-mono shrink-0 ml-2">
                     {doc.pages} {tr('Pages', 'पृष्ठ')}
                   </span>
                 </div>
@@ -149,19 +149,19 @@ export const DocumentIntelligenceTab: React.FC = () => {
         </div>
 
         {/* Extracted Entities Dossier */}
-        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-lg shadow-sm p-5 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-lg shadow-sm p-3.5 sm:p-5 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-2">
             <div>
               <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-gov-navy" />
-                <h3 className="font-bold text-slate-900 text-sm">{currentDoc.filename}</h3>
+                <FileText className="w-4 h-4 text-gov-navy shrink-0" />
+                <h3 className="font-bold text-slate-900 text-sm break-all">{currentDoc.filename}</h3>
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
                 {tr('AI extracted fields •', 'एआई निष्कर्षित विवरण •')} <span className="text-emerald-700 font-semibold">{currentDoc.extracted_entities["OCR Engine Confidence"]}</span>
               </p>
             </div>
 
-            <span className="text-[11px] bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded font-semibold">
+            <span className="self-start sm:self-auto text-[10px] sm:text-[11px] bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded font-semibold">
               {tr('AI Extracted — Verify Before Official Use', 'एआई निष्कर्षित — आधिकारिक उपयोग से पूर्व सत्यापन करें')}
             </span>
           </div>
@@ -178,14 +178,14 @@ export const DocumentIntelligenceTab: React.FC = () => {
             })}
           </div>
 
-          <div className="pt-3 border-t border-slate-200 flex items-center justify-between">
+          <div className="pt-3 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <span className="text-[11px] text-slate-500">
               {tr('Matches Parcel', 'जीआईएस डेटाबेस में पार्सल')} <strong>RJ-JPR-P127</strong> {tr('in GIS Database.', 'से मेल खाता है।')}
             </span>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
               {verifiedSuccess && (
-                <span className="text-emerald-700 text-xs font-semibold flex items-center gap-1">
+                <span className="text-emerald-700 text-xs font-semibold flex items-center gap-1 justify-center sm:justify-start">
                   <CheckCircle2 className="w-4 h-4" />
                   {tr('Verified & Committed to Record!', 'सत्यापित एवं अभिलेख में दर्ज!')}
                 </span>
@@ -194,7 +194,7 @@ export const DocumentIntelligenceTab: React.FC = () => {
               <button
                 onClick={handleVerify}
                 disabled={isProcessing}
-                className="bg-gov-blue hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded flex items-center gap-1.5 transition disabled:opacity-50"
+                className="w-full sm:w-auto justify-center bg-gov-blue hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded flex items-center gap-1.5 transition disabled:opacity-50"
               >
                 {isProcessing ? (
                   <>

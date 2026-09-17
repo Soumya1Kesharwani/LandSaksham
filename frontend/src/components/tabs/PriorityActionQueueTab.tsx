@@ -49,11 +49,11 @@ export const PriorityActionQueueTab: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Banner */}
-      <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <ListTodo className="w-5 h-5 text-gov-blue" />
-            <h2 className="text-base font-bold text-slate-900">
+            <ListTodo className="w-5 h-5 text-gov-blue shrink-0" />
+            <h2 className="text-sm sm:text-base font-bold text-slate-900 truncate">
               {tr(
                 'Officer Priority Action Queue & Resolution Workflow',
                 'अधिकारी प्राथमिकता कार्य कतार एवं समाधान कार्यप्रवाह'
@@ -68,11 +68,11 @@ export const PriorityActionQueueTab: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex flex-wrap items-center gap-2 text-xs">
           <select
             value={priorityFilter}
             onChange={e => setPriorityFilter(e.target.value)}
-            className="border border-slate-300 rounded px-2.5 py-1.5 bg-white font-medium text-xs text-slate-800"
+            className="border border-slate-300 rounded px-2.5 py-1.5 bg-white font-medium text-xs text-slate-800 flex-1 sm:flex-none"
           >
             <option value="ALL">{tr('All Priorities', 'सभी प्राथमिकताएं')}</option>
             <option value="CRITICAL">{tr('Critical Priority', 'अति-गंभीर प्राथमिकता')}</option>
@@ -83,7 +83,7 @@ export const PriorityActionQueueTab: React.FC = () => {
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
-            className="border border-slate-300 rounded px-2.5 py-1.5 bg-white font-medium text-xs text-slate-800"
+            className="border border-slate-300 rounded px-2.5 py-1.5 bg-white font-medium text-xs text-slate-800 flex-1 sm:flex-none"
           >
             <option value="ALL">{tr('All Statuses', 'सभी स्थितियां')}</option>
             <option value="New">{tr('New', 'नया')}</option>
@@ -103,14 +103,14 @@ export const PriorityActionQueueTab: React.FC = () => {
           return (
             <div
               key={action.id}
-              className={`bg-white border rounded-lg p-4 shadow-sm transition space-y-3 ${
+              className={`bg-white border rounded-lg p-3.5 sm:p-4 shadow-sm transition space-y-3 ${
                 isResolved
                   ? 'border-emerald-200 bg-emerald-50/20'
                   : (isCritical ? 'border-red-300 ring-1 ring-red-100' : 'border-slate-200')
               }`}
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-                <div className="flex items-center gap-2.5">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2.5">
                   <span className="font-mono font-bold text-xs bg-slate-100 text-gov-navy px-2 py-0.5 rounded border border-slate-300">
                     {action.id}
                   </span>

@@ -76,7 +76,7 @@ export const GovSidebar: React.FC<GovSidebarProps> = ({ isOpen = true, onClose }
       label: t('nav.actions', 'Priority Action Queue'),
       icon: ListTodo,
       badge: pendingActionsCount > 0 ? String(pendingActionsCount) : undefined,
-      badgeColor: 'bg-blue-100 text-blue-800'
+      badgeColor: 'bg-red-100 text-red-800'
     },
     { id: 'documents', label: t('nav.documents', 'Document Intelligence & OCR'), icon: FileText },
     {
@@ -96,14 +96,14 @@ export const GovSidebar: React.FC<GovSidebarProps> = ({ isOpen = true, onClose }
       {isOpen && (
         <div
           onClick={onClose}
-          className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-30 md:hidden"
+          className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-40 md:hidden"
         />
       )}
 
       <aside
-        className={`fixed md:relative inset-y-0 left-0 z-40 md:z-auto transition-all duration-300 ease-in-out bg-slate-900 text-slate-300 flex flex-col shrink-0 border-r border-slate-800 select-none ${
+        className={`fixed md:relative inset-y-0 left-0 z-50 md:z-auto transition-all duration-300 ease-in-out bg-slate-900 text-slate-300 flex flex-col shrink-0 border-r border-slate-800 select-none ${
           isOpen
-            ? 'w-64 translate-x-0 opacity-100'
+            ? 'w-64 max-w-[85vw] translate-x-0 opacity-100 shadow-2xl'
             : 'w-0 -translate-x-full md:translate-x-0 opacity-0 md:opacity-0 overflow-hidden border-none pointer-events-none'
         }`}
       >

@@ -13,9 +13,9 @@ export const EnvironmentalTab: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 items-stretch">
         {/* Card 1: Forest Land Diversion (Emerald Tint) */}
-        <div className="bg-emerald-50/70 border border-emerald-200/80 dark:bg-emerald-950/30 dark:border-emerald-900 rounded-lg p-4 shadow-2xs flex flex-col justify-between">
+        <div className="bg-emerald-50/70 border border-emerald-200/80 dark:bg-emerald-950/30 dark:border-emerald-900 rounded-lg p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between gap-1">
               <div className="text-xs font-semibold uppercase tracking-wider text-emerald-900 dark:text-emerald-300">
@@ -23,7 +23,7 @@ export const EnvironmentalTab: React.FC = () => {
               </div>
               <Trees className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
             </div>
-            <div className="text-2xl font-bold font-mono text-emerald-950 dark:text-emerald-100 mt-1">
+            <div className="text-xl sm:text-2xl font-bold font-mono text-emerald-950 dark:text-emerald-100 mt-1">
               {activeProject?.forest_land_acres} {t('common.acres')}
             </div>
           </div>
@@ -33,7 +33,7 @@ export const EnvironmentalTab: React.FC = () => {
         </div>
 
         {/* Card 2: Stage-II Clearance Status (Amber Tint - Inactivity Warning) */}
-        <div className="bg-amber-50/80 border border-amber-200 dark:bg-amber-950/40 dark:border-amber-900 rounded-lg p-4 shadow-2xs flex flex-col justify-between">
+        <div className="bg-amber-50/80 border border-amber-200 dark:bg-amber-950/40 dark:border-amber-900 rounded-lg p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between gap-1">
               <div className="text-xs font-semibold uppercase tracking-wider text-amber-900 dark:text-amber-300">
@@ -41,7 +41,7 @@ export const EnvironmentalTab: React.FC = () => {
               </div>
               <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
             </div>
-            <div className="text-xl font-bold text-amber-950 dark:text-amber-100 mt-1 font-mono">
+            <div className="text-lg sm:text-xl font-bold text-amber-950 dark:text-amber-100 mt-1 font-mono">
               <span>{tr('48 Days Inactive', '48 दिन निष्क्रिय')}</span>
             </div>
           </div>
@@ -51,7 +51,7 @@ export const EnvironmentalTab: React.FC = () => {
         </div>
 
         {/* Card 3: Distance to Eco-Sensitive Zone (Teal/Cyan Tint) */}
-        <div className="bg-teal-50/70 border border-teal-200/80 dark:bg-teal-950/30 dark:border-teal-900 rounded-lg p-4 shadow-2xs flex flex-col justify-between">
+        <div className="bg-teal-50/70 border border-teal-200/80 dark:bg-teal-950/30 dark:border-teal-900 rounded-lg p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between gap-1">
               <div className="text-xs font-semibold uppercase tracking-wider text-teal-900 dark:text-teal-300">
@@ -59,7 +59,7 @@ export const EnvironmentalTab: React.FC = () => {
               </div>
               <ShieldCheck className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
             </div>
-            <div className="text-2xl font-bold font-mono text-teal-950 dark:text-teal-100 mt-1 whitespace-nowrap">
+            <div className="text-xl sm:text-2xl font-bold font-mono text-teal-950 dark:text-teal-100 mt-1 whitespace-nowrap">
               2 {tr('Wildlife Zones', 'वन्यजीव जोन')}
             </div>
           </div>
@@ -69,12 +69,12 @@ export const EnvironmentalTab: React.FC = () => {
         </div>
 
         {/* Card 4: Forest & PARIVESH Score (Indigo Tint) */}
-        <div className="bg-indigo-50/80 border border-indigo-200 dark:bg-indigo-950/40 dark:border-indigo-900 rounded-lg p-4 shadow-2xs flex flex-col justify-between">
+        <div className="bg-indigo-50/80 border border-indigo-200 dark:bg-indigo-950/40 dark:border-indigo-900 rounded-lg p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
           <div>
             <div className="text-xs font-semibold uppercase tracking-wider text-indigo-900 dark:text-indigo-300">
               {t('overview.forest_parivesh')}
             </div>
-            <div className="text-2xl font-bold font-mono text-indigo-950 dark:text-indigo-100 mt-1">
+            <div className="text-xl sm:text-2xl font-bold font-mono text-indigo-950 dark:text-indigo-100 mt-1">
               {activeProject?.readiness_breakdown.environment} / 100
             </div>
           </div>
@@ -85,20 +85,20 @@ export const EnvironmentalTab: React.FC = () => {
       </div>
 
       {/* Parivesh Clearance Tracker */}
-      <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+      <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-2">
           <div className="flex items-center gap-2">
-            <Trees className="w-5 h-5 text-emerald-700" />
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide">
+            <Trees className="w-5 h-5 text-emerald-700 shrink-0" />
+            <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wide truncate">
               {t('environment.title')}
             </h3>
           </div>
-          <span className="text-xs font-mono bg-slate-100 text-slate-700 px-2.5 py-1 rounded">
+          <span className="text-xs font-mono bg-slate-100 text-slate-700 px-2.5 py-1 rounded self-start sm:self-auto">
             {tr('Portal Ref:', 'परिवेश संदर्भ:')} FP/RJ/ROAD/48921/2024
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
           <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-md">
             <div className="flex items-center justify-between font-bold text-emerald-900 dark:text-emerald-200 mb-1">
               <span>{tr('Stage 1: Proposal Submission', 'चरण 1: प्रस्ताव प्रस्तुति')}</span>
@@ -140,12 +140,12 @@ export const EnvironmentalTab: React.FC = () => {
 
       {/* Sensitive Parcels List */}
       <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-200 bg-slate-50 font-bold text-xs uppercase tracking-wide text-slate-700">
+        <div className="p-3.5 sm:p-4 border-b border-slate-200 bg-slate-50 font-bold text-xs uppercase tracking-wide text-slate-700">
           {tr('Environmentally Sensitive Land Parcels', 'पर्यावरण-संवेदनशील भूमि पार्सल')}
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full min-w-[700px] text-left text-xs">
             <thead className="bg-slate-100 text-slate-700 font-semibold border-b">
               <tr>
                 <th className="p-3">{t('overview.table_parcel_khasra')}</th>

@@ -35,37 +35,37 @@ export const ParcelDetailModal: React.FC<ParcelDetailModalProps> = ({ parcel, on
   ];
 
   return (
-    <div className="fixed inset-0 z-[99999] bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-lg border border-slate-300 shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-[99999] bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-lg border border-slate-300 shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
-          <div className="flex items-center gap-3">
-            <div className="px-2.5 py-1 rounded bg-gov-blue text-white font-mono font-bold text-sm">
+        <div className="px-3.5 sm:px-6 py-3 sm:py-4 bg-slate-900 text-white flex items-start sm:items-center justify-between gap-3 border-b border-slate-800">
+          <div className="flex items-start sm:items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="px-2 py-1 rounded bg-gov-blue text-white font-mono font-bold text-xs sm:text-sm shrink-0">
               {parcel.id}
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <h2 className="text-sm sm:text-base font-bold truncate">
                   {tr('Khasra No.', 'खसरा संख्या')} {parcel.khasra_survey_no} • {t(parcel.village, parcel.village)}, {t(parcel.tehsil, parcel.tehsil)}
                 </h2>
                 <RiskBadge level={parcel.delay_risk_level} score={parcel.delay_risk_score} showScore />
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-[11px] sm:text-xs text-slate-400 truncate mt-0.5">
                 {t(parcel.district, parcel.district)}, {t(parcel.state, parcel.state)} • {t(parcel.land_type, parcel.land_type)} ({parcel.area_acres} {tr('Acres', 'एकड़')})
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition"
+            className="p-1.5 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Sub-Navigation Tabs */}
-        <div className="flex border-b border-slate-200 bg-slate-50 px-6 pt-2 gap-2 text-xs font-semibold overflow-x-auto">
+        <div className="flex border-b border-slate-200 bg-slate-50 px-3 sm:px-6 pt-2 gap-2 text-xs font-semibold overflow-x-auto no-scrollbar">
           {tabs.map(tab => (
             <button
               key={tab.id}
@@ -82,13 +82,13 @@ export const ParcelDetailModal: React.FC<ParcelDetailModalProps> = ({ parcel, on
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 overflow-y-auto flex-1 space-y-6 text-xs text-slate-700">
+        <div className="p-3.5 sm:p-6 overflow-y-auto flex-1 space-y-4 sm:space-y-6 text-xs text-slate-700">
           
           {/* OVERVIEW TAB */}
           {activeSubTab === 'overview' && (
             <div className="space-y-4">
               {/* Landowner Card */}
-              <div className="bg-slate-50 dark:bg-[#0d162d] border border-slate-200 dark:border-slate-800 rounded-lg p-4 shadow-xs">
+              <div className="bg-slate-50 dark:bg-[#0d162d] border border-slate-200 dark:border-slate-800 rounded-lg p-3 sm:p-4 shadow-xs">
                 <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 tracking-wider mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
                   <span className="flex items-center gap-1.5 text-gov-navy dark:text-blue-300">
                     {tr('Recorded Landowner Information (Jamabandi RoR)', 'पंजीकृत खातेदार विवरण (जमाबंदी प्रति)')}
@@ -97,7 +97,7 @@ export const ParcelDetailModal: React.FC<ParcelDetailModalProps> = ({ parcel, on
                     Khasra No: {parcel.khasra_survey_no} • ID: {parcel.owner.id}
                   </span>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
                   <div className="p-3 bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-md">
                     <span className="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">{tr('Primary Owner Name', 'मुख्य खातेदार का नाम')}</span>
                     <strong className="text-slate-900 dark:text-white text-sm block mt-0.5">{t(parcel.owner.name, parcel.owner.name)}</strong>
@@ -130,7 +130,7 @@ export const ParcelDetailModal: React.FC<ParcelDetailModalProps> = ({ parcel, on
               </div>
 
               {/* Recommended Action Callout */}
-              <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
+              <div className="bg-amber-50 border-l-4 border-amber-500 p-3.5 sm:p-4 rounded-r-lg">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-2.5">
                     <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
@@ -144,13 +144,13 @@ export const ParcelDetailModal: React.FC<ParcelDetailModalProps> = ({ parcel, on
                     </div>
                   </div>
                 </div>
-                <div className="mt-3 flex items-center justify-between border-t border-amber-200/60 pt-2.5">
+                <div className="mt-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 border-t border-amber-200/60 pt-2.5">
                   <span className="text-[11px] text-amber-800">
                     {tr('Expected delay reduction if resolved:', 'समाधान होने पर संभावित विलंब में कमी:')} <strong>~{parcel.expected_delay_days} {tr('days', 'दिन')}</strong>
                   </span>
                   <button
                     onClick={handleResolveAction}
-                    className="bg-gov-navy hover:bg-slate-800 text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 shadow-sm"
+                    className="w-full sm:w-auto bg-gov-navy hover:bg-slate-800 text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm"
                   >
                     {actionDone ? (
                       <>
@@ -210,7 +210,7 @@ export const ParcelDetailModal: React.FC<ParcelDetailModalProps> = ({ parcel, on
           {/* COMPENSATION TAB */}
           {activeSubTab === 'compensation' && parcel.compensation && (
             <div className="space-y-4">
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                 <div className="p-3 bg-slate-50 border border-slate-200 rounded">
                   <span className="text-[11px] text-slate-500 block">
                     {tr('Total Statutory Compensation', 'कुल वैधानिक मुआवजा')}
@@ -237,8 +237,8 @@ export const ParcelDetailModal: React.FC<ParcelDetailModalProps> = ({ parcel, on
                 </div>
               </div>
 
-              <div className="border border-slate-200 rounded overflow-hidden">
-                <table className="w-full text-left text-xs">
+              <div className="border border-slate-200 rounded overflow-x-auto">
+                <table className="w-full min-w-[480px] text-left text-xs">
                   <thead className="bg-slate-100 text-slate-700 font-semibold">
                     <tr>
                       <th className="p-2.5 border-b">{tr('Statutory Component (RFCTLARR Act 2013)', 'वैधानिक घटक (RFCTLARR अधिनियम 2013)')}</th>
@@ -276,7 +276,7 @@ export const ParcelDetailModal: React.FC<ParcelDetailModalProps> = ({ parcel, on
           {activeSubTab === 'legal' && (
             <div className="space-y-4">
               {parcel.legal_case ? (
-                <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-3">
+                <div className="bg-slate-50 border border-slate-200 rounded-lg p-3.5 sm:p-4 space-y-3">
                   <div className="flex items-center justify-between border-b border-slate-200 pb-2">
                     <span className="font-bold text-sm text-gov-navy">{parcel.legal_case.case_number}</span>
                     <span className="px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-800">
@@ -284,7 +284,7 @@ export const ParcelDetailModal: React.FC<ParcelDetailModalProps> = ({ parcel, on
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                     <div>
                       <span className="text-slate-400 block text-[11px]">{tr('Court Name', 'न्यायालय का नाम')}</span>
                       <strong>{t(parcel.legal_case.court_name, parcel.legal_case.court_name)}</strong>
@@ -327,7 +327,7 @@ export const ParcelDetailModal: React.FC<ParcelDetailModalProps> = ({ parcel, on
           {/* ENVIRONMENTAL TAB */}
           {activeSubTab === 'environmental' && parcel.environmental && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="p-3 bg-slate-50 border border-slate-200 rounded">
                   <span className="text-[11px] text-slate-500 block">{tr('Forest Overlap', 'वन भूमि व्याप्ति')}</span>
                   <strong>
@@ -359,13 +359,13 @@ export const ParcelDetailModal: React.FC<ParcelDetailModalProps> = ({ parcel, on
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 bg-slate-100 border-t border-slate-200 flex items-center justify-between text-xs">
-          <span className="text-slate-500">
+        <div className="px-3.5 sm:px-6 py-2.5 sm:py-3 bg-slate-100 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs">
+          <span className="text-slate-500 text-[11px] sm:text-xs">
             {tr('Last verified with Revenue & e-Courts database:', 'राजस्व एवं ई-कोर्ट्स डेटाबेस से अंतिम सत्यापन:')} <strong>{parcel.last_updated}</strong>
           </span>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded bg-slate-800 text-white font-semibold hover:bg-slate-900 transition"
+            className="w-full sm:w-auto px-4 py-1.5 rounded bg-slate-800 text-white font-semibold hover:bg-slate-900 transition text-center"
           >
             {t('common.close', 'बंद करें')}
           </button>

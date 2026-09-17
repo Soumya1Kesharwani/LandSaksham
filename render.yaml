@@ -1,58 +1,27 @@
-# ==============================================================================
-# Render Blueprint Specification for LandSaksham (NLIIS)
-# https://render.com/docs/blueprint-spec
-# ==============================================================================
-
 services:
-  # ============================================================================
-  # OPTION 1 (DEFAULT / RECOMMENDED): Unified Full-Stack Service (Docker)
-  # - Only consumes 1 Render Free Tier service
-  # - Multi-stage build handles React/Vite compilation + FastAPI execution
-  # - Zero CORS configuration required; direct SPA & API routing
-  # ============================================================================
+  # 1. FastAPI Backend Web Service
   - type: web
-    name: landsaksham
-    env: docker
-    dockerfilePath: ./Dockerfile
+    name: landsaksham-backend
+    runtime: python
     plan: free
-    region: oregon
-    healthCheckPath: /health
-    autoDeploy: true
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
-      - key: PORT
-        value: 10000
+      - key: PYTHON_VERSION
+        value: 3.11.9
 
-# ==============================================================================
-# OPTION 2 (ALTERNATIVE): Separate Web Service (Backend) + Static Site (Frontend)
-# If you prefer running the backend and frontend on separate Render instances:
-# ------------------------------------------------------------------------------
-# services:
-#   - type: web
-#     name: landsaksham-api
-#     env: python
-#     region: oregon
-#     plan: free
-#     rootDir: backend
-#     buildCommand: pip install -r requirements.txt
-#     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-#     healthCheckPath: /health
-#     autoDeploy: true
-#
-#   - type: static
-#     name: landsaksham-web
-#     region: oregon
-#     plan: free
-#     rootDir: frontend
-#     buildCommand: npm install && npm run build
-#     staticPublishPath: dist
-#     routes:
-#       - type: rewrite
-#         source: /*
-#         destination: /index.html
-#     envVars:
-#       - key: VITE_API_BASE_URL
-#         fromService:
-#           type: web
-#           name: landsaksham-api
-#           property: url
-# ==============================================================================
+  # 2. React + Vite Frontend Static Site
+  - type: web
+    name: landsaksham-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://landsaksham-backend.onrender.com/api

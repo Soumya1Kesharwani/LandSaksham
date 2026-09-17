@@ -79,18 +79,18 @@ export const AIDelayPredictionTab: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Banner */}
-      <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex flex-wrap items-center gap-2 mb-1">
             <span className="text-[11px] font-bold bg-purple-100 text-purple-900 px-2 py-0.5 rounded border border-purple-300 uppercase tracking-wider flex items-center gap-1">
-              <BrainCircuit className="w-3.5 h-3.5" />
+              <BrainCircuit className="w-3.5 h-3.5 shrink-0" />
               {tr('Explainable AI (XGBoost + SHAP Engine)', 'व्याख्यात्मक एआई (XGBoost + SHAP इंजन)')}
             </span>
             <span className="text-xs text-slate-500 font-mono">
               {tr('Confidence: 94.6%', 'सटीकता: 94.6%')}
             </span>
           </div>
-          <h2 className="text-lg font-bold text-slate-900">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900">
             {tr('Project Delay Risk Prediction & Bottleneck Decomposition', 'परियोजना विलंब जोखिम पूर्वानुमान एवं अड़चनों का विश्लेषण')}
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -101,21 +101,21 @@ export const AIDelayPredictionTab: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-4 bg-slate-50 border border-slate-200 p-3 rounded-lg">
+        <div className="flex items-center justify-around md:justify-start gap-4 bg-slate-50 border border-slate-200 p-3 rounded-lg shrink-0">
           <div>
-            <div className="text-[11px] font-bold text-slate-500 uppercase">
+            <div className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase">
               {tr('Baseline Delay Risk', 'आधारभूत विलंब जोखिम')}
             </div>
-            <div className="text-2xl font-bold font-mono text-red-700">
+            <div className="text-xl sm:text-2xl font-bold font-mono text-red-700">
               {activeProject?.overall_delay_risk_score}%
             </div>
           </div>
           <div className="h-8 w-px bg-slate-200"></div>
           <div>
-            <div className="text-[11px] font-bold text-slate-500 uppercase">
+            <div className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase">
               {tr('Expected Delay', 'अनुमानित विलंब')}
             </div>
-            <div className="text-2xl font-bold font-mono text-slate-900">
+            <div className="text-xl sm:text-2xl font-bold font-mono text-slate-900">
               +{activeProject?.expected_delay_days} {tr('days', 'दिन')}
             </div>
           </div>
@@ -123,10 +123,10 @@ export const AIDelayPredictionTab: React.FC = () => {
       </div>
 
       {/* SHAP Feature Importance Waterfall */}
-      <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+      <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-2 gap-1">
           <div>
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide">
+            <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wide">
               {tr('SHAP Feature Attribution (Why is this project at risk?)', 'SHAP फीचर एट्रिब्यूशन (यह परियोजना जोखिम में क्यों है?)')}
             </h3>
             <p className="text-xs text-slate-500">
@@ -137,22 +137,22 @@ export const AIDelayPredictionTab: React.FC = () => {
               <span className="font-mono font-bold text-slate-700">{activeProject?.overall_delay_risk_score}%</span>
             </p>
           </div>
-          <span className="text-xs font-mono text-slate-400">
+          <span className="text-xs font-mono text-slate-400 self-start sm:self-auto">
             {tr('Sum = 100% Relative Impact', 'कुल = 100% सापेक्ष प्रभाव')}
           </span>
         </div>
 
         <div className="space-y-3">
           {shapFactors.map((f, idx) => (
-            <div key={idx} className="bg-slate-50 border border-slate-200 rounded-lg p-3.5 space-y-2">
-              <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
+            <div key={idx} className="bg-slate-50 border border-slate-200 rounded-lg p-3 sm:p-3.5 space-y-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                   <span className="font-bold text-slate-800">{idx + 1}. {f.name}</span>
                   <span className="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded font-mono">
                     {f.category}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 font-mono">
+                <div className="flex items-center gap-2 font-mono shrink-0">
                   <span className="text-red-700 font-bold">
                     +{(f.importance * 100).toFixed(0)}% {tr('Delay Contribution', 'विलंब योगदान')}
                   </span>
@@ -174,15 +174,15 @@ export const AIDelayPredictionTab: React.FC = () => {
       </div>
 
       {/* Interactive What-If Intervention Simulator */}
-      <div className="bg-slate-900 text-white rounded-lg p-6 shadow-md space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div className="bg-slate-900 text-white rounded-lg p-3.5 sm:p-6 shadow-md space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2">
           <div className="flex items-center gap-2">
-            <Sliders className="w-5 h-5 text-amber-400" />
-            <h3 className="text-sm font-bold text-white uppercase tracking-wide">
+            <Sliders className="w-5 h-5 text-amber-400 shrink-0" />
+            <h3 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wide">
               {tr('Proactive Decision Simulator: "What-If" Administrative Actions', 'सक्रिय निर्णय सिमुलेटर: "क्या-यदि (What-If)" प्रशासनिक हस्तक्षेप')}
             </h3>
           </div>
-          <span className="text-xs font-mono text-slate-400">
+          <span className="text-xs font-mono text-slate-400 self-start sm:self-auto">
             {tr('Real-time Recalculation', 'रीयल-टाइम पुनर्गणना')}
           </span>
         </div>

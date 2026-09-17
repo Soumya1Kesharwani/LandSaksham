@@ -27,10 +27,10 @@ export const CompensationTab: React.FC = () => {
   const paidPct = ((paidCompensation / totalCompensation) * 100).toFixed(1);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-full min-w-0">
       
       {/* Top Financial Dashboard */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 min-w-0 w-full">
         <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase text-slate-500">{t('compensation.total_award')}</span>
@@ -103,30 +103,30 @@ export const CompensationTab: React.FC = () => {
       </div>
 
       {/* Parcel Level Compensation Ledger */}
-      <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden min-w-0 w-full max-w-full">
         
-        <div className="p-3.5 sm:p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="p-3.5 sm:p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs min-w-0">
+          <div className="flex items-center gap-2 w-full sm:w-auto min-w-0">
             <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             <input
               type="text"
               placeholder={t('common.search_placeholder')}
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="border border-slate-300 rounded px-3 py-1.5 text-xs w-full sm:w-64 focus:ring-1 focus:ring-gov-blue outline-none bg-white"
+              className="border border-slate-300 rounded px-3 py-1.5 text-xs w-full sm:w-64 focus:ring-1 focus:ring-gov-blue outline-none bg-white min-w-0"
             />
           </div>
 
           <button
             onClick={() => alert(tr("PFMS Treasury Export Generated in XLSX format.", "PFMS राजकोष बहीखाता XLSX प्रारूप में निर्यात किया गया।"))}
-            className="w-full sm:w-auto justify-center flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold border border-slate-300"
+            className="w-full sm:w-auto justify-center flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold border border-slate-300 shrink-0"
           >
             <Download className="w-3.5 h-3.5" />
             <span>{tr('Export PFMS Treasury Ledger', 'PFMS राजकोष बहीखाता निर्यात')}</span>
           </button>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto touch-scroll max-w-full">
           <table className="w-full min-w-[850px] text-left text-xs border-collapse font-mono">
             <thead className="bg-slate-100 text-slate-700 font-sans font-semibold border-b border-slate-200">
               <tr>

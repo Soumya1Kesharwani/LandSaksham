@@ -26,28 +26,28 @@ export const OverviewTab: React.FC = () => {
   const criticalParcels = parcels.filter(p => p.delay_risk_score >= 70);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-full min-w-0">
       
       {/* Top Project Banner */}
-      <div className="bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg p-4 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-4 transition-colors">
-        <div className="space-y-1.5 flex-1">
+      <div className="bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg p-3.5 sm:p-4 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-4 transition-colors min-w-0 w-full max-w-full overflow-hidden">
+        <div className="space-y-1.5 flex-1 min-w-0">
           {/* Subtle Metadata Row */}
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="font-mono font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs min-w-0">
+            <span className="font-mono font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 shrink-0">
               {activeProject.code}
             </span>
             <span className="text-slate-300 dark:text-slate-700">•</span>
-            <span className="text-slate-600 dark:text-slate-400 font-medium">
+            <span className="text-slate-600 dark:text-slate-400 font-medium truncate max-w-[200px] sm:max-w-none">
               {t(activeProject.authority, activeProject.authority)}
             </span>
             <span className="text-slate-300 dark:text-slate-700">•</span>
-            <span className="text-blue-700 dark:text-blue-300 bg-blue-50/80 dark:bg-blue-950/50 px-2 py-0.5 rounded border border-blue-100 dark:border-blue-900 font-medium">
+            <span className="text-blue-700 dark:text-blue-300 bg-blue-50/80 dark:bg-blue-950/50 px-2 py-0.5 rounded border border-blue-100 dark:border-blue-900 font-medium shrink-0">
               {t(activeProject.type, activeProject.type)}
             </span>
             {activeProject.length_km && (
               <>
                 <span className="text-slate-300 dark:text-slate-700">•</span>
-                <span className="text-slate-500 dark:text-slate-400">
+                <span className="text-slate-500 dark:text-slate-400 shrink-0">
                   {activeProject.state || 'Rajasthan'} • {activeProject.length_km} km
                 </span>
               </>
@@ -55,18 +55,18 @@ export const OverviewTab: React.FC = () => {
           </div>
 
           {/* Clean Moderate Title */}
-          <h2 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
+          <h2 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 tracking-tight break-words">
             {t(activeProject.name, activeProject.name)}
           </h2>
 
           {/* Subtle Description */}
-          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-3xl">
+          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-3xl break-words">
             {t(activeProject.description, activeProject.description)}
           </p>
         </div>
 
         {/* Readiness Gauge */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-3 w-full lg:w-auto min-w-0 shrink-0">
           <ReadinessGauge
             score={activeProject.overall_readiness_score}
             delayProbability={activeProject.overall_delay_probability}
@@ -75,7 +75,7 @@ export const OverviewTab: React.FC = () => {
       </div>
 
       {/* Primary KPI Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+      <div className="grid grid-cols-1 min-[340px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2.5 sm:gap-3 min-w-0 w-full max-w-full">
         <MetricCard
           title={t('kpis.delay_risk')}
           value={`${activeProject.overall_delay_risk_score}%`}
@@ -135,22 +135,22 @@ export const OverviewTab: React.FC = () => {
       </div>
 
       {/* Project Health Readiness Matrix */}
-      <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-2 border-b border-slate-100 gap-2">
-          <div>
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide">
+      <div className="bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg p-3.5 sm:p-5 shadow-sm min-w-0 w-full max-w-full overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-800 gap-2 min-w-0">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wide truncate">
               {t('overview.health_matrix_title')}
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 break-words">
               {t('overview.health_matrix_subtitle')}
             </p>
           </div>
-          <span className="text-xs font-mono font-bold bg-slate-100 px-2.5 py-1 rounded text-slate-700 self-start sm:self-auto">
+          <span className="text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded text-slate-700 dark:text-slate-300 self-start sm:self-auto shrink-0 border border-slate-200 dark:border-slate-700">
             {t('overview.overall')}: {activeProject.overall_readiness_score}/100
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
+        <div className="grid grid-cols-1 min-[360px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 min-w-0 w-full">
           {[
             { label: t('overview.land_mutation'), score: activeProject.readiness_breakdown.land, tab: 'land' },
             { label: t('overview.legal_litigation'), score: activeProject.readiness_breakdown.legal, tab: 'legal' },
@@ -162,25 +162,25 @@ export const OverviewTab: React.FC = () => {
             const isHigh = dim.score >= 70;
             const isMed = dim.score >= 50 && dim.score < 70;
             const colorClass = isHigh ? 'bg-emerald-600' : isMed ? 'bg-amber-500' : 'bg-red-600';
-            const textClass = isHigh ? 'text-emerald-700' : isMed ? 'text-amber-700' : 'text-red-700';
+            const textClass = isHigh ? 'text-emerald-700 dark:text-emerald-400' : isMed ? 'text-amber-700 dark:text-amber-400' : 'text-red-700 dark:text-red-400';
 
             return (
               <div
                 key={dim.label}
                 onClick={() => setActiveTab(dim.tab)}
-                className="bg-slate-50 border border-slate-200 rounded-md p-2.5 sm:p-3 hover:border-gov-blue/50 cursor-pointer transition"
+                className="bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-md p-2.5 sm:p-3 hover:border-gov-blue/50 cursor-pointer transition min-w-0 overflow-hidden"
               >
-                <div className="text-[11px] font-semibold text-slate-600 truncate">{dim.label}</div>
-                <div className="flex items-baseline justify-between mt-1.5">
-                  <span className={`text-base sm:text-lg font-bold font-mono ${textClass}`}>
+                <div className="text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300 truncate">{dim.label}</div>
+                <div className="flex items-baseline justify-between mt-1.5 gap-1.5 min-w-0">
+                  <span className={`text-base sm:text-lg font-bold font-mono shrink-0 ${textClass}`}>
                     {dim.score}
                     <span className="text-[10px] text-slate-400 font-normal">/100</span>
                   </span>
-                  <span className="text-[9px] sm:text-[10px] font-semibold text-slate-500">
+                  <span className="text-[9px] sm:text-[10px] font-semibold text-slate-500 dark:text-slate-400 truncate">
                     {dim.score >= 70 ? t('common.optimal') : dim.score >= 50 ? t('common.moderate') : t('common.critical')}
                   </span>
                 </div>
-                <div className="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden">
+                <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 mt-2 overflow-hidden">
                   <div className={`${colorClass} h-1.5 rounded-full transition-all duration-500`} style={{ width: `${dim.score}%` }} />
                 </div>
               </div>
@@ -190,60 +190,60 @@ export const OverviewTab: React.FC = () => {
       </div>
 
       {/* Critical Priority Parcels Table & Early Warning Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 min-w-0 w-full max-w-full">
         {/* Left 2 Cols: High Risk Parcels */}
-        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-red-600 shrink-0" />
-              <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wide truncate">
+        <div className="lg:col-span-2 bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg p-3.5 sm:p-5 shadow-sm min-w-0 w-full max-w-full overflow-hidden">
+          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between mb-3 min-w-0 gap-2">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <ShieldAlert className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" />
+              <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wide truncate">
                 {t('overview.critical_parcels_title')}
               </h3>
             </div>
             <button
               onClick={() => setActiveTab('land')}
-              className="text-xs font-semibold text-gov-blue hover:underline flex items-center gap-0.5 shrink-0"
+              className="text-xs font-semibold text-gov-blue dark:text-blue-400 hover:underline flex items-center gap-0.5 shrink-0"
             >
               <span>{t('overview.view_all_parcels')} ({parcels.length})</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="border border-slate-200 rounded-md overflow-x-auto">
-            <table className="w-full min-w-[650px] text-left text-xs">
-              <thead className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+          <div className="w-full max-w-full min-w-0 border border-slate-200 dark:border-slate-800 rounded-md overflow-x-auto touch-scroll">
+            <table className="w-full min-w-[580px] sm:min-w-[650px] text-left text-xs">
+              <thead className="bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-semibold border-b border-slate-200 dark:border-slate-700">
                 <tr>
-                  <th className="p-2.5">{t('overview.table_parcel_khasra')}</th>
-                  <th className="p-2.5">{t('overview.table_village_tehsil')}</th>
-                  <th className="p-2.5">{t('overview.table_owner_name')}</th>
-                  <th className="p-2.5">{t('overview.table_delay_risk')}</th>
-                  <th className="p-2.5">{t('overview.table_primary_bottleneck')}</th>
-                  <th className="p-2.5 text-right">{t('overview.table_action')}</th>
+                  <th className="p-2.5 whitespace-nowrap">{t('overview.table_parcel_khasra')}</th>
+                  <th className="p-2.5 whitespace-nowrap">{t('overview.table_village_tehsil')}</th>
+                  <th className="p-2.5 whitespace-nowrap">{t('overview.table_owner_name')}</th>
+                  <th className="p-2.5 whitespace-nowrap">{t('overview.table_delay_risk')}</th>
+                  <th className="p-2.5 whitespace-nowrap">{t('overview.table_primary_bottleneck')}</th>
+                  <th className="p-2.5 text-right whitespace-nowrap">{t('overview.table_action')}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {criticalParcels.map(p => (
-                  <tr key={p.id} className="hover:bg-blue-50/40 transition">
+                  <tr key={p.id} className="hover:bg-blue-50/40 dark:hover:bg-blue-950/40 transition">
                     <td className="p-2.5">
-                      <div className="font-bold text-gov-navy">{p.id}</div>
-                      <div className="text-[11px] text-slate-500 font-mono">{tr('Khasra', 'खसरा')} {p.khasra_survey_no}</div>
+                      <div className="font-bold text-gov-navy dark:text-blue-300">{p.id}</div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">{tr('Khasra', 'खसरा')} {p.khasra_survey_no}</div>
                     </td>
-                    <td className="p-2.5 text-slate-700">
+                    <td className="p-2.5 text-slate-700 dark:text-slate-300">
                       {t(p.village, p.village)}, {t(p.tehsil, p.tehsil)}
                     </td>
-                    <td className="p-2.5 font-medium text-slate-800">
+                    <td className="p-2.5 font-medium text-slate-800 dark:text-slate-200">
                       {t(p.owner.name, p.owner.name)}
                     </td>
                     <td className="p-2.5">
                       <RiskBadge level={p.delay_risk_level} score={p.delay_risk_score} showScore size="sm" />
                     </td>
-                    <td className="p-2.5 text-slate-600 text-[11px]">
+                    <td className="p-2.5 text-slate-600 dark:text-slate-400 text-[11px]">
                       {p.top_risk_factors[0]?.factor_name ? t(p.top_risk_factors[0]?.factor_name, p.top_risk_factors[0]?.factor_name) : t('common.pending')}
                     </td>
                     <td className="p-2.5 text-right">
                       <button
                         onClick={() => setSelectedParcel(p)}
-                        className="px-2.5 py-1 rounded bg-slate-100 hover:bg-gov-blue hover:text-white text-slate-700 font-semibold transition border border-slate-300"
+                        className="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-gov-blue dark:hover:bg-blue-600 hover:text-white text-slate-700 dark:text-slate-200 font-semibold transition border border-slate-300 dark:border-slate-700"
                       >
                         {t('common.inspect')}
                       </button>
@@ -256,8 +256,8 @@ export const OverviewTab: React.FC = () => {
         </div>
 
         {/* Right 1 Col: Key Insights & Route Comparison Teaser */}
-        <div className="space-y-4">
-          <div className="bg-slate-900 text-white rounded-lg p-5 shadow-sm space-y-3">
+        <div className="space-y-4 min-w-0 w-full max-w-full">
+          <div className="bg-slate-900 text-white rounded-lg p-4 sm:p-5 shadow-sm space-y-3 min-w-0 w-full max-w-full overflow-hidden">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400">
                 {t('overview.ai_intelligence_tag')}
@@ -281,7 +281,7 @@ export const OverviewTab: React.FC = () => {
             </button>
           </div>
 
-          <div className="bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg p-4 shadow-sm space-y-3">
+          <div className="bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg p-4 shadow-sm space-y-3 min-w-0 w-full max-w-full overflow-hidden">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 pb-1 border-b border-slate-100 dark:border-slate-800">
               {t('overview.statutory_compliance_title')}
             </h4>

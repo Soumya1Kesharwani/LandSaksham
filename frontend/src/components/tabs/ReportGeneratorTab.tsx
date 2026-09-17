@@ -23,10 +23,10 @@ export const ReportGeneratorTab: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-full min-w-0">
       
       {/* Top Banner */}
-      <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 min-w-0">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[11px] font-bold bg-gov-navy text-white px-2 py-0.5 rounded uppercase tracking-wider">
@@ -99,7 +99,7 @@ export const ReportGeneratorTab: React.FC = () => {
       </div>
 
       {/* Live Printable Report Preview */}
-      <div className="bg-white border border-slate-300 rounded-lg shadow-lg p-4 sm:p-8 max-w-4xl mx-auto text-slate-800 space-y-6 print:shadow-none print:border-none">
+      <div className="bg-white border border-slate-300 rounded-lg shadow-lg p-3 sm:p-8 max-w-4xl w-full mx-auto text-slate-800 space-y-6 print:shadow-none print:border-none min-w-0 overflow-hidden">
         
         {/* Report Header */}
         <div className="text-center border-b-2 border-double border-slate-900 pb-4 space-y-2">

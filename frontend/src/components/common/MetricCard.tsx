@@ -36,34 +36,34 @@ export const MetricCard: React.FC<MetricCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`bg-[#111c38] border border-slate-800 rounded-lg p-3 sm:p-4 shadow-sm hover:shadow transition-all ${onClick ? 'cursor-pointer hover:border-blue-500/50' : ''
+      className={`bg-[#111c38] border border-slate-800 rounded-lg p-2.5 sm:p-4 shadow-sm hover:shadow transition-all min-w-0 w-full overflow-hidden ${onClick ? 'cursor-pointer hover:border-blue-500/50' : ''
         }`}
     >
-      <div className="flex items-start justify-between gap-1.5 sm:gap-2.5">
-        <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 uppercase tracking-normal leading-tight flex-1 pr-1 min-w-0 break-words">
+      <div className="flex items-start justify-between gap-1 sm:gap-2.5 min-w-0">
+        <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 uppercase tracking-normal leading-tight flex-1 pr-1 min-w-0 break-words line-clamp-2">
           {t(title)}
         </span>
-        <div className="p-1.5 sm:p-2 rounded bg-slate-800/80 text-blue-400 border border-slate-700 shrink-0">
+        <div className="p-1 sm:p-2 rounded bg-slate-800/80 text-blue-400 border border-slate-700 shrink-0">
           <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </div>
       </div>
 
-      <div className="mt-1.5 sm:mt-2 flex flex-col items-center text-center gap-1">
-        <div className="text-xl sm:text-2xl font-bold font-mono text-white tracking-tight whitespace-nowrap text-center">
+      <div className="mt-1.5 sm:mt-2 flex flex-col items-center text-center gap-1 min-w-0">
+        <div className="text-lg sm:text-2xl font-bold font-mono text-white tracking-tight whitespace-nowrap text-center truncate max-w-full">
           {value}
         </div>
         {badge && (
-          <span className={`text-[10px] sm:text-[11px] font-semibold px-1.5 sm:px-2 py-0.5 rounded border inline-block text-center ${badgeClasses[badgeType]}`}>
+          <span className={`text-[9.5px] sm:text-[11px] font-semibold px-1.5 sm:px-2 py-0.5 rounded border inline-block text-center truncate max-w-full ${badgeClasses[badgeType]}`}>
             {t(badge)}
           </span>
         )}
       </div>
 
       {(subtitle || trend) && (
-        <div className="mt-2 text-[10px] sm:text-xs text-slate-400 flex items-center justify-between border-t border-slate-800/80 pt-1.5 sm:pt-2 gap-1">
-          <span className="truncate">{subtitle ? t(subtitle) : ''}</span>
+        <div className="mt-2 text-[10px] sm:text-xs text-slate-400 flex items-center justify-between border-t border-slate-800/80 pt-1.5 sm:pt-2 gap-1 min-w-0 w-full overflow-hidden">
+          <span className="truncate min-w-0 flex-1">{subtitle ? t(subtitle) : ''}</span>
           {trend && (
-            <span className={`font-medium shrink-0 ${trendPositive ? 'text-emerald-400' : 'text-red-400'}`}>
+            <span className={`font-medium shrink-0 ml-1 text-[9px] sm:text-xs ${trendPositive ? 'text-emerald-400' : 'text-red-400'}`}>
               {t(trend)}
             </span>
           )}

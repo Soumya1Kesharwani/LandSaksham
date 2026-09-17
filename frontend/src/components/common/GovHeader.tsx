@@ -127,7 +127,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
   const brand = getBrandParts(language);
 
   return (
-    <header className="sticky top-0 z-40 bg-[#0b1329] border-b border-slate-800 shadow-md transition-colors duration-200">
+    <header className="sticky top-0 z-40 bg-[#0b1329] border-b border-slate-800 shadow-md transition-colors duration-200 w-full max-w-full overflow-hidden">
       {/* Tricolor Government Ribbon */}
       <div className="h-1 w-full flex">
         <div className="flex-1 bg-[#ff9933]"></div>
@@ -136,9 +136,9 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
       </div>
 
       {/* Main Bar */}
-      <div className="px-2.5 sm:px-4 py-2 sm:py-3.5 flex items-center justify-between gap-1.5 sm:gap-4">
+      <div className="px-2 sm:px-4 py-2 sm:py-3.5 flex items-center justify-between gap-1.5 sm:gap-4 w-full max-w-full min-w-0">
         {/* Left: Identity & Branding */}
-        <div className="flex items-center gap-1.5 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3 min-w-0 flex-1 sm:flex-initial">
           {/* Mobile Sidebar Hamburger Toggle */}
           <button
             onClick={onToggleSidebar}
@@ -158,9 +158,9 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
             <img src="/logo.png" alt="NLIIS Official Logo" className="w-full h-full object-contain rounded-full" />
           </button>
 
-          <div>
-            <div className="flex flex-col justify-center">
-              <h1 className="text-xs sm:text-sm font-bold text-slate-100 tracking-tight leading-tight hidden xs:block">
+          <div className="min-w-0 overflow-hidden">
+            <div className="flex flex-col justify-center min-w-0">
+              <h1 className="text-xs sm:text-sm font-bold text-slate-100 tracking-tight leading-tight hidden xs:block truncate">
                 {t('system.title')}
               </h1>
               <div className="text-xs sm:text-base font-extrabold tracking-tight leading-tight whitespace-nowrap">

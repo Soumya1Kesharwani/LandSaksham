@@ -41,6 +41,21 @@ const DashboardContent: React.FC<{
   const { t } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(() => typeof window !== 'undefined' ? window.innerWidth >= 768 : true);
 
+  // Sync sidebar state on window resize or device mode toggle
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (typeof window !== 'undefined') {
+        if (window.innerWidth < 768) {
+          setSidebarOpen(false);
+        } else {
+          setSidebarOpen(true);
+        }
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const renderActiveTab = () => {
     switch (activeTab) {
       case 'overview':
@@ -79,7 +94,7 @@ const DashboardContent: React.FC<{
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc] dark:bg-[#090d16] text-slate-900 dark:text-[#f8fafc] transition-colors duration-200">
+    <div className="min-h-screen w-full max-w-full flex flex-col bg-[#f8fafc] dark:bg-[#090d16] text-slate-900 dark:text-[#f8fafc] transition-colors duration-200 overflow-x-hidden">
       <GovHeader
         onOpenCreateProject={onOpenCreateProject}
         onOpenCopilot={onOpenCopilot}
@@ -89,14 +104,14 @@ const DashboardContent: React.FC<{
         isSidebarOpen={sidebarOpen}
       />
 
-      <div className="flex-1 flex overflow-hidden relative">
+      <div className="flex-1 w-full max-w-full flex overflow-hidden relative min-w-0">
         <GovSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-        <main className="flex-1 overflow-y-auto p-3 sm:p-6 pb-20 md:pb-6 space-y-4 sm:space-y-6">
+        <main className="flex-1 min-w-0 w-full max-w-full overflow-y-auto overflow-x-hidden p-3 sm:p-6 pb-20 md:pb-6 space-y-4 sm:space-y-6">
           {/* Active Role Indicator Bar */}
-          <div className="flex items-center justify-between bg-blue-50/80 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 px-3 sm:px-4 py-2 rounded-lg text-xs transition-colors">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400 animate-pulse"></span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-blue-50/80 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 px-3 sm:px-4 py-2 rounded-lg text-xs transition-colors min-w-0">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 min-w-0">
+              <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400 animate-pulse shrink-0"></span>
               <span className="text-slate-800 dark:text-blue-100">{t('system.active_viewport')}: <strong className="text-slate-900 dark:text-white font-bold">{t(role)}</strong></span>
               <span className="text-slate-400 dark:text-blue-600 hidden sm:inline">|</span>
               <span className="text-slate-700 dark:text-blue-200 hidden sm:inline">{t('system.all_permissions_active')}</span>
@@ -104,7 +119,7 @@ const DashboardContent: React.FC<{
 
             <button
               onClick={onOpenCreateProject}
-              className="text-blue-700 dark:text-blue-300 hover:underline font-semibold text-[11px] sm:text-xs"
+              className="text-blue-700 dark:text-blue-300 hover:underline font-semibold text-[11px] sm:text-xs shrink-0 self-start sm:self-auto"
             >
               {t('system.register_new_project')}
             </button>

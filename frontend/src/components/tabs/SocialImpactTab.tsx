@@ -11,40 +11,40 @@ export const SocialImpactTab: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Social Impact Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-          <div className="text-xs font-semibold uppercase text-slate-500">{t('social.affected_families')}</div>
-          <div className="text-2xl font-bold font-mono text-slate-900 mt-1">1,284 {tr('Families', 'परिवार')}</div>
-          <p className="text-xs text-slate-500 mt-1">{tr('Across 34 project-affected villages', '34 परियोजना-प्रभावित ग्रामों में')}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
+        <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-4 shadow-sm">
+          <div className="text-xs font-semibold uppercase text-slate-500 truncate">{t('social.affected_families')}</div>
+          <div className="text-xl sm:text-2xl font-bold font-mono text-slate-900 mt-1 truncate">1,284 {tr('Families', 'परिवार')}</div>
+          <p className="text-xs text-slate-500 mt-1 truncate">{tr('Across 34 project-affected villages', '34 परियोजना-प्रभावित ग्रामों में')}</p>
         </div>
 
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 shadow-sm">
-          <div className="text-xs font-semibold uppercase text-amber-800">{t('social.displaced_families')}</div>
-          <div className="text-2xl font-bold font-mono text-amber-950 mt-1">246 {tr('Families', 'परिवार')}</div>
-          <p className="text-xs text-amber-800 mt-1">{tr('Residential & commercial structure loss', 'आवासीय व व्यावसायिक संरचना विस्थापन')}</p>
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3.5 sm:p-4 shadow-sm">
+          <div className="text-xs font-semibold uppercase text-amber-800 truncate">{t('social.displaced_families')}</div>
+          <div className="text-xl sm:text-2xl font-bold font-mono text-amber-950 mt-1 truncate">246 {tr('Families', 'परिवार')}</div>
+          <p className="text-xs text-amber-800 mt-1 truncate">{tr('Residential & commercial structure loss', 'आवासीय व व्यावसायिक संरचना विस्थापन')}</p>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-          <div className="text-xs font-semibold uppercase text-slate-500">{tr('R&R Housing Packages Sanctioned', 'स्वीकृत पुनर्वास आवास पैकेज')}</div>
-          <div className="text-2xl font-bold font-mono text-emerald-700 mt-1">198 {tr('Packages', 'पैकेज')}</div>
-          <p className="text-xs text-slate-500 mt-1">{tr('Under Second Schedule of 2013 Act', '2013 अधिनियम की द्वितीय अनुसूची अंतर्गत')}</p>
+        <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-4 shadow-sm">
+          <div className="text-xs font-semibold uppercase text-slate-500 truncate">{tr('R&R Housing Packages Sanctioned', 'स्वीकृत पुनर्वास आवास पैकेज')}</div>
+          <div className="text-xl sm:text-2xl font-bold font-mono text-emerald-700 mt-1 truncate">198 {tr('Packages', 'पैकेज')}</div>
+          <p className="text-xs text-slate-500 mt-1 truncate">{tr('Under Second Schedule of 2013 Act', '2013 अधिनियम की द्वितीय अनुसूची अंतर्गत')}</p>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-          <div className="text-xs font-semibold uppercase text-slate-500">{t('social.vulnerable_families')}</div>
-          <div className="text-2xl font-bold font-mono text-gov-navy mt-1">100% {tr('Covered', 'आच्छादित')}</div>
-          <p className="text-xs text-slate-500 mt-1">{t('social.vulnerable_families_sub')}</p>
+        <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-4 shadow-sm">
+          <div className="text-xs font-semibold uppercase text-slate-500 truncate">{t('social.vulnerable_families')}</div>
+          <div className="text-xl sm:text-2xl font-bold font-mono text-gov-navy mt-1 truncate">100% {tr('Covered', 'आच्छादित')}</div>
+          <p className="text-xs text-slate-500 mt-1 truncate">{t('social.vulnerable_families_sub')}</p>
         </div>
       </div>
 
       {/* R&R Entitlement Matrix */}
-      <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-4">
-        <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">
+      <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm space-y-4">
+        <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">
           {t('social.title')}
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-          <div className="border border-slate-200 rounded-lg p-4 bg-slate-50 space-y-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 text-xs">
+          <div className="border border-slate-200 rounded-lg p-3.5 sm:p-4 bg-slate-50 space-y-2">
             <div className="flex items-center gap-2 text-gov-navy font-bold text-sm">
               <Home className="w-4 h-4 text-gov-blue" />
               <span>{tr('Provision of Housing Units', 'आवासीय इकाइयों का प्रावधान')}</span>
@@ -57,7 +57,7 @@ export const SocialImpactTab: React.FC = () => {
             </p>
           </div>
 
-          <div className="border border-slate-200 rounded-lg p-4 bg-slate-50 space-y-2">
+          <div className="border border-slate-200 rounded-lg p-3.5 sm:p-4 bg-slate-50 space-y-2">
             <div className="flex items-center gap-2 text-gov-navy font-bold text-sm">
               <HeartHandshake className="w-4 h-4 text-emerald-600" />
               <span>{tr('Subsistence Allowance', 'निर्वाह भत्ता')}</span>
@@ -70,7 +70,7 @@ export const SocialImpactTab: React.FC = () => {
             </p>
           </div>
 
-          <div className="border border-slate-200 rounded-lg p-4 bg-slate-50 space-y-2">
+          <div className="border border-slate-200 rounded-lg p-3.5 sm:p-4 bg-slate-50 space-y-2">
             <div className="flex items-center gap-2 text-gov-navy font-bold text-sm">
               <ShieldCheck className="w-4 h-4 text-amber-600" />
               <span>{tr('Resettlement & Cattle Shed Grant', 'विस्थापन एवं पशुशाला अनुदान')}</span>
@@ -87,12 +87,12 @@ export const SocialImpactTab: React.FC = () => {
 
       {/* Village-Level Social Impact Summary */}
       <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-200 bg-slate-50 font-bold text-xs uppercase tracking-wide text-slate-700">
+        <div className="p-3.5 sm:p-4 border-b border-slate-200 bg-slate-50 font-bold text-xs uppercase tracking-wide text-slate-700">
           {tr('Village-Level Social & Displacement Impact Breakdown', 'ग्राम-वार सामाजिक एवं विस्थापन प्रभाव विवरण')}
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full min-w-[650px] text-left text-xs">
             <thead className="bg-slate-100 text-slate-700 font-semibold border-b">
               <tr>
                 <th className="p-3">{t('overview.table_village_tehsil')}</th>

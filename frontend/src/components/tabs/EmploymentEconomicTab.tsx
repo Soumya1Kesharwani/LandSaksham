@@ -86,85 +86,85 @@ export const EmploymentEconomicTab: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Indicators */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
+        <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between text-xs font-semibold uppercase text-slate-500">
-            <span>{tr('Direct Construction Jobs', 'प्रत्यक्ष निर्माण रोजगार')}</span>
-            <Briefcase className="w-4 h-4 text-gov-navy" />
+            <span className="truncate">{tr('Direct Construction Jobs', 'प्रत्यक्ष निर्माण रोजगार')}</span>
+            <Briefcase className="w-4 h-4 text-gov-navy shrink-0" />
           </div>
-          <div className="text-2xl font-bold font-mono text-slate-900 mt-2">
+          <div className="text-xl sm:text-2xl font-bold font-mono text-slate-900 mt-2 truncate">
             {emp?.direct_construction_jobs.toLocaleString()}
           </div>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 mt-1 truncate">
             {tr('36-Month Active Build Phase', '36 माह सक्रिय निर्माण चरण')}
           </p>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-5 shadow-sm">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3.5 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between text-xs font-semibold uppercase text-gov-blue">
-            <span>{tr('Indirect Supply Chain Jobs', 'अप्रत्यक्ष आपूर्ति श्रृंखला रोजगार')}</span>
-            <TrendingUp className="w-4 h-4 text-gov-blue" />
+            <span className="truncate">{tr('Indirect Supply Chain Jobs', 'अप्रत्यक्ष आपूर्ति श्रृंखला रोजगार')}</span>
+            <TrendingUp className="w-4 h-4 text-gov-blue shrink-0" />
           </div>
-          <div className="text-2xl font-bold font-mono text-gov-navy mt-2">
+          <div className="text-xl sm:text-2xl font-bold font-mono text-gov-navy mt-2 truncate">
             {emp?.indirect_supply_chain_jobs.toLocaleString()}
           </div>
-          <p className="text-xs text-slate-600 mt-1">
+          <p className="text-xs text-slate-600 mt-1 truncate">
             {tr('Cement, Steel, Aggregates & Logistics', 'सीमेंट, इस्पात, निर्माण सामग्री एवं लॉजिस्टिक्स')}
           </p>
         </div>
 
-        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-5 shadow-sm">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3.5 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between text-xs font-semibold uppercase text-emerald-800">
-            <span>{tr('Total Estimated Jobs', 'कुल अनुमानित रोजगार')}</span>
-            <Users className="w-4 h-4 text-emerald-600" />
+            <span className="truncate">{tr('Total Estimated Jobs', 'कुल अनुमानित रोजगार')}</span>
+            <Users className="w-4 h-4 text-emerald-600 shrink-0" />
           </div>
-          <div className="text-2xl font-bold font-mono text-emerald-950 mt-2">
+          <div className="text-xl sm:text-2xl font-bold font-mono text-emerald-950 mt-2 truncate">
             {emp?.total_estimated_jobs.toLocaleString()} {tr('Jobs', 'रोजगार')}
           </div>
-          <p className="text-xs text-emerald-800 mt-1">
+          <p className="text-xs text-emerald-800 mt-1 truncate">
             {emp?.local_worker_absorption_pct}% {tr('Local District Absorption', 'स्थानीय जिला कामगार अवशोषण')}
           </p>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+        <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between text-xs font-semibold uppercase text-slate-500">
-            <span>{tr('Annual Regional GDP Boost', 'वार्षिक क्षेत्रीय GDP वृद्धि')}</span>
-            <Truck className="w-4 h-4 text-gov-navy" />
+            <span className="truncate">{tr('Annual Regional GDP Boost', 'वार्षिक क्षेत्रीय GDP वृद्धि')}</span>
+            <Truck className="w-4 h-4 text-gov-navy shrink-0" />
           </div>
-          <div className="text-2xl font-bold font-mono text-gov-blue mt-2">
+          <div className="text-xl sm:text-2xl font-bold font-mono text-gov-blue mt-2 truncate">
             ₹{eco?.estimated_local_gdp_boost_cr} {tr('Crore', 'करोड़')}
           </div>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 mt-1 truncate">
             {eco?.avg_travel_time_reduction_pct}% {tr('Average Travel Time Savings', 'औसत यात्रा समय में बचत')}
           </p>
         </div>
       </div>
 
       {/* National Development Impact Flow Visual */}
-      <div className="bg-slate-900 text-white rounded-lg p-6 shadow-sm space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-          <h3 className="text-sm font-bold text-amber-400 uppercase tracking-wide">
+      <div className="bg-slate-900 text-white rounded-lg p-3.5 sm:p-6 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2">
+          <h3 className="text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-wide">
             {tr('Development Impact Pipeline: From Infrastructure to National Growth', 'विकास प्रभाव पाइपलाइन: अवसंरचना से राष्ट्र निर्माण तक')}
           </h3>
-          <span className="text-xs text-slate-400 font-mono">
+          <span className="text-xs text-slate-400 font-mono self-start sm:self-auto">
             {tr('Macro-Economic Simulation', 'वृहद आर्थिक अनुकरण')}
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 text-center">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 text-center">
           {pipelineSteps.map((item, idx) => (
-            <div key={idx} className="bg-slate-800/80 p-3 rounded-lg border border-slate-700 flex flex-col justify-between">
-              <div className="text-[10px] font-bold text-amber-400 tracking-wider mb-1">{item.step}</div>
+            <div key={idx} className="bg-slate-800/80 p-2.5 sm:p-3 rounded-lg border border-slate-700 flex flex-col justify-between">
+              <div className="text-[9px] sm:text-[10px] font-bold text-amber-400 tracking-wider mb-1 truncate">{item.step}</div>
               <div className="font-bold text-white text-xs">{item.title}</div>
-              <div className="text-[11px] text-slate-400 mt-1">{item.sub}</div>
+              <div className="text-[10px] sm:text-[11px] text-slate-400 mt-1">{item.sub}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Trade and Sector Breakdown */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <div className="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 shadow-sm space-y-3">
           <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">
             {tr('Key Technical Employment Trades Mobilized', 'प्रमुख तकनीकी रोजगार संवर्ग')}
           </h4>

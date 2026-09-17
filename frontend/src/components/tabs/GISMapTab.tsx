@@ -8,7 +8,7 @@ import {
   Layers, Search, Filter, ShieldAlert, Eye, 
   MapPin, CheckCircle, Navigation, ZoomIn, ZoomOut,
   Compass, Droplets, Trees, Home, Sprout, Building, Mountain,
-  Train, Map as MapIcon, Globe
+  Train, Map as MapIcon, Globe, X
 } from 'lucide-react';
 
 export const GISMapTab: React.FC = () => {
@@ -23,6 +23,10 @@ export const GISMapTab: React.FC = () => {
 
   const [searchMap, setSearchMap] = useState('');
   const [selectedRiskFilter, setSelectedRiskFilter] = useState('CRITICAL');
+
+  // Mobile layout state
+  const [activeMobileView, setActiveMobileView] = useState<'map' | 'parcels'>('map');
+  const [mobileSelectedParcel, setMobileSelectedParcel] = useState<Parcel | null>(null);
 
   // Basemap tile provider state
   const [activeBasemap, setActiveBasemap] = useState<'SATELLITE_HYBRID' | 'OPEN_TOPO' | 'OPEN_STREET'>('OPEN_STREET');
@@ -47,7 +51,8 @@ export const GISMapTab: React.FC = () => {
       const map = L.map(mapContainerRef.current, {
         center: initialCenter,
         zoom: 9,
-        zoomControl: false
+        zoomControl: false,
+        touchZoom: true
       });
 
       L.control.zoom({ position: 'topright' }).addTo(map);
@@ -60,7 +65,22 @@ export const GISMapTab: React.FC = () => {
 
       mapInstanceRef.current = map;
     }
+
+    const handleResize = () => {
+      mapInstanceRef.current?.invalidateSize();
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Invalidate map size when switching mobile views
+  useEffect(() => {
+    if (activeMobileView === 'map' && mapInstanceRef.current) {
+      setTimeout(() => {
+        mapInstanceRef.current?.invalidateSize();
+      }, 150);
+    }
+  }, [activeMobileView]);
 
   // 2. Update Map Tile Provider based on activeBasemap
   useEffect(() => {
@@ -365,6 +385,10 @@ export const GISMapTab: React.FC = () => {
         }
       });
 
+      marker.on('click', () => {
+        setMobileSelectedParcel(parcel);
+      });
+
       marker.addTo(layerGroup);
     });
 
@@ -375,6 +399,8 @@ export const GISMapTab: React.FC = () => {
   ]);
 
   const handleZoomToParcel = (parcel: Parcel, openModal = false) => {
+    setMobileSelectedParcel(parcel);
+    setActiveMobileView('map');
     const map = mapInstanceRef.current;
     if (!map) return;
 
@@ -398,220 +424,298 @@ export const GISMapTab: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4 h-[calc(100vh-140px)] min-h-[650px]">
-      
-      {/* Left Column: GIS Map Container */}
-      <div className="flex-1 bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm overflow-hidden flex flex-col relative">
-        
-        {/* Top Control Bar inside Map */}
-        <div className="p-3 bg-white/95 dark:bg-[#111c38]/95 backdrop-blur-xs border-b border-slate-200 dark:border-slate-800 z-10 flex flex-wrap items-center justify-between gap-3 text-xs">
-          
-          {/* Left Controls: Search & Filters */}
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
-              <input
-                type="text"
-                placeholder={t('common.search_placeholder')}
-                value={searchMap}
-                onChange={e => setSearchMap(e.target.value)}
-                className="pl-8 pr-3 py-1.5 border border-slate-300 dark:border-slate-700 rounded text-xs w-48 sm:w-56 bg-white dark:bg-[#0b1329] text-slate-800 dark:text-slate-100 focus:ring-1 focus:ring-gov-blue outline-none"
-              />
-            </div>
+    <div className="space-y-3">
+      {/* Mobile Segmented View Switcher: Map View vs Parcel List */}
+      <div className="lg:hidden flex items-center bg-slate-200 dark:bg-slate-800/80 p-1 rounded-lg text-xs font-bold shadow-2xs gap-1">
+        <button
+          onClick={() => setActiveMobileView('map')}
+          className={`flex-1 py-2 px-3 rounded-md flex items-center justify-center gap-1.5 transition ${
+            activeMobileView === 'map'
+              ? 'bg-gov-blue text-white shadow-sm'
+              : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <MapIcon className="w-3.5 h-3.5" />
+          <span>{tr('Spatial Map View', 'स्थानिक मानचित्र दृश्य')}</span>
+        </button>
+        <button
+          onClick={() => setActiveMobileView('parcels')}
+          className={`flex-1 py-2 px-3 rounded-md flex items-center justify-center gap-1.5 transition ${
+            activeMobileView === 'parcels'
+              ? 'bg-gov-blue text-white shadow-sm'
+              : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <MapPin className="w-3.5 h-3.5" />
+          <span>{tr('Khasra Parcels', 'खसरा पार्सल सूची')} ({parcels.length})</span>
+        </button>
+      </div>
 
-            {/* Basemap Switcher Dropdown */}
-            <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1">
-              <Globe className="w-3.5 h-3.5 text-blue-500" />
+      <div className="flex flex-col lg:flex-row gap-4 h-[calc(100vh-210px)] min-h-[500px] lg:h-[calc(100vh-140px)] lg:min-h-[650px]">
+        
+        {/* Left Column: GIS Map Container */}
+        <div className={`flex-1 bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm overflow-hidden flex-col relative ${
+          activeMobileView === 'parcels' ? 'hidden lg:flex' : 'flex'
+        }`}>
+          
+          {/* Top Control Bar inside Map */}
+          <div className="p-2.5 sm:p-3 bg-white/95 dark:bg-[#111c38]/95 backdrop-blur-xs border-b border-slate-200 dark:border-slate-800 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+            
+            {/* Left Controls: Search & Filters */}
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <div className="relative flex-1 sm:flex-none">
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+                <input
+                  type="text"
+                  placeholder={t('common.search_placeholder')}
+                  value={searchMap}
+                  onChange={e => setSearchMap(e.target.value)}
+                  className="pl-8 pr-2.5 py-1.5 border border-slate-300 dark:border-slate-700 rounded text-xs w-full sm:w-52 bg-white dark:bg-[#0b1329] text-slate-800 dark:text-slate-100 focus:ring-1 focus:ring-gov-blue outline-none"
+                />
+              </div>
+
+              {/* Basemap Switcher Dropdown */}
+              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 shrink-0">
+                <Globe className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                <select
+                  value={activeBasemap}
+                  onChange={e => setActiveBasemap(e.target.value as any)}
+                  className="bg-transparent text-[11px] sm:text-xs text-slate-800 dark:text-slate-100 font-bold outline-none cursor-pointer max-w-[110px] xs:max-w-none"
+                  title="Select Basemap Provider"
+                >
+                  <option value="OPEN_STREET" className="dark:bg-slate-900">🗺️ {tr('Standard OSM', 'मानक सड़क')}</option>
+                  <option value="SATELLITE_HYBRID" className="dark:bg-slate-900">🛰️ {tr('Satellite Hybrid', 'सैटेलाइट हाइब्रिड')}</option>
+                  <option value="OPEN_TOPO" className="dark:bg-slate-900">🏔️ {tr('Topographic', 'टोपोग्राफिक')}</option>
+                </select>
+              </div>
+
               <select
-                value={activeBasemap}
-                onChange={e => setActiveBasemap(e.target.value as any)}
-                className="bg-transparent text-xs text-slate-800 dark:text-slate-100 font-bold outline-none cursor-pointer"
-                title="Select Basemap Provider"
+                value={selectedRiskFilter}
+                onChange={e => setSelectedRiskFilter(e.target.value)}
+                className="border border-slate-300 dark:border-slate-700 rounded px-2 py-1.5 text-[11px] sm:text-xs bg-white dark:bg-[#0b1329] text-slate-800 dark:text-slate-100 font-medium shrink-0"
               >
-                <option value="OPEN_STREET" className="dark:bg-slate-900">🗺️ {tr('Standard OpenStreetMap', 'मानक सड़क मानचित्र')}</option>
-                <option value="SATELLITE_HYBRID" className="dark:bg-slate-900">🛰️ {tr('Satellite Hybrid (Esri High-Res)', 'सैटेलाइट हाइब्रिड (हाई-रेस)')}</option>
-                <option value="OPEN_TOPO" className="dark:bg-slate-900">🏔️ {tr('Topographic & Rivers (OpenTopo)', 'टोपोग्राफिक एवं नदी मानचित्र')}</option>
+                <option value="ALL">{t('land.all_risk_levels')}</option>
+                <option value="CRITICAL">{t('land.critical_filter')}</option>
+                <option value="HIGH">{t('land.high_filter')}</option>
+                <option value="MEDIUM">{t('land.medium_filter')}</option>
+                <option value="LOW">{t('land.low_filter')}</option>
               </select>
             </div>
 
-            <select
-              value={selectedRiskFilter}
-              onChange={e => setSelectedRiskFilter(e.target.value)}
-              className="border border-slate-300 dark:border-slate-700 rounded px-2.5 py-1.5 text-xs bg-white dark:bg-[#0b1329] text-slate-800 dark:text-slate-100 font-medium"
-            >
-              <option value="ALL">{t('land.all_risk_levels')}</option>
-              <option value="CRITICAL">{t('land.critical_filter')}</option>
-              <option value="HIGH">{t('land.high_filter')}</option>
-              <option value="MEDIUM">{t('land.medium_filter')}</option>
-              <option value="LOW">{t('land.low_filter')}</option>
-            </select>
+            {/* Right Controls: Feature Layer Toggles (Horizontal scrolling on mobile) */}
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 max-w-full flex-nowrap">
+              <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mr-1 shrink-0">
+                {tr('Layers:', 'परतें:')}
+              </span>
+
+              <button
+                onClick={() => setShowLandOwnershipLayer(!showLandOwnershipLayer)}
+                className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition shrink-0 whitespace-nowrap ${
+                  showLandOwnershipLayer ? 'bg-cyan-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                }`}
+                title="Toggle Govt vs Private Land Khasra Color Mode"
+              >
+                <Building className="w-3 h-3 shrink-0" />
+                <span>{tr('Govt vs Private', 'शासकीय/निजी')}</span>
+              </button>
+
+              <button
+                onClick={() => setShowRiverLayer(!showRiverLayer)}
+                className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition shrink-0 whitespace-nowrap ${
+                  showRiverLayer ? 'bg-sky-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                }`}
+                title="Toggle River & Water Bodies Layer"
+              >
+                <Droplets className="w-3 h-3 shrink-0" />
+                <span>{tr('Rivers', 'नदियां')}</span>
+              </button>
+
+              <button
+                onClick={() => setShowForestLayer(!showForestLayer)}
+                className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition shrink-0 whitespace-nowrap ${
+                  showForestLayer ? 'bg-emerald-700 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                }`}
+                title="Toggle Forest & Eco-sensitive Layer"
+              >
+                <Trees className="w-3 h-3 shrink-0" />
+                <span>{tr('Forest', 'वन')}</span>
+              </button>
+
+              <button
+                onClick={() => setShowHousesLayer(!showHousesLayer)}
+                className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition shrink-0 whitespace-nowrap ${
+                  showHousesLayer ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                }`}
+                title="Toggle Houses & Habitation Layer"
+              >
+                <Home className="w-3 h-3 shrink-0" />
+                <span>{tr('Houses', 'मकान')}</span>
+              </button>
+
+              <button
+                onClick={() => setShowAgriLayer(!showAgriLayer)}
+                className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition shrink-0 whitespace-nowrap ${
+                  showAgriLayer ? 'bg-lime-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                }`}
+                title="Toggle Agricultural Crop Belt Layer"
+              >
+                <Sprout className="w-3 h-3 shrink-0" />
+                <span>{tr('Agri', 'कृषि')}</span>
+              </button>
+
+              <button
+                onClick={() => setShowBarrenLayer(!showBarrenLayer)}
+                className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition shrink-0 whitespace-nowrap ${
+                  showBarrenLayer ? 'bg-amber-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                }`}
+                title="Toggle Barren Land Layer"
+              >
+                <Mountain className="w-3 h-3 shrink-0" />
+                <span>{tr('Barren', 'बंजर')}</span>
+              </button>
+
+              <button
+                onClick={() => setShowInfraLayer(!showInfraLayer)}
+                className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition shrink-0 whitespace-nowrap ${
+                  showInfraLayer ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                }`}
+                title="Toggle Rail & Infra Lines"
+              >
+                <Train className="w-3 h-3 shrink-0" />
+                <span>{tr('Infra', 'इन्फ्रा')}</span>
+              </button>
+            </div>
           </div>
 
-          {/* Right Controls: Feature Layer Toggles */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mr-1">
-              {tr('Layers:', 'परतें:')}
-            </span>
+          {/* Map Canvas */}
+          <div ref={mapContainerRef} className="flex-1 w-full h-full relative" />
 
-            <button
-              onClick={() => setShowLandOwnershipLayer(!showLandOwnershipLayer)}
-              className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
-                showLandOwnershipLayer ? 'bg-cyan-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-              }`}
-              title="Toggle Govt vs Private Land Khasra Color Mode"
-            >
-              <Building className="w-3 h-3" />
-              <span>{tr('Govt vs Private', 'शासकीय/निजी')}</span>
-            </button>
-
-            <button
-              onClick={() => setShowRiverLayer(!showRiverLayer)}
-              className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
-                showRiverLayer ? 'bg-sky-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-              }`}
-              title="Toggle River & Water Bodies Layer"
-            >
-              <Droplets className="w-3 h-3" />
-              <span>{tr('Rivers', 'नदियां')}</span>
-            </button>
-
-            <button
-              onClick={() => setShowForestLayer(!showForestLayer)}
-              className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
-                showForestLayer ? 'bg-emerald-700 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-              }`}
-              title="Toggle Forest & Eco-sensitive Layer"
-            >
-              <Trees className="w-3 h-3" />
-              <span>{tr('Forest', 'वन')}</span>
-            </button>
-
-            <button
-              onClick={() => setShowHousesLayer(!showHousesLayer)}
-              className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
-                showHousesLayer ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-              }`}
-              title="Toggle Houses & Habitation Layer"
-            >
-              <Home className="w-3 h-3" />
-              <span>{tr('Houses', 'मकान')}</span>
-            </button>
-
-            <button
-              onClick={() => setShowAgriLayer(!showAgriLayer)}
-              className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
-                showAgriLayer ? 'bg-lime-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-              }`}
-              title="Toggle Agricultural Crop Belt Layer"
-            >
-              <Sprout className="w-3 h-3" />
-              <span>{tr('Agri', 'कृषि')}</span>
-            </button>
-
-            <button
-              onClick={() => setShowBarrenLayer(!showBarrenLayer)}
-              className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
-                showBarrenLayer ? 'bg-amber-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-              }`}
-              title="Toggle Barren Land Layer"
-            >
-              <Mountain className="w-3 h-3" />
-              <span>{tr('Barren', 'बंजर')}</span>
-            </button>
-
-            <button
-              onClick={() => setShowInfraLayer(!showInfraLayer)}
-              className={`px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
-                showInfraLayer ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-              }`}
-              title="Toggle Rail & Infra Lines"
-            >
-              <Train className="w-3 h-3" />
-              <span>{tr('Infra', 'इन्फ्रा')}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Map Canvas */}
-        <div ref={mapContainerRef} className="flex-1 w-full h-full relative" />
-
-        {/* Bottom Map Legend */}
-        <div className="p-2.5 bg-white dark:bg-[#111c38] border-t border-slate-200 dark:border-slate-800 z-10 flex flex-wrap items-center justify-between text-[11px] text-slate-600 dark:text-slate-300 gap-2">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide">{tr('Land Categorization Legend:', 'भूमि वर्गीकरण किंवदंती:')}</span>
-            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-cyan-500"></span> {tr('Govt Land', 'शासकीय भूमि')}</span>
-            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> {tr('Private Land', 'निजी भूमि')}</span>
-            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-purple-500"></span> {tr('Houses / Abadi', 'मकान / आबादी')}</span>
-            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> {tr('Forest', 'वन')}</span>
-            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-lime-500"></span> {tr('Agricultural', 'कृषि')}</span>
-            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-sky-500"></span> {tr('River / Water', 'नदी / जल')}</span>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1 text-emerald-800 dark:text-emerald-400 font-semibold"><span className="w-4 h-1 bg-emerald-600 inline-block"></span> {tr('Bypass Route B (Recommended)', 'बायपास रूट B')}</span>
-            <span className="flex items-center gap-1 text-red-800 dark:text-red-400 font-semibold"><span className="w-4 h-1 bg-red-600 inline-block"></span> {tr('NH-48 Route A (Widening)', 'रूट A')}</span>
-          </div>
-        </div>
-
-      </div>
-
-      {/* Right Column: Interactive Parcel List Drawer */}
-      <div className="w-full lg:w-80 bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm flex flex-col overflow-hidden">
-        <div className="p-3 bg-slate-900 text-white flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-amber-400" />
-            <h3 className="font-bold text-xs uppercase tracking-wider">{t('land.total_parcels')} ({parcels.length})</h3>
-          </div>
-          <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-300">
-            {activeProject?.code || 'NH-48'}
-          </span>
-        </div>
-
-        <div className="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 p-2 space-y-1.5">
-          {parcels.map(p => (
-            <div
-              key={p.id}
-              onClick={() => handleZoomToParcel(p, false)}
-              className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-gov-blue dark:hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-slate-800/60 cursor-pointer transition text-xs space-y-1.5 group"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-gov-navy dark:text-blue-400 font-mono text-xs">{p.id}</span>
-                <div className="flex items-center gap-1.5">
-                  <RiskBadge level={p.delay_risk_level} score={p.delay_risk_score} showScore size="sm" />
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleZoomToParcel(p, true);
-                    }}
-                    className="p-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-gov-blue hover:text-white dark:hover:bg-blue-600 text-slate-600 dark:text-slate-300 transition"
-                    title={tr('Open Full Dossier Report', 'पूर्ण डोजियर रिपोर्ट खोलें')}
-                  >
-                    <Eye className="w-3.5 h-3.5" />
-                  </button>
+          {/* Mobile Floating Land-Information Card */}
+          {mobileSelectedParcel && (
+            <div className="lg:hidden absolute bottom-12 left-2 right-2 z-20 bg-white/95 dark:bg-[#111c38]/95 backdrop-blur-md rounded-xl border border-blue-500/50 shadow-2xl p-3 text-xs space-y-2 animate-in slide-in-from-bottom-3 duration-200">
+              <div className="flex items-start justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-mono font-bold text-gov-navy dark:text-blue-400 text-xs bg-blue-50 dark:bg-blue-950/60 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-800">
+                      {mobileSelectedParcel.id}
+                    </span>
+                    <span className="font-bold text-slate-900 dark:text-white">
+                      {tr('Khasra', 'खसरा')} {mobileSelectedParcel.khasra_survey_no} • {t(mobileSelectedParcel.village, mobileSelectedParcel.village)}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                    {t(mobileSelectedParcel.owner.name, mobileSelectedParcel.owner.name)} • {mobileSelectedParcel.area_acres} {tr('Acres', 'एकड़')} • {t(mobileSelectedParcel.land_type, mobileSelectedParcel.land_type)}
+                  </div>
                 </div>
+
+                <button
+                  onClick={() => setMobileSelectedParcel(null)}
+                  className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded shrink-0"
+                  aria-label="Close parcel preview"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
 
-              <div className="text-slate-800 dark:text-slate-200 font-semibold text-xs flex items-center justify-between">
-                <span>{tr('Khasra', 'खसरा')} {p.khasra_survey_no} • {t(p.village, p.village)}</span>
-                <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400">{p.area_acres} {tr('Acres', 'एकड़')}</span>
-              </div>
+              <div className="flex items-center justify-between text-[11px]">
+                <div className="flex items-center gap-1.5">
+                  <RiskBadge level={mobileSelectedParcel.delay_risk_level} score={mobileSelectedParcel.delay_risk_score} showScore size="sm" />
+                  <span className="text-red-700 dark:text-red-400 font-bold font-mono">
+                    +{mobileSelectedParcel.expected_delay_days}d {tr('delay', 'विलंब')}
+                  </span>
+                </div>
 
-              <div className="flex justify-between items-center text-[11px] text-slate-600 dark:text-slate-300">
-                <span className="truncate max-w-[170px] font-medium">{t(p.owner.name, p.owner.name)}</span>
-                <span className="font-bold text-[10px] uppercase text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">{t(p.land_type, p.land_type)}</span>
-              </div>
-
-              <div className="flex justify-between items-center text-[10px] pt-1.5 border-t border-slate-100 dark:border-slate-800/80">
-                <span className="text-slate-500 dark:text-slate-400 font-mono">Tehsil: {t(p.tehsil, p.tehsil)}</span>
-                <span className="text-red-700 dark:text-red-400 font-bold">
-                  +{p.expected_delay_days} {t('common.days')} {tr('delay', 'विलंब')}
-                </span>
+                <button
+                  onClick={() => setSelectedParcel(mobileSelectedParcel)}
+                  className="px-3 py-1.5 bg-gov-navy dark:bg-blue-600 hover:bg-slate-800 text-white rounded-lg font-bold text-xs flex items-center gap-1 shadow-sm active:scale-95 transition"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>{tr('Inspect Dossier', 'डोजियर देखें')}</span>
+                </button>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
+          )}
 
+          {/* Bottom Map Legend */}
+          <div className="p-2 sm:p-2.5 bg-white dark:bg-[#111c38] border-t border-slate-200 dark:border-slate-800 z-10 flex flex-wrap items-center justify-between text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 gap-1.5 sm:gap-2">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <span className="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide">{tr('Legend:', 'किंवदंती:')}</span>
+              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-cyan-500"></span> {tr('Govt', 'शासकीय')}</span>
+              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> {tr('Private', 'निजी')}</span>
+              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-purple-500"></span> {tr('Houses', 'मकान')}</span>
+              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> {tr('Forest', 'वन')}</span>
+              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-lime-500"></span> {tr('Agri', 'कृषि')}</span>
+              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-sky-500"></span> {tr('River', 'नदी')}</span>
+            </div>
+
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="flex items-center gap-1 text-emerald-800 dark:text-emerald-400 font-semibold"><span className="w-3.5 h-1 bg-emerald-600 inline-block"></span> {tr('Route B (Rec.)', 'रूट B')}</span>
+              <span className="flex items-center gap-1 text-red-800 dark:text-red-400 font-semibold"><span className="w-3.5 h-1 bg-red-600 inline-block"></span> {tr('Route A', 'रूट A')}</span>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Right Column: Interactive Parcel List Drawer */}
+        <div className={`w-full lg:w-80 bg-white dark:bg-[#111c38] border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm flex-col overflow-hidden ${
+          activeMobileView === 'map' ? 'hidden lg:flex' : 'flex'
+        }`}>
+          <div className="p-3 bg-slate-900 text-white flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-amber-400" />
+              <h3 className="font-bold text-xs uppercase tracking-wider">{t('land.total_parcels')} ({parcels.length})</h3>
+            </div>
+            <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-300">
+              {activeProject?.code || 'NH-48'}
+            </span>
+          </div>
+
+          <div className="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 p-2 space-y-1.5">
+            {parcels.map(p => (
+              <div
+                key={p.id}
+                onClick={() => handleZoomToParcel(p, false)}
+                className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-gov-blue dark:hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-slate-800/60 cursor-pointer transition text-xs space-y-1.5 group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-gov-navy dark:text-blue-400 font-mono text-xs">{p.id}</span>
+                  <div className="flex items-center gap-1.5">
+                    <RiskBadge level={p.delay_risk_level} score={p.delay_risk_score} showScore size="sm" />
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleZoomToParcel(p, true);
+                      }}
+                      className="p-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-gov-blue hover:text-white dark:hover:bg-blue-600 text-slate-600 dark:text-slate-300 transition"
+                      title={tr('Open Full Dossier Report', 'पूर्ण डोजियर रिपोर्ट खोलें')}
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="text-slate-800 dark:text-slate-200 font-semibold text-xs flex items-center justify-between">
+                  <span>{tr('Khasra', 'खसरा')} {p.khasra_survey_no} • {t(p.village, p.village)}</span>
+                  <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400">{p.area_acres} {tr('Acres', 'एकड़')}</span>
+                </div>
+
+                <div className="flex justify-between items-center text-[11px] text-slate-600 dark:text-slate-300">
+                  <span className="truncate max-w-[170px] font-medium">{t(p.owner.name, p.owner.name)}</span>
+                  <span className="font-bold text-[10px] uppercase text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">{t(p.land_type, p.land_type)}</span>
+                </div>
+
+                <div className="flex justify-between items-center text-[10px] pt-1.5 border-t border-slate-100 dark:border-slate-800/80">
+                  <span className="text-slate-500 dark:text-slate-400 font-mono">Tehsil: {t(p.tehsil, p.tehsil)}</span>
+                  <span className="text-red-700 dark:text-red-400 font-bold">
+                    +{p.expected_delay_days} {t('common.days')} {tr('delay', 'विलंब')}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 };

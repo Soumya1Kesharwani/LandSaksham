@@ -136,13 +136,13 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
       </div>
 
       {/* Main Bar */}
-      <div className="px-3 sm:px-4 py-2.5 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-4">
+      <div className="px-2.5 sm:px-4 py-2 sm:py-3.5 flex items-center justify-between gap-1.5 sm:gap-4">
         {/* Left: Identity & Branding */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           {/* Mobile Sidebar Hamburger Toggle */}
           <button
             onClick={onToggleSidebar}
-            className="md:hidden p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 active:scale-95 transition"
+            className="md:hidden p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 active:scale-95 transition shrink-0"
             aria-label="Toggle Navigation Menu"
           >
             {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -151,7 +151,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
           {/* Logo (Desktop Sidebar Toggle) */}
           <button
             onClick={onToggleSidebar}
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white p-0.5 shadow-sm border border-slate-700 hover:border-blue-400 flex items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all duration-200 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white p-0.5 shadow-sm border border-slate-700 hover:border-blue-400 flex items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all duration-200 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
             title={isSidebarOpen ? "Click logo to close sidebar" : "Click logo to open sidebar"}
             aria-label="Toggle Navigation Sidebar"
           >
@@ -163,7 +163,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
               <h1 className="text-xs sm:text-sm font-bold text-slate-100 tracking-tight leading-tight hidden xs:block">
                 {t('system.title')}
               </h1>
-              <div className="text-sm sm:text-base font-extrabold tracking-tight leading-tight">
+              <div className="text-xs sm:text-base font-extrabold tracking-tight leading-tight whitespace-nowrap">
                 <span className="text-[#f97316]">{brand.p1}</span>
                 <span className="text-white">{brand.p2}</span>
                 <span className="text-[#4ade80]">{brand.p3}</span>
@@ -179,7 +179,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
             4. Language Dropdown
             5. Date and Time (max 2 lines)
         */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           {/* 1. Jaipur-Ajmer Live Project Selector */}
           <div className="relative hidden md:block">
             <button
@@ -194,7 +194,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
             </button>
 
             {projectDropdownOpen && (
-              <div className="absolute left-0 mt-1 w-80 bg-[#111c38] border border-slate-700 rounded-md shadow-xl py-1 z-50 text-slate-100">
+              <div className="absolute left-0 mt-1 w-80 max-w-[calc(100vw-24px)] bg-[#111c38] border border-slate-700 rounded-md shadow-xl py-1 z-50 text-slate-100">
                 <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
                   {t('system.active_infra_projects')}
                 </div>
@@ -239,15 +239,15 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
           <div className="relative">
             <button
               onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
-              className="flex items-center gap-2 bg-slate-800/90 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-md text-xs font-semibold text-white transition shadow-xs"
+              className="flex items-center gap-1.5 sm:gap-2 bg-slate-800/90 hover:bg-slate-700 border border-slate-700 px-2 sm:px-3 py-1.5 rounded-md text-xs font-semibold text-white transition shadow-xs"
             >
-              <User className="w-3.5 h-3.5 text-blue-400" />
+              <User className="w-3.5 h-3.5 text-blue-400 shrink-0" />
               <span className="hidden sm:inline max-w-[140px] truncate">{t(role)}</span>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             </button>
 
             {roleDropdownOpen && (
-              <div className="absolute right-0 mt-1 w-64 bg-[#111c38] border border-slate-700 rounded-md shadow-xl py-1 z-50 text-slate-100">
+              <div className="absolute right-0 mt-1 w-64 max-w-[calc(100vw-24px)] bg-[#111c38] border border-slate-700 rounded-md shadow-xl py-1 z-50 text-slate-100">
                 <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
                   {t('roles.select_role')}
                 </div>

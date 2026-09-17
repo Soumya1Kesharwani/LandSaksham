@@ -39,7 +39,7 @@ const DashboardContent: React.FC<{
   const { activeTab, selectedParcel, setSelectedParcel } = useProject();
   const { role } = useRole();
   const { t } = useLanguage();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(() => typeof window !== 'undefined' ? window.innerWidth >= 768 : true);
 
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -116,9 +116,9 @@ const DashboardContent: React.FC<{
 
       {/* Mobile Sticky Bottom Navigation Bar */}
       <MobileBottomNav
-        onToggleSidebar={() => setSidebarOpen(prev => !prev)}
         onOpenCopilot={onOpenCopilot}
-        isSidebarOpen={sidebarOpen}
+        onNavigateCitizen={onNavigateCitizen}
+        isCitizenPortal={false}
       />
 
       {/* Global Modals */}
@@ -132,49 +132,69 @@ const DashboardContent: React.FC<{
   );
 };
 
-export const App: React.FC = () => {
+const MainApp: React.FC = () => {
   const [viewMode, setViewMode] = useState<'landing' | 'dashboard' | 'citizen'>('dashboard');
   const [copilotOpen, setCopilotOpen] = useState(false);
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
+  const { setActiveTab } = useProject();
 
+  return (
+    <>
+      {viewMode === 'landing' && (
+        <LandingPage
+          onEnterDashboard={() => setViewMode('dashboard')}
+          onEnterCitizen={() => setViewMode('citizen')}
+        />
+      )}
+
+      {viewMode === 'citizen' && (
+        <>
+          <CitizenPortal
+            onBackToDashboard={() => setViewMode('dashboard')}
+          />
+          <MobileBottomNav
+            onOpenCopilot={() => setCopilotOpen(true)}
+            onNavigateCitizen={() => {}}
+            onNavigateTab={(tab) => {
+              setActiveTab(tab);
+              setViewMode('dashboard');
+            }}
+            isCitizenPortal={true}
+          />
+        </>
+      )}
+
+      {viewMode === 'dashboard' && (
+        <DashboardContent
+          onOpenCreateProject={() => setCreateProjectOpen(true)}
+          onOpenCopilot={() => setCopilotOpen(true)}
+          onNavigateLanding={() => setViewMode('landing')}
+          onNavigateCitizen={() => setViewMode('citizen')}
+        />
+      )}
+
+      <AIOfficerCopilot
+        isOpen={copilotOpen}
+        onToggle={() => setCopilotOpen(prev => !prev)}
+        onClose={() => setCopilotOpen(false)}
+      />
+
+      {createProjectOpen && (
+        <CreateProjectModal
+          onClose={() => setCreateProjectOpen(false)}
+        />
+      )}
+    </>
+  );
+};
+
+export const App: React.FC = () => {
   return (
     <ThemeProvider>
       <LanguageProvider>
         <RoleProvider>
           <ProjectProvider>
-            {viewMode === 'landing' && (
-              <LandingPage
-                onEnterDashboard={() => setViewMode('dashboard')}
-                onEnterCitizen={() => setViewMode('citizen')}
-              />
-            )}
-
-            {viewMode === 'citizen' && (
-              <CitizenPortal
-                onBackToDashboard={() => setViewMode('dashboard')}
-              />
-            )}
-
-            {viewMode === 'dashboard' && (
-              <DashboardContent
-                onOpenCreateProject={() => setCreateProjectOpen(true)}
-                onOpenCopilot={() => setCopilotOpen(true)}
-                onNavigateLanding={() => setViewMode('landing')}
-                onNavigateCitizen={() => setViewMode('citizen')}
-              />
-            )}
-
-            <AIOfficerCopilot
-              isOpen={copilotOpen}
-              onToggle={() => setCopilotOpen(prev => !prev)}
-              onClose={() => setCopilotOpen(false)}
-            />
-
-            {createProjectOpen && (
-              <CreateProjectModal
-                onClose={() => setCreateProjectOpen(false)}
-              />
-            )}
+            <MainApp />
           </ProjectProvider>
         </RoleProvider>
       </LanguageProvider>

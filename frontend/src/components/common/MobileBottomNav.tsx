@@ -2,19 +2,23 @@ import React from 'react';
 import { useProject } from '../../context/ProjectContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { 
-  LayoutDashboard, Map, Sparkles, ListTodo, Menu 
+  LayoutDashboard, Map, Sparkles, ListTodo, UserCheck 
 } from 'lucide-react';
 
 interface MobileBottomNavProps {
-  onToggleSidebar: () => void;
+  onToggleSidebar?: () => void;
   onOpenCopilot: () => void;
-  isSidebarOpen: boolean;
+  isSidebarOpen?: boolean;
+  onNavigateCitizen: () => void;
+  onNavigateTab?: (tab: string) => void;
+  isCitizenPortal?: boolean;
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
-  onToggleSidebar,
   onOpenCopilot,
-  isSidebarOpen
+  onNavigateCitizen,
+  onNavigateTab,
+  isCitizenPortal = false
 }) => {
   const { activeTab, setActiveTab, actionItems } = useProject();
   const { tr, t } = useLanguage();
@@ -23,34 +27,42 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     a => a.status !== 'Resolved' && a.status !== 'Closed'
   ).length;
 
+  const handleTabClick = (tabId: string) => {
+    if (onNavigateTab) {
+      onNavigateTab(tabId);
+    } else {
+      setActiveTab(tabId);
+    }
+  };
+
   return (
     <nav 
       aria-label="Mobile Navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0b1329]/95 backdrop-blur-md border-t border-slate-800 px-2 py-1.5 shadow-2xl flex items-center justify-around safe-area-bottom select-none"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0b1329]/95 backdrop-blur-md border-t border-slate-800 px-1 xs:px-2 py-1.5 shadow-2xl flex items-center justify-around safe-area-bottom select-none"
     >
       {/* 1. Overview */}
       <button
-        onClick={() => setActiveTab('overview')}
-        className={`flex flex-col items-center justify-center py-1 px-2 rounded-lg transition-all text-[10px] font-medium ${
-          activeTab === 'overview'
+        onClick={() => handleTabClick('overview')}
+        className={`flex flex-col items-center justify-center py-1 px-1 xs:px-2 rounded-lg transition-all text-[9.5px] xs:text-[10px] font-medium ${
+          !isCitizenPortal && activeTab === 'overview'
             ? 'text-blue-400 font-bold'
             : 'text-slate-400 hover:text-slate-200'
         }`}
       >
-        <LayoutDashboard className={`w-4 h-4 mb-0.5 ${activeTab === 'overview' ? 'text-blue-400 stroke-[2.5]' : 'text-slate-400'}`} />
+        <LayoutDashboard className={`w-4 h-4 mb-0.5 ${!isCitizenPortal && activeTab === 'overview' ? 'text-blue-400 stroke-[2.5]' : 'text-slate-400'}`} />
         <span>{tr('Overview', 'अवलोकन')}</span>
       </button>
 
       {/* 2. GIS Map */}
       <button
-        onClick={() => setActiveTab('gis')}
-        className={`flex flex-col items-center justify-center py-1 px-2 rounded-lg transition-all text-[10px] font-medium ${
-          activeTab === 'gis'
+        onClick={() => handleTabClick('gis')}
+        className={`flex flex-col items-center justify-center py-1 px-1 xs:px-2 rounded-lg transition-all text-[9.5px] xs:text-[10px] font-medium ${
+          !isCitizenPortal && activeTab === 'gis'
             ? 'text-blue-400 font-bold'
             : 'text-slate-400 hover:text-slate-200'
         }`}
       >
-        <Map className={`w-4 h-4 mb-0.5 ${activeTab === 'gis' ? 'text-blue-400 stroke-[2.5]' : 'text-slate-400'}`} />
+        <Map className={`w-4 h-4 mb-0.5 ${!isCitizenPortal && activeTab === 'gis' ? 'text-blue-400 stroke-[2.5]' : 'text-slate-400'}`} />
         <span>{tr('GIS Map', 'मानचित्र')}</span>
       </button>
 
@@ -66,15 +78,15 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 
       {/* 4. Actions */}
       <button
-        onClick={() => setActiveTab('actions')}
-        className={`relative flex flex-col items-center justify-center py-1 px-2 rounded-lg transition-all text-[10px] font-medium ${
-          activeTab === 'actions'
+        onClick={() => handleTabClick('actions')}
+        className={`relative flex flex-col items-center justify-center py-1 px-1 xs:px-2 rounded-lg transition-all text-[9.5px] xs:text-[10px] font-medium ${
+          !isCitizenPortal && activeTab === 'actions'
             ? 'text-blue-400 font-bold'
             : 'text-slate-400 hover:text-slate-200'
         }`}
       >
         <div className="relative">
-          <ListTodo className={`w-4 h-4 mb-0.5 ${activeTab === 'actions' ? 'text-blue-400 stroke-[2.5]' : 'text-slate-400'}`} />
+          <ListTodo className={`w-4 h-4 mb-0.5 ${!isCitizenPortal && activeTab === 'actions' ? 'text-blue-400 stroke-[2.5]' : 'text-slate-400'}`} />
           {pendingActionsCount > 0 && (
             <span className="absolute -top-1 -right-2 bg-red-600 text-white text-[8px] font-bold px-1 rounded-full">
               {pendingActionsCount}
@@ -84,17 +96,18 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         <span>{tr('Actions', 'कार्यसूची')}</span>
       </button>
 
-      {/* 5. Menu Drawer Toggle */}
+      {/* 5. Landowner Portal */}
       <button
-        onClick={onToggleSidebar}
-        className={`flex flex-col items-center justify-center py-1 px-2 rounded-lg transition-all text-[10px] font-medium ${
-          isSidebarOpen
+        onClick={onNavigateCitizen}
+        className={`flex flex-col items-center justify-center py-1 px-1 xs:px-2 rounded-lg transition-all text-[9.5px] xs:text-[10px] font-medium ${
+          isCitizenPortal
             ? 'text-blue-400 font-bold'
             : 'text-slate-400 hover:text-slate-200'
         }`}
+        title={t('Landowner Portal')}
       >
-        <Menu className={`w-4 h-4 mb-0.5 ${isSidebarOpen ? 'text-blue-400 stroke-[2.5]' : 'text-slate-400'}`} />
-        <span>{tr('All Modules', 'सभी मॉड्यूल')}</span>
+        <UserCheck className={`w-4 h-4 mb-0.5 ${isCitizenPortal ? 'text-blue-400 stroke-[2.5]' : 'text-slate-400'}`} />
+        <span className="truncate max-w-[62px] xs:max-w-[74px] sm:max-w-none">{tr('Landowner Portal', 'भूस्वामी पोर्टल')}</span>
       </button>
     </nav>
   );

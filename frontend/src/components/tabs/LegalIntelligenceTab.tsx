@@ -27,12 +27,12 @@ export const LegalIntelligenceTab: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Legal Health Banner */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 items-stretch">
         {/* Card 1: Active Cases (Blue Tint) */}
-        <div className="bg-blue-50/70 border border-blue-200/80 dark:bg-blue-950/30 dark:border-blue-900 rounded-lg p-4 shadow-2xs flex flex-col justify-between">
+        <div className="bg-blue-50/70 border border-blue-200/80 dark:bg-blue-950/30 dark:border-blue-900 rounded-lg p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
           <div>
             <div className="text-xs font-semibold uppercase tracking-wider text-blue-900 dark:text-blue-300">{t('legal.active_cases')}</div>
-            <div className="text-2xl font-bold font-mono text-blue-950 dark:text-blue-100 mt-1">
+            <div className="text-xl sm:text-2xl font-bold font-mono text-blue-950 dark:text-blue-100 mt-1">
               {activeProject?.active_court_cases_count} {tr('Cases', 'प्रकरण')}
             </div>
           </div>
@@ -40,7 +40,7 @@ export const LegalIntelligenceTab: React.FC = () => {
         </div>
 
         {/* Card 2: Injunction / Stay Orders (Red Tint - High Danger) */}
-        <div className="bg-red-50/90 border border-red-200 dark:bg-red-950/40 dark:border-red-900 rounded-lg p-4 shadow-2xs flex flex-col justify-between">
+        <div className="bg-red-50/90 border border-red-200 dark:bg-red-950/40 dark:border-red-900 rounded-lg p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between gap-1">
               <div className="text-xs font-semibold uppercase tracking-wider text-red-800 dark:text-red-300">
@@ -48,7 +48,7 @@ export const LegalIntelligenceTab: React.FC = () => {
               </div>
               <ShieldAlert className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" />
             </div>
-            <div className="text-2xl font-bold font-mono text-red-900 dark:text-red-100 mt-1">
+            <div className="text-xl sm:text-2xl font-bold font-mono text-red-900 dark:text-red-100 mt-1">
               {activeProject?.stay_orders_count} {tr('Active Orders', 'सक्रिय आदेश')}
             </div>
           </div>
@@ -56,10 +56,10 @@ export const LegalIntelligenceTab: React.FC = () => {
         </div>
 
         {/* Card 3: Next Hearing Date (Indigo Tint - Upcoming Action) */}
-        <div className="bg-indigo-50/80 border border-indigo-200 dark:bg-indigo-950/40 dark:border-indigo-900 rounded-lg p-4 shadow-2xs flex flex-col justify-between">
+        <div className="bg-indigo-50/80 border border-indigo-200 dark:bg-indigo-950/40 dark:border-indigo-900 rounded-lg p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
           <div>
             <div className="text-xs font-semibold uppercase tracking-wider text-indigo-900 dark:text-indigo-300">{tr('Next Hearing Date', 'आगामी सुनवाई तिथि')}</div>
-            <div className="text-xl font-bold text-indigo-900 dark:text-indigo-100 mt-1 flex items-center gap-1.5 font-mono">
+            <div className="text-lg sm:text-xl font-bold text-indigo-900 dark:text-indigo-100 mt-1 flex items-center gap-1.5 font-mono">
               <Calendar className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
               <span>24-Sep-2026</span>
             </div>
@@ -68,10 +68,10 @@ export const LegalIntelligenceTab: React.FC = () => {
         </div>
 
         {/* Card 4: Legal Score (Amber Tint - Priority Warning) */}
-        <div className="bg-amber-50/80 border border-amber-200 dark:bg-amber-950/40 dark:border-amber-900 rounded-lg p-4 shadow-2xs flex flex-col justify-between">
+        <div className="bg-amber-50/80 border border-amber-200 dark:bg-amber-950/40 dark:border-amber-900 rounded-lg p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
           <div>
             <div className="text-xs font-semibold uppercase tracking-wider text-amber-900 dark:text-amber-300">{t('overview.legal_litigation')}</div>
-            <div className="text-2xl font-bold font-mono text-amber-950 dark:text-amber-100 mt-1">
+            <div className="text-xl sm:text-2xl font-bold font-mono text-amber-950 dark:text-amber-100 mt-1">
               {activeProject?.readiness_breakdown.legal} / 100
             </div>
           </div>
@@ -81,16 +81,16 @@ export const LegalIntelligenceTab: React.FC = () => {
 
       {/* Case Dossiers Grid */}
       <div className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-[#111c38] p-4 rounded-lg border border-slate-200 dark:border-slate-800">
-          <div className="flex items-center gap-3">
-            <div className="relative">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-[#111c38] p-3.5 sm:p-4 rounded-lg border border-slate-200 dark:border-slate-800">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3 flex-1">
+            <div className="relative w-full sm:w-64">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
               <input
                 type="text"
                 placeholder={t('common.search_placeholder')}
                 value={searchLegal}
                 onChange={e => setSearchLegal(e.target.value)}
-                className="pl-8 pr-3 py-1.5 border border-slate-300 dark:border-slate-700 rounded text-xs w-64 focus:ring-1 focus:ring-gov-blue outline-none bg-white dark:bg-[#0b1329] text-slate-800 dark:text-slate-100 font-medium"
+                className="pl-8 pr-3 py-1.5 border border-slate-300 dark:border-slate-700 rounded text-xs w-full focus:ring-1 focus:ring-gov-blue outline-none bg-white dark:bg-[#0b1329] text-slate-800 dark:text-slate-100 font-medium"
               />
             </div>
 
@@ -105,7 +105,7 @@ export const LegalIntelligenceTab: React.FC = () => {
             </label>
           </div>
 
-          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 shrink-0">
             {litigationParcels.length} {tr('Active Dossiers Listed', 'सक्रिय वाद सूचीबद्ध')}
           </span>
         </div>
@@ -117,7 +117,7 @@ export const LegalIntelligenceTab: React.FC = () => {
             return (
               <div
                 key={c.id}
-                className={`rounded-xl p-5 shadow-2xs space-y-4 transition border ${
+                className={`rounded-xl p-3.5 sm:p-5 shadow-2xs space-y-4 transition border ${
                   isStay
                     ? 'bg-red-50/70 dark:bg-red-950/20 border-red-200/90 dark:border-red-900/80'
                     : 'bg-blue-50/40 dark:bg-blue-950/20 border-blue-200/70 dark:border-blue-900/60'

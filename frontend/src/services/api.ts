@@ -218,6 +218,81 @@ export const fetchParcels = async (projectId: string = "jaipur-ajmer-nh48"): Pro
   return [];
 };
 
+export const FALLBACK_ROUTES: AlternativeRoute[] = [
+  {
+    route_id: "ROUTE-A",
+    route_name: "Route Alignment A (Existing NH-48 Widening & Brownfield Upgrade)",
+    description: "Follows strictly existing highway right-of-way through Mahapura, Bagru town, and Kishangarh industrial belt.",
+    total_length_km: 135.0,
+    total_land_required_acres: 1740.0,
+    govt_land_pct: 33.7,
+    private_land_pct: 51.1,
+    forest_land_pct: 15.2,
+    estimated_cost_cr: 3420.0,
+    compensation_cost_cr: 184.5,
+    affected_households: 1284,
+    forest_diverted_acres: 180.0,
+    water_crossings: 14,
+    legal_risk_score: 78,
+    delay_probability: 0.71,
+    expected_delay_days: 185,
+    project_readiness_score: 59,
+    employment_potential_jobs: 29500,
+    connectivity_score: 85,
+    ai_recommendation_verdict: "High delay risk due to 11 court cases in congested commercial zones of Bagru and Kishangarh, plus heavy residential displacement.",
+    is_recommended: false,
+    coordinates: [[26.8624, 75.698], [26.812, 75.545], [26.755, 75.312], [26.685, 75.185], [26.578, 74.862], [26.468, 74.68], [26.245, 74.215]]
+  },
+  {
+    route_id: "ROUTE-B",
+    route_name: "Route Alignment B (Southern Greenfield Bypass Corridor)",
+    description: "Bypasses congested Bagru and Kishangarh urban centers via southern agricultural flatlands; avoids protected Aravalli forest pockets.",
+    total_length_km: 141.2,
+    total_land_required_acres: 1910.0,
+    govt_land_pct: 46.2,
+    private_land_pct: 49.8,
+    forest_land_pct: 4.0,
+    estimated_cost_cr: 3680.0,
+    compensation_cost_cr: 198.0,
+    affected_households: 412,
+    forest_diverted_acres: 35.1,
+    water_crossings: 8,
+    legal_risk_score: 26,
+    delay_probability: 0.31,
+    expected_delay_days: 45,
+    project_readiness_score: 82,
+    employment_potential_jobs: 33200,
+    connectivity_score: 92,
+    ai_recommendation_verdict: "RECOMMENDED BY AI: Despite ₹260 Cr higher initial civil estimate, Route B reduces delay risk by 40% (saving ~140 days), displaces 68% fewer households, and reduces forest diversion by 80%.",
+    is_recommended: true,
+    coordinates: [[26.8624, 75.698], [26.785, 75.52], [26.71, 75.28], [26.62, 75.11], [26.51, 74.81], [26.41, 74.62], [26.23, 74.19]]
+  },
+  {
+    route_id: "ROUTE-C",
+    route_name: "Route Alignment C (Northern Dedicated Freight Rail Adjacent Route)",
+    description: "Parallel to DFC / Western Railway tracks on northern alignment.",
+    total_length_km: 138.5,
+    total_land_required_acres: 1780.0,
+    govt_land_pct: 52.0,
+    private_land_pct: 38.0,
+    forest_land_pct: 10.0,
+    estimated_cost_cr: 3550.0,
+    compensation_cost_cr: 165.0,
+    affected_households: 820,
+    forest_diverted_acres: 93.9,
+    water_crossings: 11,
+    legal_risk_score: 54,
+    delay_probability: 0.58,
+    expected_delay_days: 110,
+    project_readiness_score: 68,
+    employment_potential_jobs: 28000,
+    connectivity_score: 78,
+    ai_recommendation_verdict: "Moderate delay risk: Railway safety boundary clearances and 6 major ROB (Overbridge) inter-agency approvals required from Ministry of Railways.",
+    is_recommended: false,
+    coordinates: [[26.8624, 75.698], [26.84, 75.58], [26.79, 75.35], [26.72, 75.2], [26.61, 74.89], [26.49, 74.71], [26.26, 74.24]]
+  }
+];
+
 export const fetchRoutes = async (projectId: string = "jaipur-ajmer-nh48"): Promise<AlternativeRoute[]> => {
   try {
     const res = await fetch(`${API_BASE_URL}/routes/${projectId}`);
@@ -225,7 +300,7 @@ export const fetchRoutes = async (projectId: string = "jaipur-ajmer-nh48"): Prom
   } catch (e) {
     console.warn("Using fallback routes:", e);
   }
-  return [];
+  return FALLBACK_ROUTES;
 };
 
 export const fetchActionItems = async (projectId?: string): Promise<ActionItem[]> => {

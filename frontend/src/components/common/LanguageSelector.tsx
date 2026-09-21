@@ -5,27 +5,68 @@ import { LanguageMeta } from '../../locales/regionalLanguages';
 
 interface LanguageSelectorProps {
   variant?: 'header' | 'landing' | 'citizen';
+  isOpen?: boolean;
+  onToggle?: () => void;
+  onClose?: () => void;
 }
 
-export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'header' }) => {
+export const LanguageSelector = React.forwardRef<HTMLDivElement, LanguageSelectorProps>(({
+  variant = 'header',
+  isOpen: controlledIsOpen,
+  onToggle,
+  onClose
+}, ref) => {
   const { language, setLanguage, languages, currentLanguageMeta, tr } = useLanguage();
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const fallbackRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = (ref as React.RefObject<HTMLDivElement>) || fallbackRef;
 
+  const isControlled = controlledIsOpen !== undefined;
+  const isOpen = isControlled ? controlledIsOpen : internalIsOpen;
+
+  const handleToggle = () => {
+    if (isControlled) {
+      onToggle?.();
+    } else {
+      setInternalIsOpen(prev => !prev);
+    }
+  };
+
+  const handleClose = () => {
+    setSearchQuery('');
+    if (isControlled) {
+      onClose?.();
+    } else {
+      setInternalIsOpen(false);
+    }
+  };
+
+  // Click outside and Escape key handler for standalone / uncontrolled usage
   useEffect(() => {
-    const handleOutside = (event: MouseEvent | TouchEvent) => {
+    if (isControlled || !isOpen) return;
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        handleClose();
       }
     };
-    document.addEventListener('mousedown', handleOutside);
-    document.addEventListener('touchstart', handleOutside as EventListener);
-    return () => {
-      document.removeEventListener('mousedown', handleOutside);
-      document.removeEventListener('touchstart', handleOutside as EventListener);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleClose();
+      }
     };
-  }, []);
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isControlled, isOpen]);
 
   const filteredLanguages = languages.filter(l => 
     l.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -39,7 +80,9 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'h
     <div className="relative" ref={dropdownRef}>
       {/* Selector Trigger Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggle}
+        aria-expanded={isOpen}
+        aria-haspopup="true"
         className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-md text-xs font-semibold transition border ${
           isDark
             ? 'bg-slate-800/90 hover:bg-slate-700 text-white border-slate-700 shadow-xs'
@@ -49,7 +92,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'h
       >
         <span className="font-bold shrink-0">{currentLanguageMeta.flag || '🇮🇳'}</span>
         <span className="max-w-[65px] xs:max-w-[85px] sm:max-w-[120px] truncate">{currentLanguageMeta.nativeName}</span>
-        <ChevronDown className="w-3.5 h-3.5 opacity-60 ml-0.5 shrink-0" />
+        <ChevronDown className={`w-3.5 h-3.5 opacity-60 ml-0.5 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {/* Dropdown Modal / List */}
@@ -64,8 +107,9 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'h
                 <span>Regional Languages ({languages.length})</span>
               </span>
               <button 
-                onClick={() => setIsOpen(false)}
+                onClick={handleClose}
                 className="text-slate-400 hover:text-white p-0.5"
+                aria-label="Close language selector"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -93,8 +137,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'h
                   key={lang.code}
                   onClick={() => {
                     setLanguage(lang.code as any);
-                    setIsOpen(false);
-                    setSearchQuery('');
+                    handleClose();
                   }}
                   className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-slate-800/80 transition ${
                     isSelected ? 'bg-blue-950/80 font-bold text-blue-300' : 'text-slate-200'
@@ -136,4 +179,6 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'h
       )}
     </div>
   );
-};
+});
+
+LanguageSelector.displayName = 'LanguageSelector';

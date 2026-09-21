@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useRole } from '../../context/RoleContext';
 import { useProject } from '../../context/ProjectContext';
@@ -34,31 +34,52 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
   const [currentDateStr, setCurrentDateStr] = useState<string>('');
   const [currentTimeStr, setCurrentTimeStr] = useState<string>('');
   const { theme, toggleTheme } = useTheme();
-  const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
-  const [projectDropdownOpen, setProjectDropdownOpen] = useState(false);
+
+  // Coordinated dropdown state: only one header dropdown can be open at a time
+  type HeaderDropdown = 'project' | 'role' | 'language' | null;
+  const [openDropdown, setOpenDropdown] = useState<HeaderDropdown>(null);
+
+  const projectDropdownRef = useRef<HTMLDivElement>(null);
+  const roleDropdownRef = useRef<HTMLDivElement>(null);
+  const languageDropdownRef = useRef<HTMLDivElement>(null);
+
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [showProjectModal, setShowProjectModal] = useState(false);
 
-  // Close dropdowns on outside click/touch
+  // Unified click-outside, mobile touch, and Escape key listener
   useEffect(() => {
-    const handleOutside = (e: MouseEvent | TouchEvent) => {
-      setRoleDropdownOpen(false);
-      setProjectDropdownOpen(false);
+    if (!openDropdown) return;
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node;
+      if (!target) return;
+
+      const insideProject = projectDropdownRef.current?.contains(target);
+      const insideRole = roleDropdownRef.current?.contains(target);
+      const insideLanguage = languageDropdownRef.current?.contains(target);
+
+      // Close open dropdown if click is anywhere outside all header dropdowns
+      if (!insideProject && !insideRole && !insideLanguage) {
+        setOpenDropdown(null);
+      }
     };
-    // Only close if the click is outside — check is done by individual dropdown containers
-    const handleOutsideAll = (e: MouseEvent | TouchEvent) => {
-      const target = e.target as Element;
-      // Close if click is outside any dropdown container
-      if (!target.closest('[data-dropdown="role"]')) setRoleDropdownOpen(false);
-      if (!target.closest('[data-dropdown="project"]')) setProjectDropdownOpen(false);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpenDropdown(null);
+      }
     };
-    document.addEventListener('mousedown', handleOutsideAll);
-    document.addEventListener('touchstart', handleOutsideAll as EventListener);
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+
     return () => {
-      document.removeEventListener('mousedown', handleOutsideAll);
-      document.removeEventListener('touchstart', handleOutsideAll as EventListener);
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [openDropdown]);
 
   useEffect(() => {
     const updateIST = () => {
@@ -164,8 +185,11 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
           {/* Mobile Hamburger Menu Button — strictly for mobile screen mode (< 768px) */}
           <button
             type="button"
-            onClick={onToggleSidebar}
-            className="md:hidden flex items-center justify-center p-1.5 -ml-1 text-slate-200 hover:text-white hover:bg-slate-800/80 active:bg-slate-700/80 rounded-lg transition-colors cursor-pointer shrink-0 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+            onClick={() => {
+              setOpenDropdown(null);
+              onToggleSidebar();
+            }}
+            className="md:hidden flex items-center justify-center p-1.5 -ml-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 active:scale-95 transition-colors cursor-pointer shrink-0 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
             aria-label={isSidebarOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isSidebarOpen}
             title={isSidebarOpen ? "Close menu" : "Open menu"}
@@ -175,7 +199,10 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
 
           {/* Logo */}
           <button
-            onClick={onToggleSidebar}
+            onClick={() => {
+              setOpenDropdown(null);
+              onToggleSidebar();
+            }}
             className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white p-0.5 shadow-sm border-2 border-slate-700 hover:border-blue-400 flex items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all duration-200 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
             title={isSidebarOpen ? "Click logo to close sidebar" : "Click logo to open sidebar"}
             aria-label="Toggle Navigation Sidebar"
@@ -205,20 +232,23 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
             5. Date and Time (max 2 lines)
         */}
         <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-          <div className="relative hidden md:block" data-dropdown="project">
+          {/* 1. Jaipur-Ajmer Live Project Selector */}
+          <div className="relative hidden md:block" ref={projectDropdownRef}>
             <button
-              onClick={() => setProjectDropdownOpen(!projectDropdownOpen)}
+              onClick={() => setOpenDropdown(prev => prev === 'project' ? null : 'project')}
+              aria-expanded={openDropdown === 'project'}
+              aria-haspopup="true"
               className="flex items-center gap-2 bg-slate-800/90 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-md text-xs font-semibold text-white transition shadow-xs"
             >
               <MapPin className="w-3.5 h-3.5 text-blue-400" />
               <span className="max-w-[220px] truncate">
                 {activeProject ? t(activeProject.name, activeProject.name) : t('system.select_project')}
               </span>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${openDropdown === 'project' ? 'rotate-180' : ''}`} />
             </button>
 
-            {projectDropdownOpen && (
-              <div className="absolute left-0 mt-1 w-80 max-w-[calc(100vw-24px)] bg-[#111c38] border border-slate-700 rounded-md shadow-xl py-1 z-[200] text-slate-100">
+            {openDropdown === 'project' && (
+              <div className="absolute left-0 mt-1 w-80 max-w-[calc(100vw-24px)] bg-[#111c38] border border-slate-700 rounded-md shadow-xl py-1 z-[200] text-slate-100 animate-in fade-in zoom-in-95 duration-150">
                 <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
                   {t('system.active_infra_projects')}
                 </div>
@@ -233,7 +263,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
                         } else {
                           setActiveProjectId(p.id);
                         }
-                        setProjectDropdownOpen(false);
+                        setOpenDropdown(null);
                       }}
                       className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-800 flex items-start justify-between ${p.id === activeProject?.id ? 'bg-blue-950/80 font-bold text-blue-300' : 'text-slate-200'
                         }`}
@@ -259,18 +289,21 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
             )}
           </div>
 
-          <div className="relative" data-dropdown="role">
+          {/* 2. Dropdown of District Magistrate / Role Switcher */}
+          <div className="relative" ref={roleDropdownRef}>
             <button
-              onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
+              onClick={() => setOpenDropdown(prev => prev === 'role' ? null : 'role')}
+              aria-expanded={openDropdown === 'role'}
+              aria-haspopup="true"
               className="flex items-center gap-1.5 sm:gap-2 bg-slate-800/90 hover:bg-slate-700 border border-slate-700 px-2 sm:px-3 py-1.5 rounded-md text-xs font-semibold text-white transition shadow-xs"
             >
               <User className="w-3.5 h-3.5 text-blue-400 shrink-0" />
               <span className="hidden sm:inline max-w-[140px] truncate">{t(role)}</span>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-200 ${openDropdown === 'role' ? 'rotate-180' : ''}`} />
             </button>
 
-            {roleDropdownOpen && (
-              <div className="absolute right-0 mt-1 w-64 max-w-[calc(100vw-16px)] bg-[#111c38] border border-slate-700 rounded-md shadow-xl py-1 z-[200] text-slate-100">
+            {openDropdown === 'role' && (
+              <div className="absolute right-[-65px] xs:right-[-40px] sm:right-0 mt-1 w-64 max-w-[calc(100vw-16px)] bg-[#111c38] border border-slate-700 rounded-md shadow-xl py-1 z-[200] text-slate-100 animate-in fade-in zoom-in-95 duration-150">
                 <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
                   {t('roles.select_role')}
                 </div>
@@ -283,7 +316,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
                       } else {
                         setRole(r);
                       }
-                      setRoleDropdownOpen(false);
+                      setOpenDropdown(null);
                     }}
                     className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-800 flex items-center justify-between ${r === role ? 'bg-blue-950/80 font-bold text-blue-300' : 'text-slate-200'
                       }`}
@@ -306,7 +339,10 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
           {/* 3. Landowner Portal */}
           {onNavigateCitizen && (
             <button
-              onClick={onNavigateCitizen}
+              onClick={() => {
+                setOpenDropdown(null);
+                onNavigateCitizen();
+              }}
               className="hidden xl:flex items-center gap-1 border border-slate-700 hover:bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-md text-xs font-semibold transition"
               title={t('citizen.title')}
             >
@@ -316,7 +352,13 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
           )}
 
           {/* 4. Language Dropdown */}
-          <LanguageSelector variant="header" />
+          <LanguageSelector
+            ref={languageDropdownRef}
+            variant="header"
+            isOpen={openDropdown === 'language'}
+            onToggle={() => setOpenDropdown(prev => prev === 'language' ? null : 'language')}
+            onClose={() => setOpenDropdown(null)}
+          />
 
           {/* 5. Date and Time (Formatted in max 2 lines) */}
           <div className="hidden lg:flex items-center gap-1.5 text-xs text-slate-300 bg-slate-800/80 px-2.5 py-1 rounded border border-slate-700 font-mono leading-tight shrink-0 whitespace-nowrap">

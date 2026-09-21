@@ -11,6 +11,7 @@ import { MobileBottomNav } from './components/common/MobileBottomNav';
 import { OverviewTab } from './components/tabs/OverviewTab';
 import { LandIntelligenceTab } from './components/tabs/LandIntelligenceTab';
 import { GISMapTab } from './components/tabs/GISMapTab';
+import { Cesium3DMapTab } from './components/tabs/Cesium3DMapTab';
 import { CompensationTab } from './components/tabs/CompensationTab';
 import { LegalIntelligenceTab } from './components/tabs/LegalIntelligenceTab';
 import { EnvironmentalTab } from './components/tabs/EnvironmentalTab';
@@ -64,6 +65,8 @@ const DashboardContent: React.FC<{
         return <LandIntelligenceTab />;
       case 'gis':
         return <GISMapTab />;
+      case 'cesium3d':
+        return <Cesium3DMapTab />;
       case 'compensation':
         return <CompensationTab />;
       case 'legal':

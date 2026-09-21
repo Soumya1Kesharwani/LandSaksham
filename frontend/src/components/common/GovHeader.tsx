@@ -39,6 +39,27 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [showProjectModal, setShowProjectModal] = useState(false);
 
+  // Close dropdowns on outside click/touch
+  useEffect(() => {
+    const handleOutside = (e: MouseEvent | TouchEvent) => {
+      setRoleDropdownOpen(false);
+      setProjectDropdownOpen(false);
+    };
+    // Only close if the click is outside — check is done by individual dropdown containers
+    const handleOutsideAll = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as Element;
+      // Close if click is outside any dropdown container
+      if (!target.closest('[data-dropdown="role"]')) setRoleDropdownOpen(false);
+      if (!target.closest('[data-dropdown="project"]')) setProjectDropdownOpen(false);
+    };
+    document.addEventListener('mousedown', handleOutsideAll);
+    document.addEventListener('touchstart', handleOutsideAll as EventListener);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideAll);
+      document.removeEventListener('touchstart', handleOutsideAll as EventListener);
+    };
+  }, []);
+
   useEffect(() => {
     const updateIST = () => {
       const dateOptions: Intl.DateTimeFormatOptions = {
@@ -127,31 +148,35 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
   const brand = getBrandParts(language);
 
   return (
-    <header className="sticky top-0 z-40 bg-[#0b1329] border-b border-slate-800 shadow-md transition-colors duration-200 w-full max-w-full overflow-hidden">
+    <header className="sticky top-0 z-[100] bg-[#0b1329] border-b border-slate-800 shadow-md transition-colors duration-200 w-full max-w-full">
       {/* Tricolor Government Ribbon */}
-      <div className="h-1 w-full flex">
+      <div className="h-1 w-full flex overflow-hidden">
         <div className="flex-1 bg-[#ff9933]"></div>
         <div className="flex-1 bg-[#ffffff]"></div>
         <div className="flex-1 bg-[#138808]"></div>
       </div>
 
-      {/* Main Bar */}
-      <div className="px-2 sm:px-4 py-2 sm:py-3.5 flex items-center justify-between gap-1.5 sm:gap-4 w-full max-w-full min-w-0">
+      {/* Main Bar — overflow-x-clip prevents horizontal scroll without clipping dropdown panels */}
+      <div className="px-2 sm:px-4 py-2 sm:py-3.5 flex items-center justify-between gap-1.5 sm:gap-4 w-full max-w-full min-w-0 overflow-x-clip">
         {/* Left: Identity & Branding */}
         <div className="flex items-center gap-1.5 sm:gap-3 min-w-0 flex-1 sm:flex-initial">
-          {/* Mobile Sidebar Hamburger Toggle */}
+
+          {/* Mobile Hamburger Menu Button — strictly for mobile screen mode (< 768px) */}
           <button
+            type="button"
             onClick={onToggleSidebar}
-            className="md:hidden p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 active:scale-95 transition shrink-0"
-            aria-label="Toggle Navigation Menu"
+            className="md:hidden flex items-center justify-center p-1.5 -ml-1 text-slate-200 hover:text-white hover:bg-slate-800/80 active:bg-slate-700/80 rounded-lg transition-colors cursor-pointer shrink-0 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+            aria-label={isSidebarOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isSidebarOpen}
+            title={isSidebarOpen ? "Close menu" : "Open menu"}
           >
-            {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            <Menu className="w-5 h-5 text-slate-200" />
           </button>
 
-          {/* Logo (Desktop Sidebar Toggle) */}
+          {/* Logo */}
           <button
             onClick={onToggleSidebar}
-            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white p-0.5 shadow-sm border border-slate-700 hover:border-blue-400 flex items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all duration-200 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white p-0.5 shadow-sm border-2 border-slate-700 hover:border-blue-400 flex items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all duration-200 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
             title={isSidebarOpen ? "Click logo to close sidebar" : "Click logo to open sidebar"}
             aria-label="Toggle Navigation Sidebar"
           >
@@ -180,8 +205,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
             5. Date and Time (max 2 lines)
         */}
         <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-          {/* 1. Jaipur-Ajmer Live Project Selector */}
-          <div className="relative hidden md:block">
+          <div className="relative hidden md:block" data-dropdown="project">
             <button
               onClick={() => setProjectDropdownOpen(!projectDropdownOpen)}
               className="flex items-center gap-2 bg-slate-800/90 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-md text-xs font-semibold text-white transition shadow-xs"
@@ -194,7 +218,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
             </button>
 
             {projectDropdownOpen && (
-              <div className="absolute left-0 mt-1 w-80 max-w-[calc(100vw-24px)] bg-[#111c38] border border-slate-700 rounded-md shadow-xl py-1 z-50 text-slate-100">
+              <div className="absolute left-0 mt-1 w-80 max-w-[calc(100vw-24px)] bg-[#111c38] border border-slate-700 rounded-md shadow-xl py-1 z-[200] text-slate-100">
                 <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
                   {t('system.active_infra_projects')}
                 </div>
@@ -235,8 +259,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
             )}
           </div>
 
-          {/* 2. Dropdown of District Magistrate / Role Switcher */}
-          <div className="relative">
+          <div className="relative" data-dropdown="role">
             <button
               onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
               className="flex items-center gap-1.5 sm:gap-2 bg-slate-800/90 hover:bg-slate-700 border border-slate-700 px-2 sm:px-3 py-1.5 rounded-md text-xs font-semibold text-white transition shadow-xs"
@@ -247,7 +270,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({
             </button>
 
             {roleDropdownOpen && (
-              <div className="absolute right-0 mt-1 w-64 max-w-[calc(100vw-24px)] bg-[#111c38] border border-slate-700 rounded-md shadow-xl py-1 z-50 text-slate-100">
+              <div className="absolute right-0 mt-1 w-64 max-w-[calc(100vw-16px)] bg-[#111c38] border border-slate-700 rounded-md shadow-xl py-1 z-[200] text-slate-100">
                 <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
                   {t('roles.select_role')}
                 </div>

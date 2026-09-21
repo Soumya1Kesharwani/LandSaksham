@@ -13,7 +13,7 @@ import {
 
 export const GISMapTab: React.FC = () => {
   const { language, tr, t } = useLanguage();
-  const { parcels, routes, setSelectedParcel, activeProject } = useProject();
+  const { parcels, routes, setSelectedParcel, activeProject, setActiveTab } = useProject();
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
@@ -489,17 +489,15 @@ export const GISMapTab: React.FC = () => {
                 </select>
               </div>
 
-              <select
-                value={selectedRiskFilter}
-                onChange={e => setSelectedRiskFilter(e.target.value)}
-                className="border border-slate-300 dark:border-slate-700 rounded px-2 py-1.5 text-[11px] sm:text-xs bg-white dark:bg-[#0b1329] text-slate-800 dark:text-slate-100 font-medium shrink-0"
+              {/* Cesium 3D Globe Launcher */}
+              <button
+                onClick={() => setActiveTab('cesium3d')}
+                className="px-2.5 py-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded text-[11px] font-bold flex items-center gap-1.5 transition shadow-xs shrink-0"
+                title="Launch India Cesium 3D Globe with Aerial Satellite & Labels"
               >
-                <option value="ALL">{t('land.all_risk_levels')}</option>
-                <option value="CRITICAL">{t('land.critical_filter')}</option>
-                <option value="HIGH">{t('land.high_filter')}</option>
-                <option value="MEDIUM">{t('land.medium_filter')}</option>
-                <option value="LOW">{t('land.low_filter')}</option>
-              </select>
+                <Globe className="w-3.5 h-3.5 text-cyan-200" />
+                <span>{tr('Cesium 3D Globe', 'सीज़ियम 3D ग्लोब')}</span>
+              </button>
             </div>
 
             {/* Right Controls: Feature Layer Toggles (Horizontal scrolling on mobile) */}

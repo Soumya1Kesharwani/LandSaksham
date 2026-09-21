@@ -97,7 +97,7 @@ export const LanguageSelector = React.forwardRef<HTMLDivElement, LanguageSelecto
 
       {/* Dropdown Modal / List */}
       {isOpen && (
-        <div className="absolute right-0 mt-1.5 w-72 sm:w-80 max-w-[calc(100vw-24px)] bg-[#111c38] rounded-lg shadow-2xl border border-slate-700 py-2 z-50 animate-in fade-in zoom-in-95 duration-150 text-slate-100">
+        <div className="absolute right-0 mt-1.5 w-72 sm:w-80 max-w-[calc(100vw-16px)] bg-[#111c38] rounded-lg shadow-2xl border border-slate-700 py-2 z-[200] animate-in fade-in zoom-in-95 duration-150 text-slate-100">
           
           {/* Header & Search */}
           <div className="px-3 pb-2 border-b border-slate-800 space-y-2">

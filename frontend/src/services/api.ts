@@ -1,7 +1,12 @@
 import { Project, Parcel, AlternativeRoute, ActionItem, Alert, AuditLog, CitizenTrackingResponse } from '../types';
 
 const getHost = () => (typeof window !== 'undefined' && window.location && window.location.hostname) ? window.location.hostname : '127.0.0.1';
-export const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || `http://${getHost()}:8000/api`;
+const envUrl = (import.meta as any).env?.VITE_API_BASE_URL;
+export const API_BASE_URL = envUrl
+  ? envUrl.replace(/\/$/, '')
+  : (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && !window.location.port)
+    ? '/api'
+    : `http://${getHost()}:8000/api`;
 
 
 // Realistic fallback state when backend API is starting up or in standalone preview

@@ -25,17 +25,16 @@ const JAIPUR_AJMER_LANDMARKS = [
   { name: 'Beawar NH-48 Expansion Node', km: '185 KM', lat: 26.1050, lng: 74.3200, role: 'Southern Corridor Terminal' }
 ];
 
-// 3D Cinematic Drone Flyover Waypoints along NH-48 Express Corridor
+// 3D Cinematic Drone Flyover Waypoints along NH-48 Express Corridor (Monotonic SW Alignment)
 const FLYOVER_WAYPOINTS = [
   {
     name: 'Jaipur 200 Ft Bypass Junction',
     km: 'KM 0.0',
     lat: 26.8852,
     lng: 75.7420,
-    height: 3600,
-    heading: 42.0,
-    pitch: -32.0,
-    speedKmh: 245,
+    height: 2350,
+    pitch: -28.0,
+    speedKmh: 246,
     riskLevel: 'LOW' as RiskLevel,
     bottleneck: 'Expressway terminal linking Jaipur Outer Ring Road & NH-48 corridor'
   },
@@ -44,9 +43,8 @@ const FLYOVER_WAYPOINTS = [
     km: 'KM 14.0',
     lat: 26.8450,
     lng: 75.6420,
-    height: 1950,
-    heading: 52.0,
-    pitch: -28.0,
+    height: 2150,
+    pitch: -27.0,
     speedKmh: 248,
     riskLevel: 'CRITICAL' as RiskLevel,
     bottleneck: 'High Court stay on Khasra 142/1; 42 commercial structures in corridor'
@@ -57,8 +55,7 @@ const FLYOVER_WAYPOINTS = [
     lat: 26.8120,
     lng: 75.5450,
     height: 2200,
-    heading: 58.0,
-    pitch: -30.0,
+    pitch: -28.0,
     speedKmh: 252,
     riskLevel: 'HIGH' as RiskLevel,
     bottleneck: 'Industrial viaduct corridor; 13 pending utility gas and water pipeline relocations'
@@ -68,9 +65,8 @@ const FLYOVER_WAYPOINTS = [
     km: 'KM 46.0',
     lat: 26.7550,
     lng: 75.3850,
-    height: 2450,
-    heading: 62.0,
-    pitch: -27.0,
+    height: 2250,
+    pitch: -28.0,
     speedKmh: 254,
     riskLevel: 'MEDIUM' as RiskLevel,
     bottleneck: 'Section 19 notification complete; 88% direct DBT compensation payout rate'
@@ -80,22 +76,20 @@ const FLYOVER_WAYPOINTS = [
     km: 'KM 62.0',
     lat: 26.6850,
     lng: 75.2340,
-    height: 2700,
-    heading: 58.0,
-    pitch: -31.0,
+    height: 2200,
+    pitch: -28.0,
     speedKmh: 250,
     riskLevel: 'LOW' as RiskLevel,
     bottleneck: 'State Highway 12 crossway interchange and designated emergency airstrip'
   },
   {
-    name: 'Phulera Junction & DFC Freight Link',
+    name: 'Bandanwara & DFC Rail Grade Separator',
     km: 'KM 78.0',
-    lat: 26.8780,
-    lng: 75.2420,
-    height: 3000,
-    heading: 65.0,
+    lat: 26.6350,
+    lng: 75.0520,
+    height: 2280,
     pitch: -28.0,
-    speedKmh: 253,
+    speedKmh: 251,
     riskLevel: 'LOW' as RiskLevel,
     bottleneck: 'Western Dedicated Freight Corridor (DFC) rail overbridge grade separation'
   },
@@ -104,10 +98,9 @@ const FLYOVER_WAYPOINTS = [
     km: 'KM 98.0',
     lat: 26.5820,
     lng: 74.8650,
-    height: 2350,
-    heading: 50.0,
+    height: 2220,
     pitch: -28.0,
-    speedKmh: 247,
+    speedKmh: 249,
     riskLevel: 'HIGH' as RiskLevel,
     bottleneck: 'Dense commercial marble market zone; elevated 6-lane bypass viaduct works'
   },
@@ -116,9 +109,8 @@ const FLYOVER_WAYPOINTS = [
     km: 'KM 135.0',
     lat: 26.4680,
     lng: 74.6380,
-    height: 3200,
-    heading: 42.0,
-    pitch: -34.0,
+    height: 2420,
+    pitch: -30.0,
     speedKmh: 250,
     riskLevel: 'MEDIUM' as RiskLevel,
     bottleneck: 'Aravalli mountain valley tunnel approach and southern bypass terminal'
@@ -173,15 +165,16 @@ export const Cesium3DMapTab: React.FC = () => {
   const [isFlyoverActive, setIsFlyoverActive] = useState<boolean>(false);
   const [isPlayingFlyover, setIsPlayingFlyover] = useState<boolean>(false);
   const [flyoverProgress, setFlyoverProgress] = useState<number>(0); // 0 to 1
-  const [flyoverDuration, setFlyoverDuration] = useState<number>(5); // default 5 seconds (options: 3s, 5s, 8s)
+  const [flyoverDuration, setFlyoverDuration] = useState<number>(6); // default 6 seconds (options: 4s, 6s, 10s)
   const [flyoverLoop, setFlyoverLoop] = useState<boolean>(false);
 
   const flyoverStartTimeRef = useRef<number | null>(null);
   const flyoverAnimIdRef = useRef<number | null>(null);
   const flyoverProgressRef = useRef<number>(0);
   const isPlayingFlyoverRef = useRef<boolean>(false);
-  const flyoverDurationRef = useRef<number>(5);
+  const flyoverDurationRef = useRef<number>(6);
   const flyoverLoopRef = useRef<boolean>(false);
+  const lastHeadingRef = useRef<number | null>(null);
 
   useEffect(() => {
     isPlayingFlyoverRef.current = isPlayingFlyover;
@@ -499,37 +492,114 @@ export const Cesium3DMapTab: React.FC = () => {
     });
   };
 
+  // Catmull-Rom cubic spline interpolation function (C1 continuity across segments)
+  const catmullRom = (p0: number, p1: number, p2: number, p3: number, t: number): number => {
+    const t2 = t * t;
+    const t3 = t2 * t;
+    return 0.5 * (
+      2 * p1 +
+      (-p0 + p2) * t +
+      (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 +
+      (-p0 + 3 * p1 - 3 * p2 + p3) * t3
+    );
+  };
+
+  // Global cruise easing: gentle take-off (5%), steady constant velocity cruise (90%), gentle landing (5%)
+  const cruiseEase = (t: number): number => {
+    const ramp = 0.05;
+    if (t <= 0) return 0;
+    if (t >= 1) return 1;
+    const V = 1 / (1 - ramp);
+    if (t < ramp) {
+      return 0.5 * V * (t * t / ramp);
+    } else if (t > 1 - ramp) {
+      const rem = 1 - t;
+      return 1 - 0.5 * V * (rem * rem / ramp);
+    } else {
+      return 0.5 * V * ramp + V * (t - ramp);
+    }
+  };
+
+  // Compute smooth Catmull-Rom position, pitch, speed, and lookahead heading
+  const getSplineFlightState = (globalProgress: number) => {
+    const tEased = cruiseEase(Math.max(0, Math.min(1, globalProgress)));
+    const N = FLYOVER_WAYPOINTS.length;
+    const M = N - 1;
+    const s = Math.max(0, Math.min(0.9999, tEased)) * M;
+    const i = Math.floor(s);
+    const u = s - i;
+
+    const getPt = (idx: number) => {
+      if (idx < 0) {
+        const p0 = FLYOVER_WAYPOINTS[0];
+        const p1 = FLYOVER_WAYPOINTS[1];
+        return {
+          ...p0,
+          lat: p0.lat * 2 - p1.lat,
+          lng: p0.lng * 2 - p1.lng,
+        };
+      }
+      if (idx >= N) {
+        const pEnd = FLYOVER_WAYPOINTS[N - 1];
+        const pPrev = FLYOVER_WAYPOINTS[N - 2];
+        return {
+          ...pEnd,
+          lat: pEnd.lat * 2 - pPrev.lat,
+          lng: pEnd.lng * 2 - pPrev.lng,
+        };
+      }
+      return FLYOVER_WAYPOINTS[idx];
+    };
+
+    const p0 = getPt(i - 1);
+    const p1 = getPt(i);
+    const p2 = getPt(i + 1);
+    const p3 = getPt(i + 2);
+
+    const lat = catmullRom(p0.lat, p1.lat, p2.lat, p3.lat, u);
+    const lng = catmullRom(p0.lng, p1.lng, p2.lng, p3.lng, u);
+    const height = catmullRom(p0.height, p1.height, p2.height, p3.height, u);
+    const pitch = catmullRom(p0.pitch, p1.pitch, p2.pitch, p3.pitch, u);
+    const speed = catmullRom(p0.speedKmh, p1.speedKmh, p2.speedKmh, p3.speedKmh, u);
+
+    // Compute forward lookahead for butter-smooth camera heading direction
+    const uNext = Math.min(0.9999, u + 0.02);
+    const nextLat = catmullRom(p0.lat, p1.lat, p2.lat, p3.lat, uNext);
+    const nextLng = catmullRom(p0.lng, p1.lng, p2.lng, p3.lng, uNext);
+
+    const dLat = nextLat - lat;
+    const dLng = (nextLng - lng) * Math.cos((lat * Math.PI) / 180);
+    const bearingRad = Math.atan2(dLng, dLat);
+    let headingDeg = (bearingRad * 180) / Math.PI;
+    if (headingDeg < 0) headingDeg += 360;
+
+    const activeWaypoint = FLYOVER_WAYPOINTS[Math.min(N - 1, u > 0.5 ? i + 1 : i)];
+
+    return { lat, lng, height, pitch, heading: headingDeg, speedKmh: speed, activeWaypoint };
+  };
+
   // 3D Cinematic Flyover Camera Position Calculator
   const applyCameraAtProgress = (p: number) => {
     const viewer = viewerRef.current;
     if (!viewer || viewer.isDestroyed()) return;
 
-    const N = FLYOVER_WAYPOINTS.length;
-    const numSegments = N - 1;
-    const clampedP = Math.max(0, Math.min(1, p));
-    const segIndex = Math.min(Math.floor(clampedP * numSegments), numSegments - 1);
-    const u = (clampedP * numSegments) - segIndex;
+    const state = getSplineFlightState(p);
 
-    // Hermite smoothstep easing for silky smooth camera glide
-    const ease = u * u * (3 - 2 * u);
-
-    const wpA = FLYOVER_WAYPOINTS[segIndex];
-    const wpB = FLYOVER_WAYPOINTS[segIndex + 1];
-
-    const lat = wpA.lat + (wpB.lat - wpA.lat) * ease;
-    const lng = wpA.lng + (wpB.lng - wpA.lng) * ease;
-    const height = wpA.height + (wpB.height - wpA.height) * ease;
-
-    // Shortest angular path interpolation for heading
-    let dHead = ((wpB.heading - wpA.heading + 540) % 360) - 180;
-    const heading = wpA.heading + dHead * ease;
-    const pitch = wpA.pitch + (wpB.pitch - wpA.pitch) * ease;
+    // Smooth gimbal heading transitions to eliminate sudden angular snaps
+    let finalHeading = state.heading;
+    if (lastHeadingRef.current === null) {
+      lastHeadingRef.current = state.heading;
+    } else {
+      let diff = ((state.heading - lastHeadingRef.current + 540) % 360) - 180;
+      lastHeadingRef.current = (lastHeadingRef.current + diff * 0.22 + 360) % 360;
+      finalHeading = lastHeadingRef.current;
+    }
 
     viewer.camera.setView({
-      destination: Cesium.Cartesian3.fromDegrees(lng, lat, height),
+      destination: Cesium.Cartesian3.fromDegrees(state.lng, state.lat, state.height),
       orientation: {
-        heading: Cesium.Math.toRadians(heading),
-        pitch: Cesium.Math.toRadians(pitch),
+        heading: Cesium.Math.toRadians(finalHeading),
+        pitch: Cesium.Math.toRadians(state.pitch),
         roll: 0.0
       }
     });
@@ -550,6 +620,7 @@ export const Cesium3DMapTab: React.FC = () => {
     if (p >= 1) {
       if (flyoverLoopRef.current) {
         flyoverStartTimeRef.current = timestamp;
+        lastHeadingRef.current = null;
         p = 0;
       } else {
         p = 1;
@@ -574,6 +645,7 @@ export const Cesium3DMapTab: React.FC = () => {
     setIsFlyoverActive(true);
     setIsPlayingFlyover(true);
     isPlayingFlyoverRef.current = true;
+    lastHeadingRef.current = null;
     flyoverProgressRef.current = initialProgress;
     setFlyoverProgress(initialProgress);
     flyoverStartTimeRef.current = null;
@@ -606,6 +678,7 @@ export const Cesium3DMapTab: React.FC = () => {
   };
 
   const restartFlyover = () => {
+    lastHeadingRef.current = null;
     startFlyover(0);
   };
 
@@ -614,6 +687,7 @@ export const Cesium3DMapTab: React.FC = () => {
     setIsFlyoverActive(false);
     flyoverProgressRef.current = 0;
     setFlyoverProgress(0);
+    lastHeadingRef.current = null;
     flyToCorridor('JAIPUR_AJMER');
   };
 
@@ -638,6 +712,7 @@ export const Cesium3DMapTab: React.FC = () => {
   };
 
   const seekFlyover = (val: number) => {
+    lastHeadingRef.current = null;
     flyoverProgressRef.current = val;
     setFlyoverProgress(val);
     applyCameraAtProgress(val);
@@ -656,28 +731,7 @@ export const Cesium3DMapTab: React.FC = () => {
 
   // Compute live flight telemetry and active waypoint for HUD overlay
   const currentTelemetry = useMemo(() => {
-    const N = FLYOVER_WAYPOINTS.length;
-    const numSegments = N - 1;
-    const p = Math.max(0, Math.min(1, flyoverProgress));
-    const segIndex = Math.min(Math.floor(p * numSegments), numSegments - 1);
-    const u = (p * numSegments) - segIndex;
-    const ease = u * u * (3 - 2 * u);
-
-    const wpA = FLYOVER_WAYPOINTS[segIndex];
-    const wpB = FLYOVER_WAYPOINTS[segIndex + 1];
-
-    const height = wpA.height + (wpB.height - wpA.height) * ease;
-    const pitch = wpA.pitch + (wpB.pitch - wpA.pitch) * ease;
-    const speed = wpA.speedKmh + (wpB.speedKmh - wpA.speedKmh) * ease;
-
-    const activeWaypoint = u > 0.5 ? wpB : wpA;
-
-    return {
-      height,
-      pitch,
-      speedKmh: speed,
-      activeWaypoint
-    };
+    return getSplineFlightState(flyoverProgress);
   }, [flyoverProgress]);
 
   // Handle auto-start trigger (e.g. from GIS Map tab or external link)
@@ -1949,10 +2003,10 @@ export const Cesium3DMapTab: React.FC = () => {
                 </button>
               </div>
 
-              {/* Duration Selectors: 3s, 5s, 8s */}
+              {/* Duration Selectors: 4s, 6s, 10s */}
               <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-lg p-1">
                 <span className="text-[10px] text-slate-400 font-semibold px-1.5">Speed / Duration:</span>
-                {[3, 5, 8].map((sec) => (
+                {[4, 6, 10].map((sec) => (
                   <button
                     key={sec}
                     onClick={() => changeDuration(sec)}
@@ -1962,7 +2016,7 @@ export const Cesium3DMapTab: React.FC = () => {
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    {sec}s {sec === 3 ? '(Fast)' : sec === 5 ? '(Cinematic)' : '(Detailed)'}
+                    {sec}s {sec === 4 ? '(Fast Reel)' : sec === 6 ? '(Cinematic)' : '(Smooth Survey)'}
                   </button>
                 ))}
               </div>

@@ -1206,25 +1206,24 @@ export const Cesium3DMapTab: React.FC = () => {
 
       {/* Top Right Floating Toolbar: Camera Controls, Height Metric & View Modes */}
       <div className="absolute top-4 right-4 z-20 flex items-center gap-2 pointer-events-auto">
-        {/* 3D Flyover Video Tour Button */}
+        {/* Compact Round 3D Flyover Button */}
         <button
           onClick={toggleFlyover}
-          className={`px-3 py-1.5 text-xs font-bold rounded-xl border transition-all flex items-center gap-1.5 shadow-lg ${
+          className={`relative w-8 h-8 sm:w-9 sm:h-9 rounded-full border transition-all flex items-center justify-center shadow-lg shrink-0 ${
             isFlyoverActive
-              ? 'bg-red-600 border-red-500 text-white animate-pulse shadow-red-500/30'
-              : 'bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white border-cyan-500/40 shadow-emerald-500/20'
+              ? 'bg-red-600 border-red-400 text-white animate-pulse shadow-red-500/40 ring-2 ring-red-400/50'
+              : 'bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white border-cyan-400/50 shadow-emerald-500/30 hover:scale-105 active:scale-95'
           }`}
-          title="Play 3 to 6-second Cinematic 3D Aerial Flyover along the NH-48 Corridor"
+          title={isFlyoverActive ? (isPlayingFlyover ? 'Pause 3D Tour' : 'Resume 3D Tour') : `Play 3D Aerial Corridor Flyover (${flyoverDuration}s)`}
+          aria-label="3D Corridor Flyover Tour"
         >
           {isFlyoverActive ? (
-            <>
-              <Pause className="w-3.5 h-3.5 fill-current" />
-              <span>{isPlayingFlyover ? 'Pause Tour' : 'Resume Tour'}</span>
-            </>
+            <Pause className="w-4 h-4 fill-current" />
           ) : (
             <>
-              <Play className="w-3.5 h-3.5 fill-current" />
-              <span>3D Flyover Tour ({flyoverDuration}s)</span>
+              <Play className="w-4 h-4 fill-current ml-0.5 text-white" />
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-cyan-400 rounded-full border border-slate-900 animate-ping" />
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-cyan-400 rounded-full border border-slate-900" />
             </>
           )}
         </button>

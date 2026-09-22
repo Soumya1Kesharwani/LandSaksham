@@ -516,17 +516,17 @@ export const GISMapTab: React.FC = () => {
                 <span>{tr('Cesium 3D Globe', 'सीज़ियम 3D ग्लोब')}</span>
               </button>
 
-              {/* 3D Video Flyover Tour Launcher */}
+              {/* Compact Round 3D Video Flyover Tour Launcher */}
               <button
                 onClick={() => {
                   sessionStorage.setItem('auto_start_flyover', 'true');
                   setActiveTab('cesium3d');
                 }}
-                className="hidden sm:flex px-2.5 py-1 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white rounded text-[11px] font-bold items-center gap-1.5 transition shadow-xs shrink-0"
-                title="Play 3 to 6-second Cinematic 3D Aerial Corridor Flyover"
+                className="hidden sm:flex relative w-7 h-7 rounded-full bg-gradient-to-tr from-emerald-600 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white items-center justify-center transition shadow-xs shrink-0 hover:scale-105 active:scale-95 border border-cyan-400/50"
+                title={tr('Play 3D Aerial Corridor Flyover (6s)', '3D एरियल फ्लाईओवर चलाएं (6s)')}
+                aria-label="3D Corridor Flyover Tour"
               >
-                <Play className="w-3.5 h-3.5 fill-current text-emerald-200" />
-                <span>{tr('3D Video Tour (5s)', '3D वीडियो टूर (5s)')}</span>
+                <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
               </button>
             </div>
 

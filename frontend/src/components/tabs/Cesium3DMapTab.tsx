@@ -35,7 +35,7 @@ const FLYOVER_WAYPOINTS = [
     height: 3600,
     heading: 42.0,
     pitch: -32.0,
-    speedKmh: 280,
+    speedKmh: 245,
     riskLevel: 'LOW' as RiskLevel,
     bottleneck: 'Expressway terminal linking Jaipur Outer Ring Road & NH-48 corridor'
   },
@@ -47,7 +47,7 @@ const FLYOVER_WAYPOINTS = [
     height: 1950,
     heading: 52.0,
     pitch: -28.0,
-    speedKmh: 330,
+    speedKmh: 248,
     riskLevel: 'CRITICAL' as RiskLevel,
     bottleneck: 'High Court stay on Khasra 142/1; 42 commercial structures in corridor'
   },
@@ -59,7 +59,7 @@ const FLYOVER_WAYPOINTS = [
     height: 2200,
     heading: 58.0,
     pitch: -30.0,
-    speedKmh: 370,
+    speedKmh: 252,
     riskLevel: 'HIGH' as RiskLevel,
     bottleneck: 'Industrial viaduct corridor; 13 pending utility gas and water pipeline relocations'
   },
@@ -71,7 +71,7 @@ const FLYOVER_WAYPOINTS = [
     height: 2450,
     heading: 62.0,
     pitch: -27.0,
-    speedKmh: 390,
+    speedKmh: 254,
     riskLevel: 'MEDIUM' as RiskLevel,
     bottleneck: 'Section 19 notification complete; 88% direct DBT compensation payout rate'
   },
@@ -83,7 +83,7 @@ const FLYOVER_WAYPOINTS = [
     height: 2700,
     heading: 58.0,
     pitch: -31.0,
-    speedKmh: 420,
+    speedKmh: 250,
     riskLevel: 'LOW' as RiskLevel,
     bottleneck: 'State Highway 12 crossway interchange and designated emergency airstrip'
   },
@@ -95,7 +95,7 @@ const FLYOVER_WAYPOINTS = [
     height: 3000,
     heading: 65.0,
     pitch: -28.0,
-    speedKmh: 410,
+    speedKmh: 253,
     riskLevel: 'LOW' as RiskLevel,
     bottleneck: 'Western Dedicated Freight Corridor (DFC) rail overbridge grade separation'
   },
@@ -107,7 +107,7 @@ const FLYOVER_WAYPOINTS = [
     height: 2350,
     heading: 50.0,
     pitch: -28.0,
-    speedKmh: 360,
+    speedKmh: 247,
     riskLevel: 'HIGH' as RiskLevel,
     bottleneck: 'Dense commercial marble market zone; elevated 6-lane bypass viaduct works'
   },
@@ -119,7 +119,7 @@ const FLYOVER_WAYPOINTS = [
     height: 3200,
     heading: 42.0,
     pitch: -34.0,
-    speedKmh: 310,
+    speedKmh: 250,
     riskLevel: 'MEDIUM' as RiskLevel,
     bottleneck: 'Aravalli mountain valley tunnel approach and southern bypass terminal'
   }
@@ -1841,7 +1841,7 @@ export const Cesium3DMapTab: React.FC = () => {
               </span>
               <div className="hidden md:block w-px h-4 bg-slate-700"></div>
               <span className="hidden md:inline text-xs font-semibold text-slate-300">
-                Jaipur–Ajmer NH-48 Express Corridor • 3D Drone Reconnaissance Video Simulation
+                Jaipur–Ajmer NH-48 Express Corridor • 3D Drone Survey (~250 km/h Simulation)
               </span>
             </div>
 

@@ -25,6 +25,106 @@ const JAIPUR_AJMER_LANDMARKS = [
   { name: 'Beawar NH-48 Expansion Node', km: '185 KM', lat: 26.1050, lng: 74.3200, role: 'Southern Corridor Terminal' }
 ];
 
+// 3D Cinematic Drone Flyover Waypoints along NH-48 Express Corridor
+const FLYOVER_WAYPOINTS = [
+  {
+    name: 'Jaipur 200 Ft Bypass Junction',
+    km: 'KM 0.0',
+    lat: 26.8852,
+    lng: 75.7420,
+    height: 3600,
+    heading: 42.0,
+    pitch: -32.0,
+    speedKmh: 280,
+    riskLevel: 'LOW' as RiskLevel,
+    bottleneck: 'Expressway terminal linking Jaipur Outer Ring Road & NH-48 corridor'
+  },
+  {
+    name: 'Mahapura Toll Plaza & Logistics Hub',
+    km: 'KM 14.0',
+    lat: 26.8450,
+    lng: 75.6420,
+    height: 1950,
+    heading: 52.0,
+    pitch: -28.0,
+    speedKmh: 330,
+    riskLevel: 'CRITICAL' as RiskLevel,
+    bottleneck: 'High Court stay on Khasra 142/1; 42 commercial structures in corridor'
+  },
+  {
+    name: 'Bagru RIICO Industrial Interchange',
+    km: 'KM 28.0',
+    lat: 26.8120,
+    lng: 75.5450,
+    height: 2200,
+    heading: 58.0,
+    pitch: -30.0,
+    speedKmh: 370,
+    riskLevel: 'HIGH' as RiskLevel,
+    bottleneck: 'Industrial viaduct corridor; 13 pending utility gas and water pipeline relocations'
+  },
+  {
+    name: 'Gadota Section 19 Agro Zone',
+    km: 'KM 46.0',
+    lat: 26.7550,
+    lng: 75.3850,
+    height: 2450,
+    heading: 62.0,
+    pitch: -27.0,
+    speedKmh: 390,
+    riskLevel: 'MEDIUM' as RiskLevel,
+    bottleneck: 'Section 19 notification complete; 88% direct DBT compensation payout rate'
+  },
+  {
+    name: 'Dudu Central Sub-Division & SH-12',
+    km: 'KM 62.0',
+    lat: 26.6850,
+    lng: 75.2340,
+    height: 2700,
+    heading: 58.0,
+    pitch: -31.0,
+    speedKmh: 420,
+    riskLevel: 'LOW' as RiskLevel,
+    bottleneck: 'State Highway 12 crossway interchange and designated emergency airstrip'
+  },
+  {
+    name: 'Phulera Junction & DFC Freight Link',
+    km: 'KM 78.0',
+    lat: 26.8780,
+    lng: 75.2420,
+    height: 3000,
+    heading: 65.0,
+    pitch: -28.0,
+    speedKmh: 410,
+    riskLevel: 'LOW' as RiskLevel,
+    bottleneck: 'Western Dedicated Freight Corridor (DFC) rail overbridge grade separation'
+  },
+  {
+    name: 'Kishangarh Marble City Viaduct',
+    km: 'KM 98.0',
+    lat: 26.5820,
+    lng: 74.8650,
+    height: 2350,
+    heading: 50.0,
+    pitch: -28.0,
+    speedKmh: 360,
+    riskLevel: 'HIGH' as RiskLevel,
+    bottleneck: 'Dense commercial marble market zone; elevated 6-lane bypass viaduct works'
+  },
+  {
+    name: 'Ajmer Taragarh Gateway Interchange',
+    km: 'KM 135.0',
+    lat: 26.4680,
+    lng: 74.6380,
+    height: 3200,
+    heading: 42.0,
+    pitch: -34.0,
+    speedKmh: 310,
+    riskLevel: 'MEDIUM' as RiskLevel,
+    bottleneck: 'Aravalli mountain valley tunnel approach and southern bypass terminal'
+  }
+];
+
 export const Cesium3DMapTab: React.FC = () => {
   const { parcels, routes, selectedParcel, setSelectedParcel, activeProject, setActiveTab } = useProject();
   const { tr, t } = useLanguage();
@@ -68,6 +168,32 @@ export const Cesium3DMapTab: React.FC = () => {
     mapPopupParcelRef.current = mapPopupParcel;
   }, [mapPopupParcel]);
   const [viewerReady, setViewerReady] = useState<boolean>(false);
+
+  // 3D Cinematic Flyover Video State
+  const [isFlyoverActive, setIsFlyoverActive] = useState<boolean>(false);
+  const [isPlayingFlyover, setIsPlayingFlyover] = useState<boolean>(false);
+  const [flyoverProgress, setFlyoverProgress] = useState<number>(0); // 0 to 1
+  const [flyoverDuration, setFlyoverDuration] = useState<number>(5); // default 5 seconds (options: 3s, 5s, 8s)
+  const [flyoverLoop, setFlyoverLoop] = useState<boolean>(false);
+
+  const flyoverStartTimeRef = useRef<number | null>(null);
+  const flyoverAnimIdRef = useRef<number | null>(null);
+  const flyoverProgressRef = useRef<number>(0);
+  const isPlayingFlyoverRef = useRef<boolean>(false);
+  const flyoverDurationRef = useRef<number>(5);
+  const flyoverLoopRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    isPlayingFlyoverRef.current = isPlayingFlyover;
+  }, [isPlayingFlyover]);
+
+  useEffect(() => {
+    flyoverDurationRef.current = flyoverDuration;
+  }, [flyoverDuration]);
+
+  useEffect(() => {
+    flyoverLoopRef.current = flyoverLoop;
+  }, [flyoverLoop]);
 
   // India Geographic Bounding Box: [West, South, East, North]
   const INDIA_RECTANGLE = Cesium.Rectangle.fromDegrees(68.0, 6.5, 97.5, 37.5);
@@ -372,6 +498,210 @@ export const Cesium3DMapTab: React.FC = () => {
       duration: 1.8
     });
   };
+
+  // 3D Cinematic Flyover Camera Position Calculator
+  const applyCameraAtProgress = (p: number) => {
+    const viewer = viewerRef.current;
+    if (!viewer || viewer.isDestroyed()) return;
+
+    const N = FLYOVER_WAYPOINTS.length;
+    const numSegments = N - 1;
+    const clampedP = Math.max(0, Math.min(1, p));
+    const segIndex = Math.min(Math.floor(clampedP * numSegments), numSegments - 1);
+    const u = (clampedP * numSegments) - segIndex;
+
+    // Hermite smoothstep easing for silky smooth camera glide
+    const ease = u * u * (3 - 2 * u);
+
+    const wpA = FLYOVER_WAYPOINTS[segIndex];
+    const wpB = FLYOVER_WAYPOINTS[segIndex + 1];
+
+    const lat = wpA.lat + (wpB.lat - wpA.lat) * ease;
+    const lng = wpA.lng + (wpB.lng - wpA.lng) * ease;
+    const height = wpA.height + (wpB.height - wpA.height) * ease;
+
+    // Shortest angular path interpolation for heading
+    let dHead = ((wpB.heading - wpA.heading + 540) % 360) - 180;
+    const heading = wpA.heading + dHead * ease;
+    const pitch = wpA.pitch + (wpB.pitch - wpA.pitch) * ease;
+
+    viewer.camera.setView({
+      destination: Cesium.Cartesian3.fromDegrees(lng, lat, height),
+      orientation: {
+        heading: Cesium.Math.toRadians(heading),
+        pitch: Cesium.Math.toRadians(pitch),
+        roll: 0.0
+      }
+    });
+  };
+
+  // 3D Flyover Animation Loop
+  const animateFlyover = (timestamp: number) => {
+    if (!isPlayingFlyoverRef.current) return;
+
+    if (flyoverStartTimeRef.current === null) {
+      flyoverStartTimeRef.current = timestamp - (flyoverProgressRef.current * flyoverDurationRef.current * 1000);
+    }
+
+    const elapsedMs = timestamp - flyoverStartTimeRef.current;
+    const totalMs = flyoverDurationRef.current * 1000;
+    let p = elapsedMs / totalMs;
+
+    if (p >= 1) {
+      if (flyoverLoopRef.current) {
+        flyoverStartTimeRef.current = timestamp;
+        p = 0;
+      } else {
+        p = 1;
+        setIsPlayingFlyover(false);
+        isPlayingFlyoverRef.current = false;
+        flyoverProgressRef.current = 1;
+        setFlyoverProgress(1);
+        applyCameraAtProgress(1);
+        return;
+      }
+    }
+
+    flyoverProgressRef.current = p;
+    setFlyoverProgress(p);
+    applyCameraAtProgress(p);
+
+    flyoverAnimIdRef.current = requestAnimationFrame(animateFlyover);
+  };
+
+  const startFlyover = (initialProgress = 0) => {
+    setInspectorOpen(false);
+    setIsFlyoverActive(true);
+    setIsPlayingFlyover(true);
+    isPlayingFlyoverRef.current = true;
+    flyoverProgressRef.current = initialProgress;
+    setFlyoverProgress(initialProgress);
+    flyoverStartTimeRef.current = null;
+    applyCameraAtProgress(initialProgress);
+
+    if (flyoverAnimIdRef.current) {
+      cancelAnimationFrame(flyoverAnimIdRef.current);
+    }
+    flyoverAnimIdRef.current = requestAnimationFrame(animateFlyover);
+  };
+
+  const pauseFlyover = () => {
+    setIsPlayingFlyover(false);
+    isPlayingFlyoverRef.current = false;
+    if (flyoverAnimIdRef.current) {
+      cancelAnimationFrame(flyoverAnimIdRef.current);
+      flyoverAnimIdRef.current = null;
+    }
+  };
+
+  const resumeFlyover = () => {
+    if (flyoverProgressRef.current >= 1) {
+      startFlyover(0);
+      return;
+    }
+    setIsPlayingFlyover(true);
+    isPlayingFlyoverRef.current = true;
+    flyoverStartTimeRef.current = null;
+    flyoverAnimIdRef.current = requestAnimationFrame(animateFlyover);
+  };
+
+  const restartFlyover = () => {
+    startFlyover(0);
+  };
+
+  const stopFlyover = () => {
+    pauseFlyover();
+    setIsFlyoverActive(false);
+    flyoverProgressRef.current = 0;
+    setFlyoverProgress(0);
+    flyToCorridor('JAIPUR_AJMER');
+  };
+
+  const toggleFlyover = () => {
+    if (isFlyoverActive) {
+      if (isPlayingFlyover) {
+        pauseFlyover();
+      } else {
+        resumeFlyover();
+      }
+    } else {
+      startFlyover(0);
+    }
+  };
+
+  const togglePlayPauseFlyover = () => {
+    if (isPlayingFlyover) {
+      pauseFlyover();
+    } else {
+      resumeFlyover();
+    }
+  };
+
+  const seekFlyover = (val: number) => {
+    flyoverProgressRef.current = val;
+    setFlyoverProgress(val);
+    applyCameraAtProgress(val);
+    if (isPlayingFlyoverRef.current) {
+      flyoverStartTimeRef.current = null;
+    }
+  };
+
+  const changeDuration = (sec: number) => {
+    setFlyoverDuration(sec);
+    flyoverDurationRef.current = sec;
+    if (isPlayingFlyoverRef.current) {
+      flyoverStartTimeRef.current = null;
+    }
+  };
+
+  // Compute live flight telemetry and active waypoint for HUD overlay
+  const currentTelemetry = useMemo(() => {
+    const N = FLYOVER_WAYPOINTS.length;
+    const numSegments = N - 1;
+    const p = Math.max(0, Math.min(1, flyoverProgress));
+    const segIndex = Math.min(Math.floor(p * numSegments), numSegments - 1);
+    const u = (p * numSegments) - segIndex;
+    const ease = u * u * (3 - 2 * u);
+
+    const wpA = FLYOVER_WAYPOINTS[segIndex];
+    const wpB = FLYOVER_WAYPOINTS[segIndex + 1];
+
+    const height = wpA.height + (wpB.height - wpA.height) * ease;
+    const pitch = wpA.pitch + (wpB.pitch - wpA.pitch) * ease;
+    const speed = wpA.speedKmh + (wpB.speedKmh - wpA.speedKmh) * ease;
+
+    const activeWaypoint = u > 0.5 ? wpB : wpA;
+
+    return {
+      height,
+      pitch,
+      speedKmh: speed,
+      activeWaypoint
+    };
+  }, [flyoverProgress]);
+
+  // Handle auto-start trigger (e.g. from GIS Map tab or external link)
+  useEffect(() => {
+    if (viewerReady) {
+      const shouldAutoStart = sessionStorage.getItem('auto_start_flyover');
+      if (shouldAutoStart === 'true') {
+        sessionStorage.removeItem('auto_start_flyover');
+        const timer = setTimeout(() => {
+          startFlyover(0);
+        }, 700);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [viewerReady]);
+
+  // Clean up animation on unmount
+  useEffect(() => {
+    return () => {
+      if (flyoverAnimIdRef.current) {
+        cancelAnimationFrame(flyoverAnimIdRef.current);
+      }
+    };
+  }, []);
 
   // 2. Render 3D Extruded Parcels & Natural Layers onto Cesium Globe
   useEffect(() => {
@@ -822,6 +1152,29 @@ export const Cesium3DMapTab: React.FC = () => {
 
       {/* Top Right Floating Toolbar: Camera Controls, Height Metric & View Modes */}
       <div className="absolute top-4 right-4 z-20 flex items-center gap-2 pointer-events-auto">
+        {/* 3D Flyover Video Tour Button */}
+        <button
+          onClick={toggleFlyover}
+          className={`px-3 py-1.5 text-xs font-bold rounded-xl border transition-all flex items-center gap-1.5 shadow-lg ${
+            isFlyoverActive
+              ? 'bg-red-600 border-red-500 text-white animate-pulse shadow-red-500/30'
+              : 'bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white border-cyan-500/40 shadow-emerald-500/20'
+          }`}
+          title="Play 3 to 6-second Cinematic 3D Aerial Flyover along the NH-48 Corridor"
+        >
+          {isFlyoverActive ? (
+            <>
+              <Pause className="w-3.5 h-3.5 fill-current" />
+              <span>{isPlayingFlyover ? 'Pause Tour' : 'Resume Tour'}</span>
+            </>
+          ) : (
+            <>
+              <Play className="w-3.5 h-3.5 fill-current" />
+              <span>3D Flyover Tour ({flyoverDuration}s)</span>
+            </>
+          )}
+        </button>
+
         {/* Height Extrusion Metric Dropdown */}
         <div className="bg-slate-900/95 backdrop-blur-md border border-slate-800 px-3 py-1.5 rounded-xl shadow-xl flex items-center gap-2">
           <span className="text-xs text-slate-400 font-semibold shrink-0">3D Height:</span>
@@ -1470,6 +1823,151 @@ export const Cesium3DMapTab: React.FC = () => {
               </div>
             </>
           )}
+        </div>
+      )}
+
+      {/* Cinematic 3D Aerial Flyover Video Overlay & HUD Controller */}
+      {isFlyoverActive && (
+        <div className="absolute inset-0 pointer-events-none z-30 flex flex-col justify-between overflow-hidden">
+          {/* Top Cinematic HUD Letterbox */}
+          <div className="pointer-events-auto bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-6 py-2.5 flex items-center justify-between shadow-2xl">
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-1.5 bg-red-600 text-white font-black text-[10px] tracking-wider px-2.5 py-0.5 rounded-full animate-pulse uppercase shadow-md shadow-red-600/40">
+                <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
+                REC • 3D FLYOVER
+              </span>
+              <span className="font-mono font-bold text-xs sm:text-sm text-cyan-300">
+                {(flyoverProgress * flyoverDuration).toFixed(1)}s / {flyoverDuration}.0s
+              </span>
+              <div className="hidden md:block w-px h-4 bg-slate-700"></div>
+              <span className="hidden md:inline text-xs font-semibold text-slate-300">
+                Jaipur–Ajmer NH-48 Express Corridor • 3D Drone Reconnaissance Video Simulation
+              </span>
+            </div>
+
+            {/* Real-time Telemetry */}
+            <div className="flex items-center gap-3 sm:gap-4 text-xs font-mono">
+              <div className="hidden sm:flex items-center gap-1 text-slate-300">
+                <span className="text-slate-500">ALT:</span>
+                <span className="text-amber-300 font-bold">{Math.round(currentTelemetry.height)}m</span>
+              </div>
+              <div className="hidden sm:flex items-center gap-1 text-slate-300">
+                <span className="text-slate-500">SPEED:</span>
+                <span className="text-emerald-300 font-bold">{Math.round(currentTelemetry.speedKmh)} km/h</span>
+              </div>
+              <div className="flex items-center gap-1 text-slate-300">
+                <span className="text-slate-500">PITCH:</span>
+                <span className="text-cyan-300 font-bold">{Math.round(currentTelemetry.pitch)}°</span>
+              </div>
+              <button
+                onClick={stopFlyover}
+                className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-semibold flex items-center gap-1 transition shadow-sm"
+                title="Exit 3D Flyover"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span className="hidden xs:inline">Exit Tour</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Middle Waypoint Spotlight Card */}
+          {currentTelemetry.activeWaypoint && (
+            <div className="pointer-events-auto self-start ml-4 sm:ml-6 mb-4 max-w-sm sm:max-w-md bg-slate-900/95 backdrop-blur-md border border-cyan-500/50 rounded-xl p-3.5 shadow-2xl shadow-cyan-950/50 transition-all">
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <span className="text-xs font-bold text-white flex items-center gap-1.5 truncate">
+                  <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                  [{currentTelemetry.activeWaypoint.km}] {currentTelemetry.activeWaypoint.name}
+                </span>
+                <RiskBadge level={currentTelemetry.activeWaypoint.riskLevel} />
+              </div>
+              <p className="text-[11px] text-slate-300 leading-snug">
+                {currentTelemetry.activeWaypoint.bottleneck}
+              </p>
+            </div>
+          )}
+
+          {/* Bottom Cinematic Control Player */}
+          <div className="pointer-events-auto bg-slate-950/95 backdrop-blur-md border-t border-slate-800/80 px-4 sm:px-6 py-2.5 shadow-2xl flex flex-col gap-2">
+            {/* Timeline Scrubber */}
+            <div className="flex items-center gap-3 w-full">
+              <span className="font-mono text-[11px] text-slate-400 shrink-0 w-8">
+                {(flyoverProgress * flyoverDuration).toFixed(1)}s
+              </span>
+              <div className="relative flex-1 flex items-center">
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.002"
+                  value={flyoverProgress}
+                  onChange={(e) => seekFlyover(parseFloat(e.target.value))}
+                  className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400 focus:outline-none"
+                />
+              </div>
+              <span className="font-mono text-[11px] text-slate-400 shrink-0 w-8 text-right">
+                {flyoverDuration}.0s
+              </span>
+            </div>
+
+            {/* Control Buttons */}
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={togglePlayPauseFlyover}
+                  className="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-semibold transition shadow-md flex items-center gap-1.5 text-xs"
+                >
+                  {isPlayingFlyover ? (
+                    <>
+                      <Pause className="w-3.5 h-3.5 fill-current" />
+                      <span>Pause</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-3.5 h-3.5 fill-current" />
+                      <span>Resume Tour</span>
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={restartFlyover}
+                  className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center gap-1 text-xs"
+                  title="Restart Flyover"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Restart</span>
+                </button>
+                <button
+                  onClick={() => setFlyoverLoop(!flyoverLoop)}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1 border ${
+                    flyoverLoop
+                      ? 'bg-blue-950/80 text-blue-300 border-blue-500/50'
+                      : 'bg-slate-800/60 text-slate-400 border-transparent hover:text-white'
+                  }`}
+                  title="Loop 3D Flight Continuously"
+                >
+                  <span>🔁 Loop</span>
+                </button>
+              </div>
+
+              {/* Duration Selectors: 3s, 5s, 8s */}
+              <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-lg p-1">
+                <span className="text-[10px] text-slate-400 font-semibold px-1.5">Speed / Duration:</span>
+                {[3, 5, 8].map((sec) => (
+                  <button
+                    key={sec}
+                    onClick={() => changeDuration(sec)}
+                    className={`px-2.5 py-0.5 text-xs font-bold rounded transition ${
+                      flyoverDuration === sec
+                        ? 'bg-cyan-500 text-slate-950 shadow-sm'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {sec}s {sec === 3 ? '(Fast)' : sec === 5 ? '(Cinematic)' : '(Detailed)'}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

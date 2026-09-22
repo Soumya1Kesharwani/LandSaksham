@@ -8,7 +8,7 @@ import {
   Layers, Search, Filter, ShieldAlert, Eye, 
   MapPin, CheckCircle, Navigation, ZoomIn, ZoomOut,
   Compass, Droplets, Trees, Home, Sprout, Building, Mountain,
-  Train, Map as MapIcon, Globe, X
+  Train, Map as MapIcon, Globe, X, Play
 } from 'lucide-react';
 
 export const GISMapTab: React.FC = () => {
@@ -514,6 +514,19 @@ export const GISMapTab: React.FC = () => {
               >
                 <Globe className="w-3.5 h-3.5 text-cyan-200" />
                 <span>{tr('Cesium 3D Globe', 'सीज़ियम 3D ग्लोब')}</span>
+              </button>
+
+              {/* 3D Video Flyover Tour Launcher */}
+              <button
+                onClick={() => {
+                  sessionStorage.setItem('auto_start_flyover', 'true');
+                  setActiveTab('cesium3d');
+                }}
+                className="hidden sm:flex px-2.5 py-1 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white rounded text-[11px] font-bold items-center gap-1.5 transition shadow-xs shrink-0"
+                title="Play 3 to 6-second Cinematic 3D Aerial Corridor Flyover"
+              >
+                <Play className="w-3.5 h-3.5 fill-current text-emerald-200" />
+                <span>{tr('3D Video Tour (5s)', '3D वीडियो टूर (5s)')}</span>
               </button>
             </div>
 

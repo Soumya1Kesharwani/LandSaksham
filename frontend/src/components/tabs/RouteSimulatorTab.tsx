@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useProject } from '../../context/ProjectContext';
 import { FALLBACK_ROUTES } from '../../services/api';
-import { GitFork, CheckCircle2, Sparkles, MapPin, AlertTriangle } from 'lucide-react';
+import { GitFork, CheckCircle2, Sparkles, MapPin, AlertTriangle, Play } from 'lucide-react';
 
 export const RouteSimulatorTab: React.FC = () => {
   const { language, tr } = useLanguage();
@@ -104,6 +104,17 @@ export const RouteSimulatorTab: React.FC = () => {
           >
             <MapPin className="w-4 h-4 text-blue-400" />
             <span>{tr('View Alignments on GIS Map', 'जीआईएस मानचित्र पर संरेखन देखें')}</span>
+          </button>
+
+          <button
+            onClick={() => {
+              sessionStorage.setItem('auto_start_flyover', 'true');
+              setActiveTab('cesium3d');
+            }}
+            className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm"
+          >
+            <Play className="w-3.5 h-3.5 fill-current text-emerald-200" />
+            <span>{tr('Play 3D Flyover Tour (5s)', '3D फ्लाईओवर टूर देखें (5s)')}</span>
           </button>
         </div>
       </div>

@@ -301,23 +301,6 @@ export const GovSidebar: React.FC<GovSidebarProps> = ({ isOpen = true, onClose }
 
                   <button
                     onClick={() => {
-                      setActiveTab('cesium3d');
-                      if (onClose) onClose();
-                    }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                      activeTab === 'cesium3d'
-                        ? 'bg-gov-blue text-white shadow-sm font-semibold'
-                        : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                    }`}
-                  >
-                    <span className="truncate whitespace-nowrap">{tr('Cesium 3D Globe', 'सीज़ियम 3D ग्लोब')}</span>
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-700/60 shrink-0 ml-1">
-                      Aerial 3D
-                    </span>
-                  </button>
-
-                  <button
-                    onClick={() => {
                       setActiveTab('routes');
                       if (onClose) onClose();
                     }}

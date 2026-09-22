@@ -137,13 +137,30 @@ export const GISMapTab: React.FC = () => {
 
     layerGroup.clearLayers();
 
-    // 1. Draw Route Alignment Polylines
+    // 1. Draw Route Alignment Polylines with Distinct Colors per Route
     routes.forEach(route => {
-      const isPrimary = route.route_id === 'ROUTE-A' || route.route_id === 'ROUTE-B';
+      let routeColor = '#8b5cf6';
+      let weight = 5;
+      let opacity = 0.90;
+
+      if (route.route_id === 'ROUTE-B' || route.is_recommended) {
+        routeColor = '#10b981'; // Emerald Green (Recommended)
+        weight = 6;
+        opacity = 0.95;
+      } else if (route.route_id === 'ROUTE-A') {
+        routeColor = '#ef4444'; // Red (Existing Highway)
+        weight = 5;
+        opacity = 0.90;
+      } else if (route.route_id === 'ROUTE-C') {
+        routeColor = '#8b5cf6'; // Electric Purple (Freight Rail Alignment)
+        weight = 5;
+        opacity = 0.85;
+      }
+
       const polyline = L.polyline(route.coordinates as [number, number][], {
-        color: route.is_recommended ? '#10b981' : (route.route_id === 'ROUTE-A' ? '#ef4444' : '#3b82f6'),
-        weight: isPrimary ? 6 : 4,
-        opacity: isPrimary ? 0.90 : 0.60,
+        color: routeColor,
+        weight,
+        opacity,
         dashArray: route.route_id === 'ROUTE-C' ? '6, 6' : undefined
       });
 
@@ -489,10 +506,10 @@ export const GISMapTab: React.FC = () => {
                 </select>
               </div>
 
-              {/* Cesium 3D Globe Launcher */}
+              {/* Cesium 3D Globe Launcher (Desktop/Tablet only) */}
               <button
                 onClick={() => setActiveTab('cesium3d')}
-                className="px-2.5 py-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded text-[11px] font-bold flex items-center gap-1.5 transition shadow-xs shrink-0"
+                className="hidden md:flex px-2.5 py-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded text-[11px] font-bold items-center gap-1.5 transition shadow-xs shrink-0"
                 title="Launch India Cesium 3D Globe with Aerial Satellite & Labels"
               >
                 <Globe className="w-3.5 h-3.5 text-cyan-200" />
@@ -647,8 +664,9 @@ export const GISMapTab: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              <span className="flex items-center gap-1 text-emerald-800 dark:text-emerald-400 font-semibold"><span className="w-3.5 h-1 bg-emerald-600 inline-block"></span> {tr('Route B (Rec.)', 'रूट B')}</span>
-              <span className="flex items-center gap-1 text-red-800 dark:text-red-400 font-semibold"><span className="w-3.5 h-1 bg-red-600 inline-block"></span> {tr('Route A', 'रूट A')}</span>
+              <span className="flex items-center gap-1 text-emerald-800 dark:text-emerald-400 font-semibold"><span className="w-3.5 h-1.5 rounded-xs bg-emerald-500 inline-block"></span> {tr('Route B (Rec.)', 'रूट B')}</span>
+              <span className="flex items-center gap-1 text-red-800 dark:text-red-400 font-semibold"><span className="w-3.5 h-1.5 rounded-xs bg-red-500 inline-block"></span> {tr('Route A', 'रूट A')}</span>
+              <span className="flex items-center gap-1 text-purple-800 dark:text-purple-400 font-semibold"><span className="w-3.5 h-1.5 rounded-xs bg-purple-500 inline-block"></span> {tr('Route C', 'रूट C')}</span>
             </div>
           </div>
 

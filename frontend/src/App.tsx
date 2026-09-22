@@ -37,17 +37,20 @@ const DashboardContent: React.FC<{
   onNavigateLanding: () => void;
   onNavigateCitizen: () => void;
 }> = ({ onOpenCreateProject, onOpenCopilot, onNavigateLanding, onNavigateCitizen }) => {
-  const { activeTab, selectedParcel, setSelectedParcel } = useProject();
+  const { activeTab, setActiveTab, selectedParcel, setSelectedParcel } = useProject();
   const { role } = useRole();
   const { t } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(() => typeof window !== 'undefined' ? window.innerWidth >= 768 : true);
 
-  // Sync sidebar state on window resize or device mode toggle
+  // Sync sidebar state on window resize or device mode toggle; redirect 3D map on mobile
   React.useEffect(() => {
     const handleResize = () => {
       if (typeof window !== 'undefined') {
         if (window.innerWidth < 768) {
           setSidebarOpen(false);
+          if (activeTab === 'cesium3d') {
+            setActiveTab('gis');
+          }
         } else {
           setSidebarOpen(true);
         }
@@ -55,7 +58,14 @@ const DashboardContent: React.FC<{
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [activeTab, setActiveTab]);
+
+  // Fallback check on initial mount or activeTab changes: disable 3D on mobile
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768 && activeTab === 'cesium3d') {
+      setActiveTab('gis');
+    }
+  }, [activeTab, setActiveTab]);
 
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -66,6 +76,10 @@ const DashboardContent: React.FC<{
       case 'gis':
         return <GISMapTab />;
       case 'cesium3d':
+        // Guard against 3D globe rendering on mobile devices (<768px)
+        if (typeof window !== 'undefined' && window.innerWidth < 768) {
+          return <GISMapTab />;
+        }
         return <Cesium3DMapTab />;
       case 'compensation':
         return <CompensationTab />;

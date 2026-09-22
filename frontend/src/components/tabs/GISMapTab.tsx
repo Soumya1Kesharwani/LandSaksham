@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import L from 'leaflet';
 import { useProject } from '../../context/ProjectContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -22,7 +22,8 @@ export const GISMapTab: React.FC = () => {
   const parcelMarkersRef = useRef<{ [key: string]: L.CircleMarker }>({});
 
   const [searchMap, setSearchMap] = useState('');
-  const [selectedRiskFilter, setSelectedRiskFilter] = useState('CRITICAL');
+  const [selectedRiskFilter, setSelectedRiskFilter] = useState('ALL');
+  const [activeParcelId, setActiveParcelId] = useState<string | null>(null);
 
   // Mobile layout state
   const [activeMobileView, setActiveMobileView] = useState<'map' | 'parcels'>('map');
@@ -334,25 +335,35 @@ export const GISMapTab: React.FC = () => {
         if (parcel.delay_risk_level === 'CRITICAL') color = '#dc2626';
         else if (parcel.delay_risk_level === 'HIGH') color = '#ea580c';
         else if (parcel.delay_risk_level === 'MEDIUM') color = '#d97706';
+        else color = '#10b981';
       }
+
+      const isSelected = activeParcelId === parcel.id;
+      const riskColor = 
+        parcel.delay_risk_level === 'CRITICAL' ? '#dc2626' :
+        parcel.delay_risk_level === 'HIGH' ? '#ea580c' :
+        parcel.delay_risk_level === 'MEDIUM' ? '#d97706' : '#10b981';
 
       // Draw Parcel boundary polygon
       if (parcel.polygon_coordinates && parcel.polygon_coordinates.length > 0) {
         const poly = L.polygon(parcel.polygon_coordinates as [number, number][], {
-          color: color,
+          color: isSelected ? '#0284c7' : color,
           fillColor: color,
-          fillOpacity: 0.55,
-          weight: 2
+          fillOpacity: isSelected ? 0.70 : 0.45,
+          weight: isSelected ? 3.5 : 2
         });
-        poly.bindTooltip(`<strong>Khasra ${parcel.khasra_survey_no}</strong> (${t(parcel.land_type, parcel.land_type)})<br>${t(parcel.village, parcel.village)} • ${parcel.area_acres} Acres`, { sticky: true });
+        poly.bindTooltip(`<strong>Khasra ${parcel.khasra_survey_no}</strong> (${t(parcel.land_type, parcel.land_type)})<br>${t(parcel.village, parcel.village)} • ${parcel.area_acres} Acres • <strong>${parcel.delay_risk_score}% ${t(parcel.delay_risk_level)}</strong>`, { sticky: true });
+        poly.on('click', () => {
+          handleZoomToParcel(parcel, false);
+        });
         poly.addTo(layerGroup);
       }
 
       // Add Circle Marker with Tooltip
       const marker = L.circleMarker([parcel.lat, parcel.lng], {
-        radius: parcel.delay_risk_score >= 80 ? 10 : 7,
-        color: '#ffffff',
-        weight: 2,
+        radius: isSelected ? 12 : (parcel.delay_risk_score >= 80 ? 10 : 8),
+        color: isSelected ? '#0284c7' : '#ffffff',
+        weight: isSelected ? 3.5 : 2,
         fillColor: color,
         fillOpacity: 0.95
       });
@@ -360,38 +371,52 @@ export const GISMapTab: React.FC = () => {
       parcelMarkersRef.current[parcel.id] = marker;
 
       const popupHtml = `
-        <div style="font-family: 'Inter', sans-serif; padding: 12px; min-width: 250px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <span style="font-weight: 800; font-size: 13px; color: #0f2942;">${parcel.id}</span>
-            <span style="font-size: 11px; font-weight: bold; background: ${color}20; color: ${color}; padding: 2px 6px; border-radius: 4px; border: 1px solid ${color};">
+        <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; padding: 12px; min-width: 270px; max-width: 320px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">
+            <div>
+              <span style="font-weight: 800; font-size: 13px; color: #0f2942; display: block;">${parcel.id}</span>
+              <span style="font-size: 10px; color: #64748b;">${tr('Khasra', 'खसरा')} ${parcel.khasra_survey_no}</span>
+            </div>
+            <span style="font-size: 11px; font-weight: 800; background: ${riskColor}18; color: ${riskColor}; padding: 3px 8px; border-radius: 6px; border: 1.5px solid ${riskColor};">
               ${parcel.delay_risk_score}% ${t(parcel.delay_risk_level)}
             </span>
           </div>
-          <div style="font-size: 11px; color: #475569; margin-bottom: 4px;">
-            <strong>${tr('Khasra', 'खसरा')}:</strong> ${parcel.khasra_survey_no} • ${t(parcel.village, parcel.village)}, ${t(parcel.tehsil, parcel.tehsil)}
+
+          <div style="font-size: 11px; color: #334155; margin-bottom: 5px; display: flex; justify-content: space-between;">
+            <strong style="color: #64748b;">${tr('Location', 'स्थान')}:</strong> 
+            <span style="font-weight: 600; text-align: right;">${t(parcel.village, parcel.village)}, ${t(parcel.tehsil, parcel.tehsil)}</span>
           </div>
-          <div style="font-size: 11px; color: #475569; margin-bottom: 4px;">
-            <strong>${tr('Land Category', 'भूमि श्रेणी')}:</strong> <span style="color: ${color}; font-weight: 700;">${t(parcel.land_type, parcel.land_type)}</span>
+
+          <div style="font-size: 11px; color: #334155; margin-bottom: 5px; display: flex; justify-content: space-between;">
+            <strong style="color: #64748b;">${tr('Land Category', 'भूमि श्रेणी')}:</strong> 
+            <span style="color: ${color}; font-weight: 700; text-align: right;">${t(parcel.land_type, parcel.land_type)}</span>
           </div>
-          <div style="font-size: 11px; color: #475569; margin-bottom: 4px;">
-            <strong>${tr('Owner', 'भूस्वामी')}:</strong> ${t(parcel.owner.name, parcel.owner.name)} (${parcel.area_acres} ${t('common.acres')})
+
+          <div style="font-size: 11px; color: #334155; margin-bottom: 5px; display: flex; justify-content: space-between;">
+            <strong style="color: #64748b;">${tr('Owner', 'भूस्वामी')}:</strong> 
+            <span style="font-weight: 600; text-align: right;">${t(parcel.owner.name, parcel.owner.name)} (${parcel.area_acres} ${t('common.acres')})</span>
           </div>
-          <div style="font-size: 11px; color: #475569; margin-bottom: 8px;">
-            <strong>${tr('Compensation', 'मुआवजा')}:</strong> ${parcel.compensation ? `₹${(parcel.compensation.total_estimated_compensation_inr/100000).toFixed(1)} ${tr('Lakh', 'लाख')} (${t(parcel.compensation.payment_status)})` : 'N/A'}
+
+          <div style="font-size: 11px; color: #334155; margin-bottom: 5px; display: flex; justify-content: space-between;">
+            <strong style="color: #64748b;">${tr('Compensation', 'मुआवजा')}:</strong> 
+            <span style="font-weight: 600; text-align: right;">${parcel.compensation ? `₹${(parcel.compensation.total_estimated_compensation_inr/100000).toFixed(1)} ${tr('Lakh', 'लाख')} (${t(parcel.compensation.payment_status)})` : 'N/A'}</span>
           </div>
-          <div style="font-size: 11px; color: #b91c1c; font-weight: 600; margin-bottom: 8px;">
-            ${parcel.top_risk_factors[0]?.factor_name ? t(parcel.top_risk_factors[0]?.factor_name) : t('common.pending')} (+${parcel.expected_delay_days} ${t('common.days')})
+
+          <div style="font-size: 11px; margin-bottom: 10px; padding: 6px 8px; border-radius: 5px; background: ${riskColor}12; border-left: 3px solid ${riskColor}; color: ${riskColor}; font-weight: 600;">
+            ${parcel.top_risk_factors && parcel.top_risk_factors[0]?.factor_name ? t(parcel.top_risk_factors[0]?.factor_name) : (parcel.delay_risk_level === 'LOW' ? tr('No major risk • Clear title', 'कोई बड़ा जोखिम नहीं') : t('common.pending'))}
+            ${parcel.expected_delay_days > 0 ? ` (+${parcel.expected_delay_days} ${t('common.days')} ${tr('delay', 'विलंब')})` : ` (${tr('0 days delay', '0 दिन विलंब')})`}
           </div>
+
           <button
             id="btn-inspect-${parcel.id}"
-            style="width: 100%; background: #0f2942; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;"
+            style="width: 100%; background: #0f2942; color: white; border: none; padding: 7px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;"
           >
-            ${t('gis.open_dossier')}
+            📋 ${tr('Open Complete Land Dossier', 'पूर्ण भूमि डोजियर खोलें')}
           </button>
         </div>
       `;
 
-      marker.bindPopup(popupHtml);
+      marker.bindPopup(popupHtml, { maxWidth: 320 });
 
       marker.on('popupopen', () => {
         const btn = document.getElementById(`btn-inspect-${parcel.id}`);
@@ -403,6 +428,7 @@ export const GISMapTab: React.FC = () => {
       });
 
       marker.on('click', () => {
+        setActiveParcelId(parcel.id);
         setMobileSelectedParcel(parcel);
       });
 
@@ -410,14 +436,21 @@ export const GISMapTab: React.FC = () => {
     });
 
   }, [
-    parcels, routes, searchMap, selectedRiskFilter, 
+    parcels, routes, searchMap, selectedRiskFilter, activeParcelId,
     showRiverLayer, showForestLayer, showHousesLayer, showAgriLayer, showBarrenLayer, showInfraLayer, showLandOwnershipLayer,
     activeRouteId, t, tr
   ]);
 
   const handleZoomToParcel = (parcel: Parcel, openModal = false) => {
+    setActiveParcelId(parcel.id);
     setMobileSelectedParcel(parcel);
     setActiveMobileView('map');
+
+    // If the parcel is currently filtered out by selectedRiskFilter, reset to ALL so it renders
+    if (selectedRiskFilter !== 'ALL' && parcel.delay_risk_level !== selectedRiskFilter) {
+      setSelectedRiskFilter('ALL');
+    }
+
     const map = mapInstanceRef.current;
     if (!map) return;
 
@@ -428,17 +461,36 @@ export const GISMapTab: React.FC = () => {
       map.setView([parcel.lat, parcel.lng], 15, { animate: true });
     }
 
-    const marker = parcelMarkersRef.current[parcel.id];
-    if (marker) {
-      setTimeout(() => {
+    setTimeout(() => {
+      const marker = parcelMarkersRef.current[parcel.id];
+      if (marker) {
         marker.openPopup();
-      }, 350);
-    }
+      }
+    }, 300);
 
     if (openModal) {
       setSelectedParcel(parcel);
     }
   };
+
+  const criticalCount = useMemo(() => parcels.filter(p => p.delay_risk_level === 'CRITICAL').length, [parcels]);
+  const highCount = useMemo(() => parcels.filter(p => p.delay_risk_level === 'HIGH').length, [parcels]);
+  const mediumCount = useMemo(() => parcels.filter(p => p.delay_risk_level === 'MEDIUM').length, [parcels]);
+  const lowCount = useMemo(() => parcels.filter(p => p.delay_risk_level === 'LOW').length, [parcels]);
+
+  const displayedParcels = useMemo(() => {
+    return parcels.filter(p => {
+      if (selectedRiskFilter !== 'ALL' && p.delay_risk_level !== selectedRiskFilter) return false;
+      if (searchMap) {
+        const s = searchMap.toLowerCase();
+        return p.id.toLowerCase().includes(s) ||
+               p.khasra_survey_no.toLowerCase().includes(s) ||
+               p.village.toLowerCase().includes(s) ||
+               p.owner.name.toLowerCase().includes(s);
+      }
+      return true;
+    });
+  }, [parcels, selectedRiskFilter, searchMap]);
 
   return (
     <div className="space-y-3 w-full max-w-full min-w-0">
@@ -655,12 +707,23 @@ export const GISMapTab: React.FC = () => {
           <div className="p-2 sm:p-2.5 bg-white dark:bg-[#111c38] border-t border-slate-200 dark:border-slate-800 z-10 flex flex-wrap items-center justify-between text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 gap-1.5 sm:gap-2">
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <span className="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide">{tr('Legend:', 'किंवदंती:')}</span>
-              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-cyan-500"></span> {tr('Govt', 'शासकीय')}</span>
-              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> {tr('Private', 'निजी')}</span>
-              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-purple-500"></span> {tr('Houses', 'मकान')}</span>
-              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> {tr('Forest', 'वन')}</span>
-              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-lime-500"></span> {tr('Agri', 'कृषि')}</span>
-              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-sky-500"></span> {tr('River', 'नदी')}</span>
+              {showLandOwnershipLayer ? (
+                <>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-cyan-500"></span> {tr('Govt', 'शासकीय')}</span>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> {tr('Private', 'निजी')}</span>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-purple-500"></span> {tr('Houses', 'मकान')}</span>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> {tr('Forest', 'वन')}</span>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-lime-500"></span> {tr('Agri', 'कृषि')}</span>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-sky-500"></span> {tr('River', 'नदी')}</span>
+                </>
+              ) : (
+                <>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-red-600"></span> {tr('Critical', 'गंभीर')} (80-100%)</span>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-orange-500"></span> {tr('High', 'उच्च')} (70-79%)</span>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> {tr('Medium', 'मध्यम')} (30-69%)</span>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> {tr('Low', 'कम')} (&lt;30%)</span>
+                </>
+              )}
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
@@ -679,19 +742,81 @@ export const GISMapTab: React.FC = () => {
           <div className="p-3 bg-slate-900 text-white flex items-center justify-between">
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4 text-amber-400" />
-              <h3 className="font-bold text-xs uppercase tracking-wider">{t('land.total_parcels')} ({parcels.length})</h3>
+              <h3 className="font-bold text-xs uppercase tracking-wider">{t('land.total_parcels')} ({displayedParcels.length}/{parcels.length})</h3>
             </div>
             <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-300">
               {activeProject?.code || 'NH-48'}
             </span>
           </div>
 
+          {/* Risk Level Filter Tabs */}
+          <div className="flex items-center gap-1 p-2 bg-slate-100 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800 overflow-x-auto text-[11px] font-bold no-scrollbar">
+            <button
+              onClick={() => setSelectedRiskFilter('ALL')}
+              className={`px-2 py-1 rounded-md transition shrink-0 ${
+                selectedRiskFilter === 'ALL'
+                  ? 'bg-gov-navy dark:bg-blue-600 text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
+              }`}
+            >
+              {tr('All', 'सभी')} ({parcels.length})
+            </button>
+            <button
+              onClick={() => setSelectedRiskFilter(selectedRiskFilter === 'CRITICAL' ? 'ALL' : 'CRITICAL')}
+              className={`px-2 py-1 rounded-md transition flex items-center gap-1 shrink-0 ${
+                selectedRiskFilter === 'CRITICAL'
+                  ? 'bg-red-600 text-white shadow-xs'
+                  : 'text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40'
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-red-500 inline-block"></span>
+              {tr('Critical', 'गंभीर')} ({criticalCount})
+            </button>
+            <button
+              onClick={() => setSelectedRiskFilter(selectedRiskFilter === 'HIGH' ? 'ALL' : 'HIGH')}
+              className={`px-2 py-1 rounded-md transition flex items-center gap-1 shrink-0 ${
+                selectedRiskFilter === 'HIGH'
+                  ? 'bg-orange-600 text-white shadow-xs'
+                  : 'text-orange-700 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/40'
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-orange-500 inline-block"></span>
+              {tr('High', 'उच्च')} ({highCount})
+            </button>
+            <button
+              onClick={() => setSelectedRiskFilter(selectedRiskFilter === 'MEDIUM' ? 'ALL' : 'MEDIUM')}
+              className={`px-2 py-1 rounded-md transition flex items-center gap-1 shrink-0 ${
+                selectedRiskFilter === 'MEDIUM'
+                  ? 'bg-amber-600 text-white shadow-xs'
+                  : 'text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40'
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
+              {tr('Medium', 'मध्यम')} ({mediumCount})
+            </button>
+            <button
+              onClick={() => setSelectedRiskFilter(selectedRiskFilter === 'LOW' ? 'ALL' : 'LOW')}
+              className={`px-2 py-1 rounded-md transition flex items-center gap-1 shrink-0 ${
+                selectedRiskFilter === 'LOW'
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+              {tr('Low', 'कम')} ({lowCount})
+            </button>
+          </div>
+
           <div className="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 p-2 space-y-1.5">
-            {parcels.map(p => (
+            {displayedParcels.map(p => (
               <div
                 key={p.id}
                 onClick={() => handleZoomToParcel(p, false)}
-                className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-gov-blue dark:hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-slate-800/60 cursor-pointer transition text-xs space-y-1.5 group"
+                className={`p-2.5 rounded-lg border transition text-xs space-y-1.5 cursor-pointer group ${
+                  activeParcelId === p.id
+                    ? 'border-gov-blue dark:border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 shadow-xs ring-1 ring-gov-blue dark:ring-blue-500'
+                    : 'border-slate-200 dark:border-slate-800 hover:border-gov-blue dark:hover:border-blue-500 hover:bg-blue-50/40 dark:hover:bg-slate-800/60'
+                }`}
               >
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-gov-navy dark:text-blue-400 font-mono text-xs">{p.id}</span>
@@ -722,12 +847,22 @@ export const GISMapTab: React.FC = () => {
 
                 <div className="flex justify-between items-center text-[10px] pt-1.5 border-t border-slate-100 dark:border-slate-800/80">
                   <span className="text-slate-500 dark:text-slate-400 font-mono">Tehsil: {t(p.tehsil, p.tehsil)}</span>
-                  <span className="text-red-700 dark:text-red-400 font-bold">
+                  <span className={`font-bold ${
+                    p.delay_risk_level === 'CRITICAL' ? 'text-red-700 dark:text-red-400' :
+                    p.delay_risk_level === 'HIGH' ? 'text-orange-700 dark:text-orange-400' :
+                    p.delay_risk_level === 'MEDIUM' ? 'text-amber-700 dark:text-amber-400' :
+                    'text-emerald-700 dark:text-emerald-400'
+                  }`}>
                     +{p.expected_delay_days} {t('common.days')} {tr('delay', 'विलंब')}
                   </span>
                 </div>
               </div>
             ))}
+            {displayedParcels.length === 0 && (
+              <div className="text-center py-8 text-xs text-slate-400 dark:text-slate-500">
+                {tr('No parcels match the selected filter.', 'चयनित फ़िल्टर से कोई पार्सल मेल नहीं खाता।')}
+              </div>
+            )}
           </div>
         </div>
 

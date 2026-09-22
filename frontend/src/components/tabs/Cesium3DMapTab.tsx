@@ -289,13 +289,13 @@ export const Cesium3DMapTab: React.FC = () => {
       }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-    // Mouse Click (Opens on-map popup card matching Image 1)
+    // Mouse Click (Opens on-map popup card matching Image 3)
     handler.setInputAction((click: any) => {
       const pickedObject = viewer.scene.pick(click.position);
       if (Cesium.defined(pickedObject) && pickedObject.id && pickedObject.id.userData) {
         const pData: Parcel = pickedObject.id.userData;
-        setSelectedParcel(pData);
         setMapPopupParcel(pData);
+        setDetailParcel(pData);
         flyToCesiumParcel(pData);
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
@@ -1038,7 +1038,6 @@ export const Cesium3DMapTab: React.FC = () => {
                       key={p.id}
                       onClick={() => {
                         setDetailParcel(p);
-                        setSelectedParcel(p);
                         setMapPopupParcel(p);
                         flyToCesiumParcel(p);
                       }}
@@ -1052,6 +1051,8 @@ export const Cesium3DMapTab: React.FC = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
+                              setDetailParcel(p);
+                              setMapPopupParcel(p);
                               flyToCesiumParcel(p);
                             }}
                             className="p-1 rounded bg-slate-800 hover:bg-blue-600 text-slate-400 hover:text-white transition"
@@ -1064,21 +1065,21 @@ export const Cesium3DMapTab: React.FC = () => {
 
                       {/* Row 2: Khasra + Village + Area */}
                       <div className="text-slate-200 font-semibold text-xs flex items-center justify-between">
-                        <span>Khasra {p.khasra_survey_no} • {p.village}</span>
-                        <span className="font-mono text-[11px] text-slate-400">{p.area_acres} Acres</span>
+                        <span>{tr('Khasra', 'खसरा')} {p.khasra_survey_no} • {t(p.village, p.village)}</span>
+                        <span className="font-mono text-[11px] text-slate-400">{p.area_acres} {tr('Acres', 'एकड़')}</span>
                       </div>
 
                       {/* Row 3: Owner + Land Type */}
                       <div className="flex justify-between items-center text-[11px] text-slate-300">
-                        <span className="truncate max-w-[180px] font-medium">{p.owner.name}</span>
-                        <span className="font-bold text-[10px] uppercase text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">{p.land_type}</span>
+                        <span className="truncate max-w-[180px] font-medium">{t(p.owner.name, p.owner.name)}</span>
+                        <span className="font-bold text-[10px] uppercase text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">{t(p.land_type, p.land_type)}</span>
                       </div>
 
                       {/* Row 4: Tehsil + Delay */}
                       <div className="flex justify-between items-center text-[10px] pt-1.5 border-t border-slate-800/80">
-                        <span className="text-slate-500 font-mono">Tehsil: {p.tehsil}</span>
+                        <span className="text-slate-500 font-mono">{tr('Tehsil:', 'तहसील:')} {t(p.tehsil, p.tehsil)}</span>
                         <span className={`font-bold ${riskColors[p.delay_risk_level] || 'text-red-400'}`}>
-                          +{p.expected_delay_days} Days delay
+                          +{p.expected_delay_days} {tr('Days delay', 'दिन विलंब')}
                         </span>
                       </div>
                     </div>
